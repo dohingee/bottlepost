@@ -17,9 +17,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -88,7 +88,7 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
                     val gender = t?.partnerGender?.takeIf { it.isNotBlank() }?.let { " · ${genderText(it)}" }.orEmpty()
                     Text(name + gender)
                 },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, stringResource(R.string.action_back)) } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) } },
                 actions = {
                     IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, stringResource(R.string.action_more)) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
@@ -125,7 +125,7 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
                         modifier = Modifier.weight(1f),
                     )
                     IconButton(onClick = vm::sendReply, enabled = !ui.sending) {
-                        Icon(Icons.Filled.Send, stringResource(R.string.compose_send))
+                        Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.compose_send))
                     }
                 }
             }

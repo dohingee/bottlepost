@@ -18,6 +18,9 @@ const year = new Date().getUTCFullYear();
 describe.skipIf(!onEmulator)("letter lifecycle", async () => {
   const fns = (await import("../src/index")) as unknown as Record<string, Fn>;
   const { db } = await import("../src/db");
+  const { clearPauseCache } = await import("../src/billing");
+  const budget = (costAmount: number, budgetAmount: number) =>
+    fns.onBudgetAlert.run({ data: { message: { json: { costAmount, budgetAmount } } } });
 
   const call = (name: string, uid: string, data: object = {}) =>
     fns[name].run({ data, auth: { uid, token: { firebase: { sign_in_provider: "anonymous" } } }, rawRequest: {}, acceptsStreaming: false });
@@ -37,7 +40,7 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
   };
 
   beforeAll(async () => {
-    const cols = ["users", "threads", "deliveries", "reports", "bans", "appeals"];
+    const cols = ["users", "threads", "deliveries", "reports", "bans", "appeals", "config"];
     for (const c of cols) await db.recursiveDelete(db.collection(c));
   });
 
@@ -81,6 +84,17 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     expect(await pickup(A)).toHaveLength(1);
     expect((await db.doc(`threads/${threadId}`).get()).get("replied")).toBe(true);
     await expectCode(call("replyLetter", C, { threadId, body: "can I join this conversation?" }), "not_a_participant");
+  });
+
+  it("spending guard pauses new letters at 90% of budget but keeps conversations going", async () => {
+    await budget(9.2, 10);
+    clearPauseCache();
+    await expectCode(call("sendLetter", A, { body: "a brand new letter for a stranger", wantGender: "F" }), "service_paused");
+    await call("replyLetter", B, { threadId, body: "Replies still work while paused, right?" });
+    await pickup(A);
+    await budget(0.4, 10); // next month: cost reset
+    clearPauseCache();
+    expect((await db.doc("config/runtime").get()).get("paused")).toBe(false);
   });
 
   it("verifies reported letters by signature and runs the moderation bot", async () => {

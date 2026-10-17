@@ -116,4 +116,6 @@
     <string name="translate_loading">번역 중… (처음에는 언어팩을 내려받아요)</string>
     <string name="translate_same_language">이미 내 언어로 쓰인 편지예요.</string>
     <string name="translate_unsupported">아직 번역할 수 없는 언어예요.</string>
+    <string name="error_service_paused">잠시 새 편지 보내기가 멈춰 있어요. 진행 중인 대화는 계속 읽고 답장할 수 있어요.</string>
+    <string name="error_no_google_account">이 휴대폰에 구글 계정이 없어요. 휴대폰 설정 > 계정에서 추가한 뒤 다시 시도해 주세요.</string>
 </resources>

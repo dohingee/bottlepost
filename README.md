@@ -16,8 +16,8 @@ firebase/
   firestore.rules   클라이언트는 자기 앞으로 온 편지 읽기·삭제만 가능
   hosting/          약관·개인정보·아동안전·계정삭제 웹페이지
   rules-test/       보안 규칙 테스트
-tools/              운영 도구 7개 (신고 처리, 매칭 통계, 계정, 번역 검사, 정책 검사, 문의함, 광고 설정)
-.claude/            운영용 Claude Code 에이전트 7개 + 스킬 7개
+tools/              운영 도구 8개 (신고 처리, 매칭 통계, 계정, 번역 검사, 정책 검사, 문의함, 광고 설정, 비용)
+.claude/            운영용 Claude Code 에이전트 8개 + 스킬 8개
 docs/               기획서, 정책 체크리스트, 운영 가이드, 앱 이름, 약관·개인정보 초안
 ```
 
@@ -39,6 +39,7 @@ docs/               기획서, 정책 체크리스트, 운영 가이드, 앱 이
    cd .. && firebase deploy
    ```
 7. Firestore 콘솔 > TTL에서 `expireAt` 정책 4개가 활성인지 확인
+8. **비용 자동 차단 설정** — [docs/OPERATIONS.md §7](docs/OPERATIONS.md) (예산 + Pub/Sub 연결 + 권한 1개)
 
 ### 2. Android
 1. Firebase 콘솔에서 Android 앱 추가 (패키지명: `com.bottlepost.app` → **본인 도메인으로 바꾸기 권장**, `app/build.gradle.kts`의 `namespace`/`applicationId`)

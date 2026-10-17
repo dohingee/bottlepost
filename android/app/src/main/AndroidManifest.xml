@@ -6,6 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Merged in by libraries but unused here (no passkeys/biometrics, no foreground work).
+         Removing them keeps the Play permission list and Data safety answers minimal. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" tools:node="remove" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" tools:node="remove" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />
+
     <!-- allowBackup=false: conversations are backed up only to the user's own Drive app folder,
          encrypted, after linking Google (see backup/DriveBackupManager). -->
     <application

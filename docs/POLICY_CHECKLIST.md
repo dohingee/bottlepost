@@ -5,7 +5,7 @@
 ## A. 기술 요구사항 (자동 검사: `tools/policy-check.sh`)
 - [ ] `targetSdk = 36`, `compileSdk = 36` (2026-08-31 이후 신규 앱·업데이트 기준. 매년 8월 말 상향되므로 매년 갱신)
 - [ ] `minSdk = 26`
-- [ ] 권한은 `INTERNET`, `POST_NOTIFICATIONS`만 사용 (위치·연락처·전화·저장소 권한 없음)
+- [ ] 앱이 요청하는 권한은 `INTERNET`, `POST_NOTIFICATIONS`뿐 (위치·연락처·전화·저장소 없음). 라이브러리가 추가하는 일반 권한(네트워크 상태, WAKE_LOCK, 부팅 완료, FCM 수신)만 허용, 생체인식·포그라운드 서비스는 매니페스트에서 제거
 - [ ] `android:allowBackup="false"` — 대화 백업은 Drive appDataFolder로만 처리(의도치 않은 Auto Backup 방지)
 - [ ] `usesCleartextTraffic` 미사용
 - [ ] 릴리스 빌드 `isMinifyEnabled = true`

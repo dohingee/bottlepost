@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { onCall, HttpsError } from "firebase-functions/https";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { LIMITS } from "./config";
 import { callableOpts, loadUser, requireUid } from "./common";
 import { col, dayKey } from "./db";
 import { emailHash } from "./hash";
@@ -64,12 +65,18 @@ export const createProfile = onCall(callableOpts, async (req) => {
   return view(user);
 });
 
+/** Writes lastActive only when it is stale, so opening the app usually costs a single read. */
+function staleActive(u: UserDoc): boolean {
+  return Date.now() - (u.lastActive?.toMillis() ?? 0) > LIMITS.activeTouchMinutes * 60_000;
+}
+
 export const getProfile = onCall(callableOpts, async (req) => {
   const uid = requireUid(req);
   const snap = await col.users().doc(uid).get();
   if (!snap.exists) return null;
-  await snap.ref.update({ lastActive: Timestamp.now() });
-  return view(snap.data() as UserDoc);
+  const user = snap.data() as UserDoc;
+  if (staleActive(user)) await snap.ref.update({ lastActive: Timestamp.now() });
+  return view(user);
 });
 
 export const updateProfile = onCall(callableOpts, async (req) => {
@@ -89,6 +96,8 @@ export const registerPushToken = onCall(callableOpts, async (req) => {
   const uid = requireUid(req);
   const token = req.data?.token;
   if (typeof token !== "string" || token.length > 4096) throw new HttpsError("invalid-argument", "invalid_token");
+  const user = await loadUser(uid);
+  if (user.fcmToken === token && !staleActive(user)) return { ok: true };
   await col.users().doc(uid).update({ fcmToken: token, lastActive: Timestamp.now() });
   return { ok: true };
 });

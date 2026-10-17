@@ -116,4 +116,6 @@
     <string name="translate_loading">Đang dịch… (lần đầu sẽ tải gói ngôn ngữ)</string>
     <string name="translate_same_language">Thư đã ở ngôn ngữ của bạn.</string>
     <string name="translate_unsupported">Ngôn ngữ này chưa thể dịch.</string>
+    <string name="error_service_paused">Tạm dừng gửi thư mới trong ít lâu. Bạn vẫn có thể đọc và trả lời các cuộc trò chuyện.</string>
+    <string name="error_no_google_account">Điện thoại này chưa có tài khoản Google. Hãy thêm trong Cài đặt > Tài khoản rồi thử lại.</string>
 </resources>

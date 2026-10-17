@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -60,7 +60,7 @@ import java.util.Date
 
 private enum class Tab(val title: Int, val icon: ImageVector, val empty: Int) {
     Inbox(R.string.tab_inbox, Icons.Filled.Email, R.string.empty_inbox),
-    Sent(R.string.tab_sent, Icons.Filled.Send, R.string.empty_sent),
+    Sent(R.string.tab_sent, Icons.AutoMirrored.Filled.Send, R.string.empty_sent),
     Connections(R.string.tab_connections, Icons.Filled.Favorite, R.string.empty_connections),
     Settings(R.string.tab_settings, Icons.Filled.Settings, 0),
 }

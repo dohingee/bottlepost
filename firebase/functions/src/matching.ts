@@ -1,8 +1,14 @@
 import type { Gender, GenderPref } from "./config";
 import { LIMITS } from "./config";
 
+/** Same value for (a, b) and (b, a). */
+export function pairKey(a: string, b: string): string {
+  return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
 export interface Candidate {
   uid: string;
+  fcmToken?: string;
   gender: Gender;
   receiveFrom: GenderPref;
   status: string;

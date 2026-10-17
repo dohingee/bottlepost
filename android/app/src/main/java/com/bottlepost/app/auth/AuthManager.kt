@@ -5,6 +5,8 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.NoCredentialException
+import com.bottlepost.app.data.remote.ApiException
 import com.bottlepost.app.R
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -44,6 +46,9 @@ class AuthManager(private val auth: FirebaseAuth = FirebaseAuth.getInstance()) {
             googleCredential(activityContext)
         } catch (_: GetCredentialCancellationException) {
             return GoogleResult.Cancelled
+        } catch (e: NoCredentialException) {
+            // No Google account on this phone: tell the user to add one in system settings.
+            throw ApiException("no_google_account", e)
         }
         val current = auth.currentUser
         if (current == null) {

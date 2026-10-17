@@ -1,5 +1,6 @@
-# Versions were chosen offline (Google Maven was unreachable from the build container).
-# Run `./gradlew dependencyUpdates` or Android Studio's "Project Structure > Suggestions" before release.
+# Verified: assembleDebug, assembleRelease, testDebugUnitTest and lintDebug pass with these versions
+# (2026-10-17). Newer stable versions exist (e.g. AGP 9.x, Firebase BoM 35); upgrade deliberately,
+# AGP 9 changes Kotlin plugin setup.
 [versions]
 agp = "8.13.0"
 kotlin = "2.2.20"

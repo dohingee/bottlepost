@@ -10,7 +10,8 @@
     "strings": "tsx check-strings.ts",
     "support": "tsx support-inbox.ts",
     "ads": "tsx ad-config.ts",
-    "policy": "bash policy-check.sh"
+    "policy": "bash policy-check.sh",
+    "cost": "tsx cost-cli.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

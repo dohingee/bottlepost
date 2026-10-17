@@ -42,3 +42,11 @@ describe("pickRecipient", () => {
     expect(pickRecipient(list, req)?.uid).toBe("b");
   });
 });
+
+describe("pairKey", () => {
+  it("is order independent", async () => {
+    const { pairKey } = await import("../src/matching");
+    expect(pairKey("a", "b")).toBe(pairKey("b", "a"));
+    expect(pairKey("a", "b")).not.toBe(pairKey("a", "c"));
+  });
+});

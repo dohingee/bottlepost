@@ -116,4 +116,6 @@
     <string name="translate_loading">กำลังแปล… (ครั้งแรกจะดาวน์โหลดชุดภาษา)</string>
     <string name="translate_same_language">เป็นภาษาของคุณอยู่แล้ว</string>
     <string name="translate_unsupported">ยังแปลภาษานี้ไม่ได้</string>
+    <string name="error_service_paused">หยุดส่งจดหมายใหม่ชั่วคราว คุณยังอ่านและตอบบทสนทนาที่มีอยู่ได้</string>
+    <string name="error_no_google_account">โทรศัพท์เครื่องนี้ยังไม่มีบัญชี Google เพิ่มบัญชีในการตั้งค่า > บัญชี แล้วลองอีกครั้ง</string>
 </resources>

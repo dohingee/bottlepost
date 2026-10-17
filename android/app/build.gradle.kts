@@ -42,11 +42,15 @@ android {
     androidResources {
         // Builds the per-app language list (Settings > Apps > Language) from values-* folders.
         generateLocaleConfig = true
+        // Ship only the UI languages we translate; drops library strings for ~80 other locales.
+        localeFilters += listOf("en", "ko", "ja", "es", "pt", "in", "vi", "th")
     }
 }
 
 kotlin {
-    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 dependencies {

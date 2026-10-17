@@ -26,6 +26,7 @@ Claude Code에서 이 저장소를 열면 아래 에이전트와 스킬이 자�
 | 정책·릴리즈 | `play-policy-auditor` | `release-checklist` | `policy-check.sh` |
 | 고객지원 | `support-responder` | `support-macros` | `support-inbox.ts` |
 | 광고 (승인 후) | `ads-compliance` | `enable-admob` | `ad-config.ts` |
+| 비용 관리 | `cost-monitor` | `cost-guard` | `cost-cli.ts` |
 
 도구 실행 준비:
 ```bash
@@ -66,6 +67,7 @@ npx tsx moderation-cli.ts queue
 |---|---|---|
 | 매일 | 신고 검토 큐 비우기 | `moderation-cli.ts queue` |
 | 매일 | 이의 제기 확인 | `support-inbox.ts list` |
+| 주 1회 | 무료 한도 대비 사용량, 일시정지 여부 | `cost-cli.ts status` |
 | 주 1회 | 매칭 지표 (성별 풀, 답장률, 미전달) | `matching-stats.ts` |
 | 주 1회 | Crashlytics, Firebase 사용량·비용 | 콘솔 |
 | 출시마다 | 정책 검사 + 테스트 | `policy-check.sh`, `release-checklist` 스킬 |
@@ -80,3 +82,36 @@ Firestore TTL 정책으로 자동 삭제됩니다. 배포 후 콘솔에서 TTL�
 | 신고 | 처리 후 90일 | `reports.expireAt` |
 | 영구 정지 이메일 해시 | 3년 | `bans.expireAt` |
 | 이의 제기 | 1년 | `appeals.expireAt` |
+
+## 7. 비용과 자동 차단 장치
+
+### 예상 비용 (최적화 후, 2026-10 기준 추정)
+| 구간 | 월 비용 |
+|---|---|
+| 하루 활성 사용자 ~600명 | 0원 (Firestore 무료 한도 안: 읽기 5만/일, 쓰기 2만/일) |
+| 이후 활성 사용자 1,000명당 | 약 2~3천 원 |
+| Cloud Functions | 월 200만 호출 무료 — 사용자 수천 명까지 0원 |
+| 로그인, 푸시, 번역, 웹페이지 | 0원 |
+
+사용자 1명당 하루 약 읽기 60회, 쓰기 32회로 계산 (첫 편지 2통, 답장 5통, 앱 열기 3회). 실제 단가는 [Firebase 가격](https://firebase.google.com/pricing)에서 확인하세요(서울 리전은 미국보다 조금 비쌈).
+
+### 비용을 줄이려고 한 것
+- 매칭 후보 30명 → 10명씩 읽기, 실패할 때만 한 번 더
+- "이미 대화한 상대인가" 확인: 대화 전체(최대 1000개)를 읽던 것 → 후보와의 대화만 1회 조회 (`pairKey`)
+- 마지막 접속 시각은 1시간에 한 번만 기록, 푸시 토큰은 바뀔 때만 기록
+- 편지 수신 후 카운터 감소를 읽기 없이 처리
+
+### 자동 차단 설정 (처음 한 번, 약 10분)
+1. **함수 배포**: `firebase deploy --only functions` (`onBudgetAlert` 포함)
+2. **예산 만들기**: [Google Cloud 콘솔 > 결제 > 예산 및 알림](https://console.cloud.google.com/billing/budgets) → 예산 만들기
+   - 범위: 보틀포스트 프로젝트, 금액: 예) 월 5,000원
+   - 알림 기준: 50%, 90%, 100% (이메일)
+   - **"Pub/Sub 주제를 이 예산에 연결"** 체크 → 프로젝트에서 `billing-budget` 주제 선택 (함수 배포 시 자동 생성됨)
+3. **결제 분리 권한 주기**: 콘솔 > 결제 > 계정 관리 > 권한 → 주 구성원 추가
+   - 구성원: `PROJECT_NUMBER-compute@developer.gserviceaccount.com` (함수 실행 서비스 계정. 콘솔 > IAM에서 확인)
+   - 역할: **결제 계정 관리자** (프로젝트와 결제 계정의 연결을 끊는 데 필요)
+4. **확인**: `npx tsx tools/cost-cli.ts status` → "new letters: running"
+   테스트하려면 예산을 일시적으로 아주 낮게(예: 10원) 잡고 알림이 오는지 확인 → 원래대로
+
+- 결제를 끊고 싶지 않고 새 편지 일시정지만 원하면 `firebase/functions/.env`에서 `BILLING_HARD_CAP=false`
+- **결제가 분리되면** 서버 기능(편지 발송·수신)이 멈춥니다. 데이터는 지워지지 않으며, 결제 계정을 다시 연결하면 바로 돌아옵니다 (`cost-guard` 스킬).

@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -109,7 +109,7 @@ fun ComposeScreen(container: AppContainer, onBack: () -> Unit, onSent: (String) 
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.compose_title)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, stringResource(R.string.action_back)) } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) } },
             )
         },
     ) { padding ->
@@ -152,7 +152,7 @@ fun ComposeScreen(container: AppContainer, onBack: () -> Unit, onSent: (String) 
                 enabled = s.canSend,
                 modifier = Modifier.fillMaxWidth().height(52.dp),
             ) {
-                Icon(Icons.Filled.Send, contentDescription = null)
+                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null)
                 Text(stringResource(if (s.sending) R.string.compose_sending else R.string.compose_send), modifier = Modifier.padding(start = 8.dp))
             }
         }

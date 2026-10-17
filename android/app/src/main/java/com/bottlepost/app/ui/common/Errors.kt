@@ -12,6 +12,7 @@ fun errorMessage(t: Throwable): Int = when ((t as? ApiException)?.code) {
     "crypto_not_allowed" -> R.string.error_contact_info
     "duplicate_letter" -> R.string.error_duplicate
     "no_recipient_available" -> R.string.error_no_recipient
+    "service_paused" -> R.string.error_service_paused
     "body_too_short" -> R.string.error_too_short
     "body_too_long" -> R.string.error_too_long
     "account_suspended" -> R.string.error_suspended
@@ -21,6 +22,7 @@ fun errorMessage(t: Throwable): Int = when ((t as? ApiException)?.code) {
     "report_limit" -> R.string.error_report_limit
     "appeal_pending" -> R.string.error_appeal_pending
     "google_link_required" -> R.string.error_google_required
+    "no_google_account" -> R.string.error_no_google_account
     "network" -> R.string.error_network
     else -> R.string.error_generic
 }

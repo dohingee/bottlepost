@@ -30,6 +30,8 @@ export interface UserDoc {
 export interface ThreadDoc {
   /** [starter, recipient]. Never exposed to clients. */
   participants: [string, string];
+  /** Order-independent "uidA|uidB" key so "do these two already talk?" is one cheap query. */
+  pairKey: string;
   createdAt: Timestamp;
   lastAt: Timestamp;
   replied: boolean;

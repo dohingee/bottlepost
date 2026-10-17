@@ -31,7 +31,11 @@ export const LIMITS = {
   deliveryTtlDays: 7,
   reportRetentionDays: 90,
   reportMaxMessages: 6,
-  matchCandidatePool: 30,
+  /** Users read per matching attempt. Each one is a billed Firestore read, so keep it small. */
+  matchCandidatePool: 10,
+  matchAttempts: 2,
+  /** lastActive is written at most this often (writes cost 3x reads). */
+  activeTouchMinutes: 60,
 } as const;
 
 export const GENDERS = ["M", "F"] as const;

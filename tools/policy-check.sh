@@ -23,8 +23,13 @@ grep -q 'com.android.application' gradle/libs.versions.toml 2>/dev/null || true
 
 echo "== Manifest"
 M=$APP/src/main/AndroidManifest.xml
-allowed="android.permission.INTERNET android.permission.POST_NOTIFICATIONS"
-for p in $(grep -oE 'uses-permission android:name="[^"]+"' $M | sed -E 's/.*"([^"]+)"/\1/'); do
+# Prefer the merged manifest (includes permissions added by libraries) when a build exists.
+MERGED=$(ls $APP/build/intermediates/merged_manifests/release/*/AndroidManifest.xml $APP/build/intermediates/merged_manifest/release/*/AndroidManifest.xml 2>/dev/null | head -1)
+PM=${MERGED:-$M}
+[ -n "$MERGED" ] && ok "checking merged release manifest" || warn "no release build yet: checking source manifest only (run ./gradlew assembleRelease)"
+# Normal-protection permissions added by Firebase/WorkManager are expected; declare them in Data safety if asked.
+allowed="android.permission.INTERNET android.permission.POST_NOTIFICATIONS android.permission.ACCESS_NETWORK_STATE android.permission.WAKE_LOCK android.permission.RECEIVE_BOOT_COMPLETED com.google.android.c2dm.permission.RECEIVE com.bottlepost.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION com.google.android.providers.gsf.permission.READ_GSERVICES"
+for p in $(grep -v 'tools:node="remove"' $PM | grep -oE 'uses-permission android:name="[^"]+"' | sed -E 's/.*"([^"]+)"/\1/' | sort -u); do
   case " $allowed " in *" $p "*) ok "permission $p";; *) bad "unexpected permission $p (update Data safety + checklist first)";; esac
 done
 grep -q 'android:allowBackup="false"' $M && ok "allowBackup=false" || bad "allowBackup must be false (backups go to Drive appData only)"

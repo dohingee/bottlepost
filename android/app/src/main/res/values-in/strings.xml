@@ -116,4 +116,6 @@
     <string name="translate_loading">Menerjemahkan… (pertama kali mengunduh paket bahasa)</string>
     <string name="translate_same_language">Sudah dalam bahasa Anda.</string>
     <string name="translate_unsupported">Bahasa ini belum bisa diterjemahkan.</string>
+    <string name="error_service_paused">Pengiriman surat baru dijeda sementara. Anda tetap bisa membaca dan membalas percakapan.</string>
+    <string name="error_no_google_account">Tidak ada akun Google di ponsel ini. Tambahkan di Setelan > Akun, lalu coba lagi.</string>
 </resources>

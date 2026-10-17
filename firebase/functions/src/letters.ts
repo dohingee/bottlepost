@@ -3,10 +3,11 @@ import { onCall, HttpsError } from "firebase-functions/https";
 import { onDocumentDeleted } from "firebase-functions/firestore";
 import { logger } from "firebase-functions";
 import { FieldValue, Timestamp, type Query } from "firebase-admin/firestore";
+import { isPaused } from "./billing";
 import { LETTER_HMAC_KEY, LIMITS, REGION } from "./config";
 import { blockedSet, callableOpts, loadActiveUser, requireUid } from "./common";
 import { col, dayKey, daysFromNow, db, messaging } from "./db";
-import { pickRecipient, type Candidate, type MatchRequest } from "./matching";
+import { isEligible, pairKey, pickRecipient, type Candidate, type MatchRequest } from "./matching";
 import { preSendViolation } from "./moderation/rules";
 import { signLetter } from "./signing";
 import type { DeliveryDoc, ThreadDoc, UserDoc } from "./types";
@@ -21,8 +22,11 @@ function checkContent(body: string): void {
   if (violation) throw new HttpsError("invalid-argument", violation);
 }
 
-async function threadPartners(uid: string): Promise<Set<string>> {
-  const snap = await col.threads().where("participants", "array-contains", uid).select("participants").limit(1000).get();
+/** Which of these candidates already have a thread with uid. Reads only the matching threads. */
+async function existingPartners(uid: string, candidates: string[]): Promise<Set<string>> {
+  if (candidates.length === 0) return new Set();
+  const keys = candidates.map((c) => pairKey(uid, c));
+  const snap = await col.threads().where("pairKey", "in", keys).select("participants").get();
   const set = new Set<string>();
   for (const d of snap.docs) for (const p of d.get("participants") as string[]) if (p !== uid) set.add(p);
   return set;
@@ -39,6 +43,7 @@ async function loadCandidates(base: Query, r: number): Promise<Candidate[]> {
       pendingInbox: u.pendingInbox ?? 0,
       lastActiveMs: u.lastActive?.toMillis() ?? 0,
       lang: u.lang,
+      fcmToken: u.fcmToken,
     };
   };
   const n = LIMITS.matchCandidatePool;
@@ -52,8 +57,10 @@ async function loadCandidates(base: Query, r: number): Promise<Candidate[]> {
   return docs.map(toCandidate);
 }
 
-async function notify(toUid: string, kind: DeliveryDoc["kind"]): Promise<void> {
-  const token = (await col.users().doc(toUid).get()).get("fcmToken") as string | undefined;
+/** Pass knownToken when the recipient doc was already read, to save a billed read. */
+async function notify(toUid: string, kind: DeliveryDoc["kind"], knownToken?: string | null): Promise<void> {
+  const token =
+    knownToken !== undefined ? knownToken : ((await col.users().doc(toUid).get()).get("fcmToken") as string | undefined);
   if (!token) return;
   try {
     // Data-only: the app builds a localized, content-free notification ("You've got a letter").
@@ -102,6 +109,8 @@ function newDelivery(params: {
 export const sendLetter = onCall(callableOpts, async (req) => {
   const uid = requireUid(req);
   const sender = await loadActiveUser(uid);
+  // Spending guard (billing.ts): only new first letters stop; conversations keep going.
+  if (await isPaused()) throw new HttpsError("unavailable", "service_paused");
   const body = requireBody(req.data?.body);
   const wantGender = requireGenderPref(req.data?.wantGender);
   const sameLanguageOnly = req.data?.sameLanguageOnly === true;
@@ -120,22 +129,23 @@ export const sendLetter = onCall(callableOpts, async (req) => {
   if (wantGender !== "ANY") base = base.where("gender", "==", wantGender);
   if (sameLanguageOnly) base = base.where("lang", "==", sender.lang);
 
-  const [excluded, existingPartners, candidates] = await Promise.all([
-    blockedSet(uid),
-    threadPartners(uid),
-    loadCandidates(base, Math.random()),
-  ]);
   const matchReq: MatchRequest = {
     senderUid: uid,
     senderGender: sender.gender,
     senderLang: sender.lang,
     wantGender,
     sameLanguageOnly,
-    excluded,
-    existingPartners,
+    excluded: await blockedSet(uid),
+    existingPartners: new Set(),
     nowMs: Date.now(),
   };
-  const recipient = pickRecipient(candidates, matchReq);
+  // Small random samples instead of one big one: most sends succeed on the first 10 reads.
+  let recipient: Candidate | null = null;
+  for (let attempt = 0; attempt < LIMITS.matchAttempts && !recipient; attempt++) {
+    const eligible = (await loadCandidates(base, Math.random())).filter((c) => isEligible(c, matchReq));
+    const partners = await existingPartners(uid, eligible.map((c) => c.uid));
+    recipient = pickRecipient(eligible, { ...matchReq, existingPartners: partners });
+  }
   if (!recipient) throw new HttpsError("unavailable", "no_recipient_available");
 
   const threadRef = col.threads().doc();
@@ -150,6 +160,7 @@ export const sendLetter = onCall(callableOpts, async (req) => {
   const now = Timestamp.now();
   const thread: ThreadDoc = {
     participants: [uid, recipient.uid],
+    pairKey: pairKey(uid, recipient.uid),
     createdAt: now,
     lastAt: now,
     replied: false,
@@ -169,7 +180,7 @@ export const sendLetter = onCall(callableOpts, async (req) => {
   });
   batch.update(col.users().doc(recipient.uid), { pendingInbox: FieldValue.increment(1) });
   await batch.commit();
-  await notify(recipient.uid, "first");
+  await notify(recipient.uid, "first", recipient.fcmToken ?? null);
 
   return {
     threadId: threadRef.id,
@@ -211,7 +222,10 @@ export const replyLetter = onCall(callableOpts, async (req) => {
       replyCounts: counts,
     });
     tx.update(col.users().doc(other), { pendingInbox: FieldValue.increment(1) });
-    tx.update(col.users().doc(uid), { lastActive: Timestamp.now() });
+    // lastActive only matters for matching, at hour granularity; skip the write when fresh.
+    if (Date.now() - (sender.lastActive?.toMillis() ?? 0) > LIMITS.activeTouchMinutes * 60_000) {
+      tx.update(col.users().doc(uid), { lastActive: Timestamp.now() });
+    }
     return { other, deliveryId: ref.id, sentAt: doc.sentAt, sig: doc.sig };
   });
 
@@ -227,11 +241,6 @@ export const replyLetter = onCall(callableOpts, async (req) => {
 export const onDeliveryDeleted = onDocumentDeleted({ region: REGION, document: "deliveries/{id}" }, async (event) => {
   const to = event.data?.get("to") as string | undefined;
   if (!to) return;
-  const userRef = col.users().doc(to);
-  await db.runTransaction(async (tx) => {
-    const snap = await tx.get(userRef);
-    if (!snap.exists) return;
-    const pending = Math.max(0, ((snap.get("pendingInbox") as number | undefined) ?? 1) - 1);
-    tx.update(userRef, { pendingInbox: pending });
-  });
+  // Blind decrement (no read). A rare drift below zero is harmless: matching only checks the upper limit.
+  await col.users().doc(to).update({ pendingInbox: FieldValue.increment(-1) }).catch(() => undefined);
 });
