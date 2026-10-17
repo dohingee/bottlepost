@@ -79,20 +79,31 @@ abstract class MailDao {
     }
 }
 
-@Database(entities = [ThreadEntity::class, LetterEntity::class], version = 2, exportSchema = false)
+@Database(entities = [ThreadEntity::class, LetterEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mail(): MailDao
 
     companion object {
         fun create(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "bottlepost.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
 
         /** v2: "partner left" flag for the leave-conversation feature. */
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE threads ADD COLUMN partnerLeft INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        /** v3: whose turn it is, shown in the conversation list; filled in from the newest letter. */
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE threads ADD COLUMN lastOutgoing INTEGER NOT NULL DEFAULT 0")
+                db.execSQL(
+                    "UPDATE threads SET lastOutgoing = COALESCE((SELECT outgoing FROM letters " +
+                        "WHERE letters.threadId = threads.threadId ORDER BY sentAt DESC LIMIT 1), 0)",
+                )
             }
         }
     }

@@ -27,6 +27,8 @@ data class ThreadEntity(
     val closed: Boolean = false,
     /** The other person left; the conversation stays readable until this user deletes it. */
     val partnerLeft: Boolean = false,
+    /** The newest letter is mine, so it is the other person's turn. */
+    val lastOutgoing: Boolean = false,
 )
 
 /** Both sides have written: shown under "Connections". */

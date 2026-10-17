@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">Sua garrafa está a caminho. Enquanto espera, role para reler suas cartas.</string>
     <string name="error_wait_for_reply">Espere a resposta antes de escrever de novo.</string>
     <string name="letter_launched">Sua garrafa foi lançada ao mar. Quando alguém responder, ela aparece em Conexões.</string>
+    <string name="status_waiting">Aguardando a resposta</string>
+    <string name="status_new_letter">Chegou uma carta nova</string>
+    <string name="status_your_turn">Sua vez de escrever</string>
+    <string name="preview_me">Eu: %1$s</string>
 </resources>

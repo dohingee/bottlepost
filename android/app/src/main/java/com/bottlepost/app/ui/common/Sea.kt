@@ -214,6 +214,32 @@ fun BottleButton(
     }
 }
 
+/** The red-and-blue diagonal edge of an airmail envelope. */
+@Composable
+fun AirmailStripe(modifier: Modifier = Modifier, faded: Boolean = false) {
+    Canvas(modifier) {
+        val w = 14.dp.toPx()
+        val alpha = if (faded) 0.35f else 0.9f
+        var x = -size.height
+        var i = 0
+        while (x < size.width) {
+            val color = if (i % 2 == 0) Sea.Wax else Sea.Deep
+            drawPath(
+                Path().apply {
+                    moveTo(x, size.height)
+                    lineTo(x + size.height, 0f)
+                    lineTo(x + size.height + w * 0.6f, 0f)
+                    lineTo(x + w * 0.6f, size.height)
+                    close()
+                },
+                color.copy(alpha = alpha),
+            )
+            x += w
+            i++
+        }
+    }
+}
+
 /** Unread marker: a red wax seal. */
 @Composable
 fun WaxSeal(count: Int) {

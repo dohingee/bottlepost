@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">あなたの手紙を入れたボトルが海を渡っています。待つ間、これまでの手紙をスクロールして読み返せます。</string>
     <string name="error_wait_for_reply">相手の返事が届いてから、また手紙を書けます。</string>
     <string name="letter_launched">手紙を入れたボトルを海に流しました。返事が届くと「つながり」に表示されます。</string>
+    <string name="status_waiting">返事を待っています</string>
+    <string name="status_new_letter">新しい手紙が届きました</string>
+    <string name="status_your_turn">あなたが返事を書く番です</string>
+    <string name="preview_me">自分: %1$s</string>
 </resources>

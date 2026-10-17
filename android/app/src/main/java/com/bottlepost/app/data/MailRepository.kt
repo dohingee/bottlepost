@@ -102,6 +102,7 @@ class MailRepository(
                         lastAt = maxOf(existing?.lastAt ?: 0, sentAt),
                         lastPreview = body.take(PREVIEW_CHARS),
                         hasIncoming = true,
+                        lastOutgoing = false,
                         unread = (existing?.unread ?: 0) + 1,
                     ),
                 )
@@ -127,6 +128,7 @@ class MailRepository(
                 hasIncoming = false,
                 hasOutgoing = true,
                 unread = 0,
+                lastOutgoing = true,
             ),
         )
         dao.insertLetter(LetterEntity(sent.deliveryId, sent.threadId, true, body, myLang, sent.sentAt, sent.sig))
@@ -137,7 +139,7 @@ class MailRepository(
         val sent = api.replyLetter(threadId, body)
         dao.insertLetter(LetterEntity(sent.deliveryId, threadId, true, body, myLang, sent.sentAt, sent.sig))
         dao.thread(threadId)?.let {
-            dao.upsertThread(it.copy(lastAt = sent.sentAt, lastPreview = body.take(PREVIEW_CHARS), hasOutgoing = true))
+            dao.upsertThread(it.copy(lastAt = sent.sentAt, lastPreview = body.take(PREVIEW_CHARS), hasOutgoing = true, lastOutgoing = true))
         }
     }
 

@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">ขวดจดหมายของคุณกำลังลอยไป ระหว่างรอ เลื่อนเพื่ออ่านจดหมายย้อนหลังได้</string>
     <string name="error_wait_for_reply">รออีกฝ่ายตอบกลับก่อนแล้วค่อยเขียนอีกครั้ง</string>
     <string name="letter_launched">ปล่อยขวดจดหมายลงทะเลแล้ว เมื่อมีคนตอบกลับ จะปรากฏในสายสัมพันธ์</string>
+    <string name="status_waiting">กำลังรอคำตอบ</string>
+    <string name="status_new_letter">มีจดหมายฉบับใหม่มาถึง</string>
+    <string name="status_your_turn">ถึงตาคุณเขียนแล้ว</string>
+    <string name="preview_me">ฉัน: %1$s</string>
 </resources>

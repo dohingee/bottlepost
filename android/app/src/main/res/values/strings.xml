@@ -143,4 +143,8 @@
     <string name="waiting_reply_hint">Your bottle is on its way. Scroll to reread your letters while you wait.</string>
     <string name="error_wait_for_reply">Wait for their reply before writing again.</string>
     <string name="letter_launched">Your bottle is out to sea. When someone replies, it appears in Connections.</string>
+    <string name="status_waiting">Waiting for their reply</string>
+    <string name="status_new_letter">A new letter has arrived</string>
+    <string name="status_your_turn">Your turn to write</string>
+    <string name="preview_me">Me: %1$s</string>
 </resources>

@@ -4,7 +4,13 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import android.text.format.DateUtils
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,6 +69,7 @@ import com.bottlepost.app.AppContainer
 import com.bottlepost.app.R
 import com.bottlepost.app.data.local.ThreadEntity
 import com.bottlepost.app.data.local.connected
+import com.bottlepost.app.ui.common.AirmailStripe
 import com.bottlepost.app.ui.common.EmptyBottle
 import com.bottlepost.app.ui.common.PaperSheet
 import com.bottlepost.app.ui.common.Sea
@@ -222,40 +230,113 @@ private fun StatusBanner(status: String, until: Long?) {
     }
 }
 
-/** An envelope-like paper card; press and hold to delete. */
+/**
+ * A conversation as an airmail envelope: the partner's seal, their latest line and whose turn it
+ * is. Press and hold to delete.
+ */
 @Composable
 internal fun ThreadCard(t: ThreadEntity, onClick: () -> Unit, onLongClick: () -> Unit) {
     PaperSheet(
         tinted = t.closed,
+        contentPadding = PaddingValues(0.dp),
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).combinedClickable(onClick = onClick, onLongClick = onLongClick),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        AirmailStripe(Modifier.fillMaxWidth().height(5.dp), faded = t.closed)
+        Row(Modifier.padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 14.dp), verticalAlignment = Alignment.Top) {
             val who = t.partnerNickname.ifBlank { stringResource(R.string.stranger) }
-            val gender = if (t.partnerGender.isNotBlank()) " · ${genderText(t.partnerGender)}" else ""
-            Text(
-                who + gender,
-                style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Serif,
-                fontWeight = if (t.unread > 0) FontWeight.Bold else FontWeight.Normal,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                DateFormat.getDateInstance(DateFormat.SHORT).format(Date(t.lastAt)),
-                style = MaterialTheme.typography.labelSmall,
-                color = Sea.InkText.copy(alpha = 0.6f),
-            )
-            if (t.unread > 0) {
-                Spacer(Modifier.width(8.dp))
-                WaxSeal(t.unread)
+            PartnerSeal(who, t.threadId, faded = t.closed)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        who,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = if (t.unread > 0) FontWeight.Bold else FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (t.partnerGender.isNotBlank()) {
+                        Text(
+                            genderText(t.partnerGender),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Sea.Teal,
+                            modifier = Modifier
+                                .padding(start = 6.dp)
+                                .border(1.dp, Sea.Teal.copy(alpha = 0.5f), CircleShape)
+                                .padding(horizontal = 6.dp, vertical = 1.dp),
+                        )
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text(relativeTime(t.lastAt), style = MaterialTheme.typography.labelSmall, color = Sea.InkText.copy(alpha = 0.55f))
+                }
+                Row(verticalAlignment = Alignment.Top) {
+                    Text(
+                        if (t.lastOutgoing) stringResource(R.string.preview_me, t.lastPreview) else t.lastPreview,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = LetterTextStyle.copy(fontSize = 15.sp, lineHeight = 22.sp),
+                        color = Sea.InkText.copy(alpha = if (t.unread > 0) 1f else 0.8f),
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (t.unread > 0) {
+                        Spacer(Modifier.width(8.dp))
+                        WaxSeal(t.unread)
+                    }
+                }
+                ThreadStatus(t)
             }
-        }
-        Text(t.lastPreview, maxLines = 2, overflow = TextOverflow.Ellipsis, style = LetterTextStyle.copy(fontSize = 15.sp, lineHeight = 22.sp))
-        if (t.closed) {
-            Text(
-                stringResource(if (t.partnerLeft) R.string.partner_left else R.string.thread_closed),
-                style = MaterialTheme.typography.labelSmall,
-                color = Sea.Wax,
-            )
         }
     }
 }
+
+/** One line under the preview: left, ended, waiting, new letter or my turn. */
+@Composable
+private fun ThreadStatus(t: ThreadEntity) {
+    val (text, color, icon) = when {
+        t.partnerLeft -> Triple(R.string.partner_left, Sea.Wax, null)
+        t.closed -> Triple(R.string.thread_closed, Sea.Wax, null)
+        t.lastOutgoing -> Triple(R.string.status_waiting, Sea.Teal, R.drawable.ic_notification)
+        t.unread > 0 -> Triple(R.string.status_new_letter, Sea.Wax, null)
+        else -> Triple(R.string.status_your_turn, Sea.Deep, null)
+    }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 2.dp)) {
+        if (icon != null) {
+            Icon(painterResource(icon), contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+            Spacer(Modifier.width(4.dp))
+        } else {
+            Box(Modifier.size(6.dp).clip(CircleShape).background(color))
+            Spacer(Modifier.width(6.dp))
+        }
+        Text(stringResource(text), style = MaterialTheme.typography.labelMedium, color = color)
+    }
+}
+
+/** A round seal with the partner's initial, its colour fixed per conversation. */
+@Composable
+private fun PartnerSeal(name: String, key: String, faded: Boolean) {
+    val tones = listOf(Sea.Deep, Sea.Teal, Sea.Wax, Color(0xFF8A6A3B), Color(0xFF5B4E8C), Color(0xFF3F7D5C))
+    val tone = if (faded) Sea.PaperEdge else tones[Math.floorMod(key.hashCode(), tones.size)]
+    Box(
+        Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(Brush.radialGradient(listOf(tone.copy(alpha = 0.75f), tone)))
+            .border(2.dp, Sea.Paper.copy(alpha = 0.7f), CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            name.trim().take(1).uppercase(),
+            color = if (faded) Sea.InkText.copy(alpha = 0.6f) else Sea.Paper,
+            fontFamily = FontFamily.Serif,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+        )
+    }
+}
+
+/** "5 min ago", "Yesterday", or a date, in the app language. */
+@Composable
+private fun relativeTime(at: Long): String =
+    DateUtils.getRelativeTimeSpanString(at, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE).toString()

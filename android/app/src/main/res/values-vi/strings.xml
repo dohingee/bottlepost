@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">Chai thư của bạn đang trên đường đi. Trong lúc chờ, hãy cuộn để đọc lại thư.</string>
     <string name="error_wait_for_reply">Hãy chờ họ trả lời rồi mới viết tiếp.</string>
     <string name="letter_launched">Chai thư đã được thả ra biển. Khi có người trả lời, nó sẽ xuất hiện trong Kết nối.</string>
+    <string name="status_waiting">Đang chờ hồi âm</string>
+    <string name="status_new_letter">Có thư mới đến</string>
+    <string name="status_your_turn">Đến lượt bạn viết</string>
+    <string name="preview_me">Tôi: %1$s</string>
 </resources>

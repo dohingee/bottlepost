@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">Botolmu sedang dalam perjalanan. Sambil menunggu, gulir untuk membaca ulang suratmu.</string>
     <string name="error_wait_for_reply">Tunggu balasannya sebelum menulis lagi.</string>
     <string name="letter_launched">Botolmu sudah berlayar. Saat ada yang membalas, percakapan muncul di Koneksi.</string>
+    <string name="status_waiting">Menunggu balasan</string>
+    <string name="status_new_letter">Surat baru telah tiba</string>
+    <string name="status_your_turn">Giliranmu menulis</string>
+    <string name="preview_me">Saya: %1$s</string>
 </resources>

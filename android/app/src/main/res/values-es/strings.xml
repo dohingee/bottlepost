@@ -134,4 +134,8 @@
     <string name="waiting_reply_hint">Tu botella va en camino. Mientras esperas, desplázate para releer tus cartas.</string>
     <string name="error_wait_for_reply">Espera su respuesta antes de volver a escribir.</string>
     <string name="letter_launched">Tu botella ya está en el mar. Cuando alguien responda, aparecerá en Conexiones.</string>
+    <string name="status_waiting">Esperando su respuesta</string>
+    <string name="status_new_letter">Ha llegado una carta nueva</string>
+    <string name="status_your_turn">Te toca escribir</string>
+    <string name="preview_me">Yo: %1$s</string>
 </resources>
