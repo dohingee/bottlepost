@@ -1,0 +1,66 @@
+# One-time (and safe to re-run) project preparation. Run it from Actions > "Firebase setup" > Run workflow.
+# Needs: secret FIREBASE_SERVICE_ACCOUNT (service account JSON key), variable FIREBASE_PROJECT_ID,
+#        optional secret OPENAI_API_KEY. See docs/FIREBASE_SETUP.md.
+name: Firebase setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+  REGION: asia-northeast3
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          project_id: ${{ vars.FIREBASE_PROJECT_ID }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      - name: Enable required Google Cloud APIs
+        run: |
+          gcloud services enable --project "$PROJECT_ID" \
+            cloudfunctions.googleapis.com run.googleapis.com cloudbuild.googleapis.com \
+            artifactregistry.googleapis.com eventarc.googleapis.com pubsub.googleapis.com \
+            secretmanager.googleapis.com cloudscheduler.googleapis.com firestore.googleapis.com \
+            firebasehosting.googleapis.com cloudbilling.googleapis.com firebaseappcheck.googleapis.com
+
+      # The HMAC key signs every letter. Generated here once and never shown to anyone; re-running
+      # this workflow keeps the existing key so signatures on old letters stay verifiable.
+      - name: Create LETTER_HMAC_KEY if missing
+        run: |
+          if gcloud secrets describe LETTER_HMAC_KEY --project "$PROJECT_ID" >/dev/null 2>&1; then
+            echo "LETTER_HMAC_KEY already exists, keeping it."
+          else
+            openssl rand -base64 48 | tr -d '\n' | gcloud secrets create LETTER_HMAC_KEY \
+              --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
+            echo "LETTER_HMAC_KEY created."
+          fi
+
+      - name: Store OPENAI_API_KEY ("disabled" when not provided)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          value="${OPENAI_API_KEY:-disabled}"
+          if ! gcloud secrets describe OPENAI_API_KEY --project "$PROJECT_ID" >/dev/null 2>&1; then
+            printf '%s' "$value" | gcloud secrets create OPENAI_API_KEY \
+              --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
+          elif [ "$(gcloud secrets versions access latest --secret OPENAI_API_KEY --project "$PROJECT_ID")" != "$value" ]; then
+            printf '%s' "$value" | gcloud secrets versions add OPENAI_API_KEY --project "$PROJECT_ID" --data-file=-
+          fi
+          [ "$value" = "disabled" ] && echo "OpenAI moderation disabled (rules + human review only)." || echo "OpenAI moderation key stored."
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # Old function container images cost storage; keep only one day of them.
+      - name: Container image cleanup policy
+        run: npx -y firebase-tools@15 functions:artifacts:setpolicy --project "$PROJECT_ID" --location "$REGION" --days 1 --force --non-interactive

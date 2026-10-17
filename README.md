@@ -24,6 +24,8 @@ docs/               기획서, 정책 체크리스트, 운영 가이드, 앱 이
 ## 처음 설정하기
 
 ### 1. Firebase
+> **단계별 가이드: [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md)** — 서버 배포는 GitHub Actions(`.github/workflows/`)가 합니다. 아래는 직접 CLI로 할 때의 요약입니다.
+
 1. [Firebase 콘솔](https://console.firebase.google.com)에서 프로젝트 생성 → **Blaze 요금제** + 예산 알림
 2. Authentication: **익명**, **Google** 로그인 사용 설정
 3. Firestore 생성 (위치: `asia-northeast3` 서울 권장. 바꾸면 `functions/src/config.ts`의 `REGION`과 앱의 `BottlepostApi.kt`도 변경)
