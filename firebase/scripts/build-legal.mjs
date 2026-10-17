@@ -19,7 +19,8 @@ const inline = (s) =>
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`(.+?)`/g, "<code>$1</code>")
     .replace(/\[(.+?)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2">$1</a>')
-    .replace(/(^|[\s(])(https?:\/\/[^\s)<]+)/g, '$1<a href="$2">$2</a>');
+    // Bare URLs; sentence punctuation right after a URL is not part of it.
+    .replace(/(^|[\s(])(https?:\/\/[^\s)<]*[^\s)<.,;:!?])/g, '$1<a href="$2">$2</a>');
 
 function render(md) {
   const out = [];

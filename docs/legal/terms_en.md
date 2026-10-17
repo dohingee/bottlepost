@@ -16,4 +16,4 @@
 12. **Disclaimer.** We are not liable for interactions, meetings or transactions between users, or for lost conversations due to uninstalling, lost devices or missing backups, except where caused by our intent or gross negligence. Be careful when sharing personal information or meeting someone offline.
 13. **Changes.** We announce changes in the app 7 days ahead (30 days for changes unfavorable to you).
 14. **Governing law.** Laws of the Republic of Korea, without prejudice to mandatory consumer protection laws of your country.
-15. **Contact.** support@______ · Child safety: safety@______
+15. **Contact.** kimyeoware@gmail.com · Child safety: kimyeoware@gmail.com

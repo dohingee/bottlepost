@@ -94,7 +94,7 @@
 
 ## 제17조 (문의처)
 - 운영자: ______
-- 이메일: support@______
-- 아동안전 담당: safety@______
+- 이메일: kimyeoware@gmail.com
+- 아동안전 담당: kimyeoware@gmail.com
 
 부칙: 이 약관은 2026년 __월 __일부터 시행합니다.

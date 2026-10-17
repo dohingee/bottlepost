@@ -15,6 +15,6 @@
 
 **Processors.** Google (Firebase/Google Cloud: hosting, auth, push, crash reporting, integrity); OpenAI (Moderation API, **only for reported letters**); Google AdMob once ads are enabled. Data may be processed in the United States.
 
-**Your rights.** Edit your profile in Settings. Delete your account in Settings › Delete account or at https://______/delete-account. Other requests: privacy@______.
+**Your rights.** Edit your profile in Settings. Delete your account in Settings › Delete account or at https://bottlepost.web.app/delete-account. Other requests: kimyeoware@gmail.com.
 
 **Minors.** The service is not directed at anyone under 18; accounts of minors are deleted.

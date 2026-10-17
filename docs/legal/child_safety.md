@@ -11,7 +11,7 @@ Bottlepost has zero tolerance for child sexual abuse and exploitation (CSAE), in
 3. **Moderation.** Reported content is analyzed by automated classifiers (including a minor-sexual-content category) and always reviewed by a human when minors may be involved.
 4. **Action.** Confirmed violations result in permanent bans and ban-evasion protection.
 5. **Reporting to authorities.** We report apparent CSAM to the relevant authorities (e.g. NCMEC in the US; the Korean National Police Agency / KCSC in Korea) and preserve evidence as required by law.
-6. **Contact.** Child safety point of contact: safety@______ (responds within 24 hours).
+6. **Contact.** Child safety point of contact: kimyeoware@gmail.com (responds within 24 hours).
 
 **한국어**
 
@@ -22,4 +22,4 @@ Bottlepost has zero tolerance for child sexual abuse and exploitation (CSAE), in
 3. 신고 내용은 자동 분류기(미성년자 성적 콘텐츠 항목 포함)로 분석하고, 미성년자 관련 가능성이 있으면 반드시 사람이 검토합니다.
 4. 위반이 확인되면 영구 정지하고 재가입을 막습니다.
 5. 아동 성착취물로 보이는 내용은 법령에 따라 경찰청·방송통신심의위원회 등 관계 기관에 신고하고 증거를 보존합니다.
-6. 아동안전 담당: safety@______ (24시간 이내 응답)
+6. 아동안전 담당: kimyeoware@gmail.com (24시간 이내 응답)

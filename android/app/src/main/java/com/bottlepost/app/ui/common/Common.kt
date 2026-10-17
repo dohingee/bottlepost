@@ -24,7 +24,7 @@ object Links {
     const val TERMS = "$BASE/terms"
     const val PRIVACY = "$BASE/privacy"
     const val CHILD_SAFETY = "$BASE/child-safety"
-    const val SUPPORT_EMAIL = "support@example.com"
+    const val SUPPORT_EMAIL = "kimyeoware@gmail.com"
 }
 
 /** Languages with translated UI strings (res/values-*). Letters in any other language still translate. */
