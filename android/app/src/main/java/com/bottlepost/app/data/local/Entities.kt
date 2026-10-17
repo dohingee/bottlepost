@@ -25,10 +25,15 @@ data class ThreadEntity(
     val hasOutgoing: Boolean,
     val unread: Int,
     val closed: Boolean = false,
+    /** The other person left; the conversation stays readable until this user deletes it. */
+    val partnerLeft: Boolean = false,
 )
 
 /** Both sides have written: shown under "Connections". */
 val ThreadEntity.connected: Boolean get() = hasIncoming && hasOutgoing
+
+/** Letters alternate: after writing, wait for the other side (enforced by the server too). */
+fun List<LetterEntity>.awaitingReply(): Boolean = lastOrNull()?.outgoing == true
 
 /** One letter. [sig] is the server signature that lets a report prove the text is unaltered. */
 @Serializable

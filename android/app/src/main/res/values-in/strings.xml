@@ -36,7 +36,6 @@
     <string name="delete_title">Hapus akun Anda?</string>
     <string name="empty_connections">Saat Anda dan orang asing saling menulis, percakapannya muncul di sini.</string>
     <string name="empty_inbox">Belum ada surat. Surat dari orang asing akan hanyut ke sini.</string>
-    <string name="empty_sent">Surat yang Anda kirim muncul di sini sampai dibalas.</string>
     <string name="error_appeal_pending">Anda sudah punya banding yang sedang ditinjau.</string>
     <string name="error_banned">Akun ini ditangguhkan secara permanen.</string>
     <string name="error_contact_info">Hapus tautan, nomor telepon, email, atau ID messenger lalu coba lagi.</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">Akun Anda ditangguhkan sementara.</string>
     <string name="error_thread_closed">Percakapan ini sudah berakhir.</string>
     <string name="error_too_long">Surat terlalu panjang (maks. 1.000 karakter).</string>
-    <string name="error_too_short">Tulis minimal 10 karakter.</string>
+    <string name="error_too_short">Tulis minimal 2 karakter.</string>
     <string name="error_underage">Bottlepost hanya untuk usia 18 tahun ke atas.</string>
     <string name="gender_any">Siapa saja</string>
     <string name="gender_female">Perempuan</string>
@@ -109,7 +108,6 @@
     <string name="stranger">Orang asing</string>
     <string name="tab_connections">Koneksi</string>
     <string name="tab_inbox">Kotak masuk</string>
-    <string name="tab_sent">Terkirim</string>
     <string name="tab_settings">Pengaturan</string>
     <string name="thread_closed">Percakapan ini sudah berakhir.</string>
     <string name="translate_failed">Gagal menerjemahkan. Pertama kali perlu mengunduh paket bahasa; periksa koneksi Anda.</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">Tidak ada akun Google di ponsel ini. Tambahkan di Setelan > Akun, lalu coba lagi.</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">Surat dalam botol untuk seseorang di suatu tempat</string>
+    <string name="action_leave">Keluar</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_delete_thread">Hapus percakapan</string>
+    <string name="leave_title">Keluar dari percakapan ini?</string>
+    <string name="leave_body">Orang tersebut akan melihat bahwa kamu keluar, dan surat tidak bisa dikirim lagi di sini. Surat tetap tersimpan di ponselmu sampai kamu menghapusnya.</string>
+    <string name="leave_done">Kamu keluar dari percakapan.</string>
+    <string name="delete_thread_title">Hapus percakapan ini?</string>
+    <string name="delete_thread_body">Suratnya akan dihapus dari ponsel ini dan tidak bisa dipulihkan.</string>
+    <string name="delete_active_title">Dia masih di sini</string>
+    <string name="delete_active_body">Orang tersebut belum keluar dari percakapan ini. Menghapusnya juga membuatmu keluar, dan dia akan melihat bahwa kamu keluar. Tetap hapus?</string>
+    <string name="delete_done">Percakapan dihapus.</string>
+    <string name="partner_left">Orang tersebut telah keluar dari percakapan ini.</string>
+    <string name="waiting_reply">Menunggu surat dari orang tersebut tiba.</string>
+    <string name="waiting_reply_hint">Botolmu sedang dalam perjalanan. Sambil menunggu, gulir untuk membaca ulang suratmu.</string>
+    <string name="error_wait_for_reply">Tunggu balasannya sebelum menulis lagi.</string>
+    <string name="letter_launched">Botolmu sudah berlayar. Saat ada yang membalas, percakapan muncul di Koneksi.</string>
 </resources>

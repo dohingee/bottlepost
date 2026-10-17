@@ -36,7 +36,6 @@
     <string name="delete_title">계정을 삭제할까요?</string>
     <string name="empty_connections">낯선 사람과 서로 편지를 주고받으면 여기에 나타나요.</string>
     <string name="empty_inbox">아직 편지가 없어요. 낯선 이의 편지가 이곳으로 흘러올 거예요.</string>
-    <string name="empty_sent">보낸 편지는 답장이 올 때까지 여기에 있어요.</string>
     <string name="error_appeal_pending">이미 검토 중인 이의 제기가 있어요.</string>
     <string name="error_banned">이 계정은 영구 정지되었어요.</string>
     <string name="error_contact_info">링크, 전화번호, 이메일, 메신저 아이디를 지우고 다시 보내 주세요.</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">계정이 일시 정지되었어요.</string>
     <string name="error_thread_closed">종료된 대화예요.</string>
     <string name="error_too_long">편지가 너무 길어요 (최대 1,000자).</string>
-    <string name="error_too_short">10자 이상 적어 주세요.</string>
+    <string name="error_too_short">2자 이상 적어 주세요.</string>
     <string name="error_underage">보틀포스트는 만 18세 이상만 이용할 수 있어요.</string>
     <string name="gender_any">누구나</string>
     <string name="gender_female">여성</string>
@@ -109,7 +108,6 @@
     <string name="stranger">낯선 이</string>
     <string name="tab_connections">인연</string>
     <string name="tab_inbox">받은편지</string>
-    <string name="tab_sent">보낸편지</string>
     <string name="tab_settings">설정</string>
     <string name="thread_closed">종료된 대화예요.</string>
     <string name="translate_failed">번역하지 못했어요. 처음에는 언어팩을 받아야 하니 인터넷 연결을 확인해 주세요.</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">이 휴대폰에 구글 계정이 없어요. 휴대폰 설정 > 계정에서 추가한 뒤 다시 시도해 주세요.</string>
     <string name="app_name">보틀포스트</string>
     <string name="splash_tagline">어딘가의 누군가에게 띄우는 편지</string>
+    <string name="action_leave">나가기</string>
+    <string name="action_delete">삭제</string>
+    <string name="action_delete_thread">대화 삭제</string>
+    <string name="leave_title">대화에서 나갈까요?</string>
+    <string name="leave_body">상대방에게 내가 나갔다는 사실이 표시되고, 더 이상 이 대화에 편지를 보낼 수 없어요. 주고받은 편지는 삭제하기 전까지 휴대폰에 남아 있어요.</string>
+    <string name="leave_done">대화에서 나갔어요.</string>
+    <string name="delete_thread_title">이 대화를 삭제할까요?</string>
+    <string name="delete_thread_body">이 휴대폰에서 편지가 모두 지워지며 되돌릴 수 없어요.</string>
+    <string name="delete_active_title">상대방이 아직 나가지 않았어요</string>
+    <string name="delete_active_body">상대방은 아직 이 대화에 남아 있어요. 삭제하면 대화에서도 나가게 되고, 상대방에게 퇴장한 것으로 표시돼요. 그래도 삭제할까요?</string>
+    <string name="delete_done">대화를 삭제했어요.</string>
+    <string name="partner_left">상대방이 대화에서 나갔어요.</string>
+    <string name="waiting_reply">상대방의 편지가 도착하길 기다리고 있습니다.</string>
+    <string name="waiting_reply_hint">내 편지를 담은 병이 바다를 건너는 중이에요. 기다리는 동안 지난 편지를 스크롤해서 다시 읽어 볼 수 있어요.</string>
+    <string name="error_wait_for_reply">상대방의 답장이 온 뒤에 다시 편지를 쓸 수 있어요.</string>
+    <string name="letter_launched">편지를 담은 병을 바다에 띄웠어요. 답장이 오면 인연 탭에 나타나요.</string>
 </resources>

@@ -19,6 +19,7 @@ fun errorMessage(t: Throwable): Int = when ((t as? ApiException)?.code) {
     "account_banned" -> R.string.error_banned
     "underage" -> R.string.error_underage
     "thread_closed" -> R.string.error_thread_closed
+    "wait_for_reply" -> R.string.error_wait_for_reply
     "report_limit" -> R.string.error_report_limit
     "appeal_pending" -> R.string.error_appeal_pending
     "google_link_required" -> R.string.error_google_required

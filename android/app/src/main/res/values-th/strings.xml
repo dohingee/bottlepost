@@ -36,7 +36,6 @@
     <string name="delete_title">ลบบัญชีของคุณไหม</string>
     <string name="empty_connections">เมื่อคุณกับคนแปลกหน้าเขียนถึงกัน บทสนทนาจะแสดงที่นี่</string>
     <string name="empty_inbox">ยังไม่มีจดหมาย จดหมายจากคนแปลกหน้าจะลอยมาที่นี่</string>
-    <string name="empty_sent">จดหมายที่คุณส่งจะอยู่ที่นี่จนกว่าจะมีคนตอบ</string>
     <string name="error_appeal_pending">คุณมีคำอุทธรณ์ที่กำลังพิจารณาอยู่แล้ว</string>
     <string name="error_banned">บัญชีนี้ถูกระงับถาวร</string>
     <string name="error_contact_info">โปรดลบลิงก์ เบอร์โทร อีเมล หรือไอดีแอปแชต แล้วลองอีกครั้ง</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">บัญชีของคุณถูกระงับชั่วคราว</string>
     <string name="error_thread_closed">บทสนทนานี้สิ้นสุดแล้ว</string>
     <string name="error_too_long">จดหมายยาวเกินไป (สูงสุด 1,000 ตัวอักษร)</string>
-    <string name="error_too_short">เขียนอย่างน้อย 10 ตัวอักษร</string>
+    <string name="error_too_short">เขียนอย่างน้อย 2 ตัวอักษร</string>
     <string name="error_underage">Bottlepost สำหรับผู้ที่มีอายุ 18 ปีขึ้นไปเท่านั้น</string>
     <string name="gender_any">ใครก็ได้</string>
     <string name="gender_female">ผู้หญิง</string>
@@ -109,7 +108,6 @@
     <string name="stranger">คนแปลกหน้า</string>
     <string name="tab_connections">สายสัมพันธ์</string>
     <string name="tab_inbox">กล่องจดหมาย</string>
-    <string name="tab_sent">ส่งแล้ว</string>
     <string name="tab_settings">การตั้งค่า</string>
     <string name="thread_closed">บทสนทนานี้สิ้นสุดแล้ว</string>
     <string name="translate_failed">แปลไม่สำเร็จ ครั้งแรกต้องดาวน์โหลดชุดภาษา โปรดตรวจสอบการเชื่อมต่อ</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">โทรศัพท์เครื่องนี้ยังไม่มีบัญชี Google เพิ่มบัญชีในการตั้งค่า > บัญชี แล้วลองอีกครั้ง</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">จดหมายในขวด ถึงใครสักคน ที่ไหนสักแห่ง</string>
+    <string name="action_leave">ออกจากบทสนทนา</string>
+    <string name="action_delete">ลบ</string>
+    <string name="action_delete_thread">ลบบทสนทนา</string>
+    <string name="leave_title">ออกจากบทสนทนานี้ไหม</string>
+    <string name="leave_body">อีกฝ่ายจะเห็นว่าคุณออกไปแล้ว และจะส่งจดหมายในบทสนทนานี้ไม่ได้อีก จดหมายจะยังอยู่ในโทรศัพท์จนกว่าคุณจะลบ</string>
+    <string name="leave_done">คุณออกจากบทสนทนาแล้ว</string>
+    <string name="delete_thread_title">ลบบทสนทนานี้ไหม</string>
+    <string name="delete_thread_body">จดหมายจะถูกลบออกจากโทรศัพท์เครื่องนี้และกู้คืนไม่ได้</string>
+    <string name="delete_active_title">อีกฝ่ายยังอยู่ในบทสนทนา</string>
+    <string name="delete_active_body">อีกฝ่ายยังไม่ได้ออกจากบทสนทนานี้ การลบจะทำให้คุณออกจากบทสนทนาด้วย และอีกฝ่ายจะเห็นว่าคุณออกไปแล้ว ยังต้องการลบไหม</string>
+    <string name="delete_done">ลบบทสนทนาแล้ว</string>
+    <string name="partner_left">อีกฝ่ายออกจากบทสนทนานี้แล้ว</string>
+    <string name="waiting_reply">กำลังรอจดหมายจากอีกฝ่าย</string>
+    <string name="waiting_reply_hint">ขวดจดหมายของคุณกำลังลอยไป ระหว่างรอ เลื่อนเพื่ออ่านจดหมายย้อนหลังได้</string>
+    <string name="error_wait_for_reply">รออีกฝ่ายตอบกลับก่อนแล้วค่อยเขียนอีกครั้ง</string>
+    <string name="letter_launched">ปล่อยขวดจดหมายลงทะเลแล้ว เมื่อมีคนตอบกลับ จะปรากฏในสายสัมพันธ์</string>
 </resources>

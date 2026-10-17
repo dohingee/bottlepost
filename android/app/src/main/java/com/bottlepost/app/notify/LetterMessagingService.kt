@@ -36,7 +36,8 @@ class LetterMessagingService : FirebaseMessagingService() {
         container.appScope.launch {
             val uid = container.auth.uid ?: return@launch
             runCatching { container.mail.syncOnce(uid) }
-            show(this@LetterMessagingService, kind == "reply")
+            // "left" only updates the conversation; no notification for someone leaving.
+            if (kind != "left") show(this@LetterMessagingService, kind == "reply")
         }
     }
 

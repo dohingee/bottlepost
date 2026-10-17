@@ -167,6 +167,8 @@ export const sendLetter = onCall(callableOpts, async (req) => {
     closed: false,
     replyDay: today,
     replyCounts: {},
+    lastFrom: uid,
+    leftBy: null,
   };
 
   const batch = db.batch();
@@ -207,6 +209,8 @@ export const replyLetter = onCall(callableOpts, async (req) => {
     const t = snap.data() as ThreadDoc;
     if (!t.participants.includes(uid)) throw new HttpsError("permission-denied", "not_a_participant");
     if (t.closed) throw new HttpsError("failed-precondition", "thread_closed");
+    // Letters alternate, like real mail: wait for the other side before writing again.
+    if (t.lastFrom === uid) throw new HttpsError("failed-precondition", "wait_for_reply");
     const other = t.participants[0] === uid ? t.participants[1] : t.participants[0];
 
     const counts = t.replyDay === today ? { ...t.replyCounts } : {};
@@ -220,6 +224,7 @@ export const replyLetter = onCall(callableOpts, async (req) => {
       replied: t.replied || uid === t.participants[1],
       replyDay: today,
       replyCounts: counts,
+      lastFrom: uid,
     });
     tx.update(col.users().doc(other), { pendingInbox: FieldValue.increment(1) });
     // lastActive only matters for matching, at hour granularity; skip the write when fresh.
@@ -240,7 +245,44 @@ export const replyLetter = onCall(callableOpts, async (req) => {
  */
 export const onDeliveryDeleted = onDocumentDeleted({ region: REGION, document: "deliveries/{id}" }, async (event) => {
   const to = event.data?.get("to") as string | undefined;
-  if (!to) return;
+  // "left" notices never counted towards the inbox.
+  if (!to || event.data?.get("kind") === "left") return;
   // Blind decrement (no read). A rare drift below zero is harmless: matching only checks the upper limit.
   await col.users().doc(to).update({ pendingInbox: FieldValue.increment(-1) }).catch(() => undefined);
+});
+
+/**
+ * Leave a conversation. The thread closes for both sides and the other participant gets a
+ * content-free "left" notice so their app can show that the conversation ended. Leaving a thread
+ * the other side already left just confirms it (used when the remaining person deletes it).
+ */
+export const leaveThread = onCall(callableOpts, async (req) => {
+  const uid = requireUid(req);
+  const threadId = requireId(req.data?.threadId, "thread");
+  const threadRef = col.threads().doc(threadId);
+
+  const other = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(threadRef);
+    if (!snap.exists) return null;
+    const t = snap.data() as ThreadDoc;
+    if (!t.participants.includes(uid)) throw new HttpsError("permission-denied", "not_a_participant");
+    if (t.leftBy) return null;
+    const partner = t.participants[0] === uid ? t.participants[1] : t.participants[0];
+    tx.update(threadRef, { leftBy: uid, closed: true, lastAt: Timestamp.now() });
+    const notice: Pick<DeliveryDoc, "to" | "threadId" | "kind" | "sentAt" | "expireAt"> = {
+      to: partner,
+      threadId,
+      kind: "left",
+      sentAt: Date.now(),
+      expireAt: daysFromNow(LIMITS.deliveryTtlDays),
+    };
+    tx.set(col.deliveries().doc(), notice);
+    return partner;
+  });
+
+  // Letters still waiting for the leaver in this thread will never be read.
+  const pending = await col.deliveries().where("to", "==", uid).where("threadId", "==", threadId).get();
+  await Promise.all(pending.docs.map((d) => d.ref.delete()));
+  if (other) await notify(other, "left");
+  return { ok: true };
 });

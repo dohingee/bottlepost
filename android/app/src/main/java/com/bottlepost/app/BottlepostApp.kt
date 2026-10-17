@@ -18,6 +18,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -46,6 +47,9 @@ class AppContainer(context: Context) {
     val backup = DriveBackupManager(appContext, db.mail(), api)
     val translator = LetterTranslator()
     val adGate: AdGate = NoOpAdGate
+
+    /** One-off messages (string resource ids) shown as a snackbar on the main screen; buffered until it is back on screen. */
+    val notices = Channel<Int>(Channel.BUFFERED)
 
     suspend fun registerPushToken(token: String? = null) {
         if (auth.uid == null || profiles.current() == null) return

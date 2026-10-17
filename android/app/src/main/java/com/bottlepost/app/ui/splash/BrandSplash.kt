@@ -30,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,8 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bottlepost.app.R
-import kotlin.math.PI
-import kotlin.math.sin
+import com.bottlepost.app.ui.common.seaWavePath
 
 // Same night-sea palette as the launcher icon (res/drawable/ic_launcher_background.xml).
 private val SkyTop = Color(0xFF13283F)
@@ -157,23 +154,6 @@ fun BrandSplash(message: String? = null, onRetry: (() -> Unit)? = null) {
 @Composable
 private fun Waves(modifier: Modifier, phase: Float, color: Color, crest: Float, shift: Float) {
     Canvas(modifier.fillMaxSize()) {
-        drawPath(wavePath(phase + shift, crest), color)
-    }
-}
-
-private fun DrawScope.wavePath(phase: Float, crest: Float): Path {
-    val top = size.height * (1f - crest)
-    val amplitude = 10.dp.toPx()
-    val wavelength = size.width / 1.5f
-    return Path().apply {
-        moveTo(0f, size.height)
-        var x = 0f
-        while (x <= size.width + 1f) {
-            val y = top + amplitude * sin(2 * PI * (x / wavelength + phase)).toFloat()
-            lineTo(x, y)
-            x += 8f
-        }
-        lineTo(size.width, size.height)
-        close()
+        drawPath(seaWavePath(phase + shift, crest), color)
     }
 }

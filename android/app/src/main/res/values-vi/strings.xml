@@ -36,7 +36,6 @@
     <string name="delete_title">Xóa tài khoản của bạn?</string>
     <string name="empty_connections">Khi bạn và một người lạ cùng viết cho nhau, cuộc trò chuyện sẽ xuất hiện ở đây.</string>
     <string name="empty_inbox">Chưa có thư nào. Thư từ người lạ sẽ trôi dạt đến đây.</string>
-    <string name="empty_sent">Thư bạn gửi sẽ ở đây cho đến khi có người trả lời.</string>
     <string name="error_appeal_pending">Bạn đã có một kháng nghị đang được xem xét.</string>
     <string name="error_banned">Tài khoản này đã bị khóa vĩnh viễn.</string>
     <string name="error_contact_info">Hãy xóa liên kết, số điện thoại, email hoặc ID nhắn tin rồi thử lại.</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">Tài khoản của bạn đang bị tạm khóa.</string>
     <string name="error_thread_closed">Cuộc trò chuyện này đã kết thúc.</string>
     <string name="error_too_long">Thư quá dài (tối đa 1.000 ký tự).</string>
-    <string name="error_too_short">Hãy viết ít nhất 10 ký tự.</string>
+    <string name="error_too_short">Hãy viết ít nhất 2 ký tự.</string>
     <string name="error_underage">Bottlepost chỉ dành cho người từ 18 tuổi trở lên.</string>
     <string name="gender_any">Bất kỳ ai</string>
     <string name="gender_female">Nữ</string>
@@ -109,7 +108,6 @@
     <string name="stranger">Một người lạ</string>
     <string name="tab_connections">Kết nối</string>
     <string name="tab_inbox">Hộp thư đến</string>
-    <string name="tab_sent">Đã gửi</string>
     <string name="tab_settings">Cài đặt</string>
     <string name="thread_closed">Cuộc trò chuyện này đã kết thúc.</string>
     <string name="translate_failed">Không dịch được. Lần đầu cần tải gói ngôn ngữ; hãy kiểm tra kết nối.</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">Điện thoại này chưa có tài khoản Google. Hãy thêm trong Cài đặt > Tài khoản rồi thử lại.</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">Lá thư trong chai gửi đến ai đó, ở đâu đó</string>
+    <string name="action_leave">Rời đi</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_delete_thread">Xóa cuộc trò chuyện</string>
+    <string name="leave_title">Rời khỏi cuộc trò chuyện này?</string>
+    <string name="leave_body">Người kia sẽ thấy bạn đã rời đi và không thể gửi thêm thư ở đây. Thư vẫn được giữ trên điện thoại cho đến khi bạn xóa.</string>
+    <string name="leave_done">Bạn đã rời cuộc trò chuyện.</string>
+    <string name="delete_thread_title">Xóa cuộc trò chuyện này?</string>
+    <string name="delete_thread_body">Các lá thư sẽ bị xóa khỏi điện thoại này và không thể khôi phục.</string>
+    <string name="delete_active_title">Người kia vẫn còn ở đây</string>
+    <string name="delete_active_body">Người kia chưa rời cuộc trò chuyện này. Xóa cũng khiến bạn rời đi và họ sẽ thấy bạn đã rời. Vẫn xóa?</string>
+    <string name="delete_done">Đã xóa cuộc trò chuyện.</string>
+    <string name="partner_left">Người kia đã rời cuộc trò chuyện này.</string>
+    <string name="waiting_reply">Đang chờ thư của người kia đến.</string>
+    <string name="waiting_reply_hint">Chai thư của bạn đang trên đường đi. Trong lúc chờ, hãy cuộn để đọc lại thư.</string>
+    <string name="error_wait_for_reply">Hãy chờ họ trả lời rồi mới viết tiếp.</string>
+    <string name="letter_launched">Chai thư đã được thả ra biển. Khi có người trả lời, nó sẽ xuất hiện trong Kết nối.</string>
 </resources>

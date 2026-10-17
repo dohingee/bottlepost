@@ -45,7 +45,6 @@
     <string name="delete_title">Delete your account?</string>
     <string name="empty_connections">When you and a stranger both write, the conversation appears here.</string>
     <string name="empty_inbox">No letters yet. Letters from strangers will drift in here.</string>
-    <string name="empty_sent">Letters you send to strangers appear here until they reply.</string>
     <string name="error_appeal_pending">You already have an appeal under review.</string>
     <string name="error_banned">This account has been permanently suspended.</string>
     <string name="error_contact_info">Remove links, phone numbers, e-mail or messenger IDs and try again.</string>
@@ -59,7 +58,7 @@
     <string name="error_suspended">Your account is temporarily suspended.</string>
     <string name="error_thread_closed">This conversation has ended.</string>
     <string name="error_too_long">Your letter is too long (max 1,000 characters).</string>
-    <string name="error_too_short">Write at least 10 characters.</string>
+    <string name="error_too_short">Write at least 2 characters.</string>
     <string name="error_underage">Bottlepost is only for people 18 and older.</string>
     <string name="gender_any">Anyone</string>
     <string name="gender_female">Women</string>
@@ -118,7 +117,6 @@
     <string name="stranger">A stranger</string>
     <string name="tab_connections">Connections</string>
     <string name="tab_inbox">Inbox</string>
-    <string name="tab_sent">Sent</string>
     <string name="tab_settings">Settings</string>
     <string name="thread_closed">This conversation has ended.</string>
     <string name="translate_failed">Translation failed. Check your connection for the first download.</string>
@@ -129,4 +127,20 @@
     <string name="error_no_google_account">No Google account on this phone. Add one in Settings > Accounts, then try again.</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">A letter in a bottle, to someone out there</string>
+    <string name="action_leave">Leave</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_thread">Delete conversation</string>
+    <string name="leave_title">Leave this conversation?</string>
+    <string name="leave_body">They will see that you left, and no more letters can be sent here. The letters stay on your phone until you delete them.</string>
+    <string name="leave_done">You left the conversation.</string>
+    <string name="delete_thread_title">Delete this conversation?</string>
+    <string name="delete_thread_body">Its letters will be removed from this phone and cannot be recovered.</string>
+    <string name="delete_active_title">They are still here</string>
+    <string name="delete_active_body">The other person has not left this conversation. Deleting it also makes you leave, and they will see that you left. Delete anyway?</string>
+    <string name="delete_done">Conversation deleted.</string>
+    <string name="partner_left">The other person has left this conversation.</string>
+    <string name="waiting_reply">Waiting for the other person\'s letter to arrive.</string>
+    <string name="waiting_reply_hint">Your bottle is on its way. Scroll to reread your letters while you wait.</string>
+    <string name="error_wait_for_reply">Wait for their reply before writing again.</string>
+    <string name="letter_launched">Your bottle is out to sea. When someone replies, it appears in Connections.</string>
 </resources>

@@ -1,7 +1,29 @@
 package com.bottlepost.app.ui.thread
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import com.bottlepost.app.data.local.awaitingReply
+import com.bottlepost.app.ui.common.BottleButton
+import com.bottlepost.app.ui.common.DriftingBottleScene
+import com.bottlepost.app.ui.common.PaperSheet
+import com.bottlepost.app.ui.common.Sea
+import com.bottlepost.app.ui.common.SeaBackdrop
+import com.bottlepost.app.ui.common.SeaTopBar
+import com.bottlepost.app.ui.common.ruledLines
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,11 +43,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +54,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,7 +75,6 @@ import com.bottlepost.app.ui.theme.LetterTextStyle
 import java.text.DateFormat
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) {
     val vm: ThreadViewModel = viewModel(key = threadId) { ThreadViewModel(container, threadId) }
@@ -67,11 +84,16 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
     val context = LocalContext.current
     var menu by remember { mutableStateOf(false) }
     var confirmBlock by remember { mutableStateOf(false) }
+    var confirmLeave by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
     var showReport by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+    val closed = thread?.closed == true
+    // Letters alternate: after writing, the reply box gives way to the drifting bottle.
+    val waiting = !closed && letters.awaitingReply()
 
     LaunchedEffect(letters.size) { if (letters.isNotEmpty()) listState.animateScrollToItem(letters.lastIndex) }
-    LaunchedEffect(ui.toast) {
+    LaunchedEffect(ui.toast, ui.leave) {
         ui.toast?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             vm.toastShown()
@@ -80,53 +102,53 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
+            SeaTopBar(
                 title = {
                     val t = thread
                     val name = t?.partnerNickname?.ifBlank { null } ?: stringResource(R.string.stranger)
                     val gender = t?.partnerGender?.takeIf { it.isNotBlank() }?.let { " · ${genderText(it)}" }.orEmpty()
-                    Text(name + gender)
+                    Text(name + gender, fontFamily = FontFamily.Serif)
                 },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) } },
                 actions = {
                     IconButton(onClick = { menu = true }) { Icon(Icons.Filled.MoreVert, stringResource(R.string.action_more)) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                        if (!closed) {
+                            DropdownMenuItem(text = { Text(stringResource(R.string.action_leave)) }, onClick = { menu = false; confirmLeave = true })
+                        }
+                        DropdownMenuItem(text = { Text(stringResource(R.string.action_delete_thread)) }, onClick = { menu = false; confirmDelete = true })
+                        HorizontalDivider()
                         DropdownMenuItem(text = { Text(stringResource(R.string.action_report)) }, onClick = { menu = false; showReport = true })
-                        DropdownMenuItem(text = { Text(stringResource(R.string.action_block)) }, onClick = { menu = false; confirmBlock = true })
+                        if (!closed) {
+                            DropdownMenuItem(text = { Text(stringResource(R.string.action_block)) }, onClick = { menu = false; confirmBlock = true })
+                        }
                     }
                 },
             )
         },
     ) { padding ->
-        Column(Modifier.padding(padding).fillMaxSize().imePadding()) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(letters, key = { it.deliveryId }) { letter ->
-                    LetterCard(letter, ui.translations[letter.deliveryId]) { vm.toggleTranslation(letter) }
-                }
-            }
-            HorizontalDivider()
-            if (thread?.closed == true) {
-                Text(stringResource(R.string.thread_closed), modifier = Modifier.padding(16.dp), color = MaterialTheme.colorScheme.error)
-            } else {
-                ui.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp)) }
-                Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = ui.reply,
-                        onValueChange = vm::onReplyChange,
-                        placeholder = { Text(stringResource(R.string.reply_placeholder)) },
-                        textStyle = LetterTextStyle,
-                        maxLines = 6,
-                        modifier = Modifier.weight(1f),
-                    )
-                    IconButton(onClick = vm::sendReply, enabled = !ui.sending) {
-                        Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.compose_send))
+        SeaBackdrop(Modifier.fillMaxSize()) {
+            Column(Modifier.padding(padding).fillMaxSize().imePadding()) {
+                if (waiting) WaitingBanner()
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    items(letters, key = { it.deliveryId }) { letter ->
+                        LetterCard(letter, ui.translations[letter.deliveryId]) { vm.toggleTranslation(letter) }
                     }
+                }
+                ui.error?.let {
+                    Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+                }
+                when {
+                    closed -> ClosedFooter(partnerLeft = thread?.partnerLeft == true) { confirmDelete = true }
+                    waiting -> {}
+                    else -> ReplyBox(ui.reply, ui.sending, vm::onReplyChange, vm::sendReply)
                 }
             }
         }
@@ -141,6 +163,16 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
             dismissButton = { TextButton(onClick = { confirmBlock = false }) { Text(stringResource(R.string.action_cancel)) } },
         )
     }
+    if (confirmLeave) LeaveThreadDialog(onDismiss = { confirmLeave = false }) {
+        confirmLeave = false
+        vm.leave()
+    }
+    if (confirmDelete) thread?.let { t ->
+        DeleteThreadDialogs(t, onDismiss = { confirmDelete = false }) {
+            confirmDelete = false
+            vm.delete()
+        }
+    }
     if (showReport) ReportDialog(onDismiss = { showReport = false }) { reason, note ->
         showReport = false
         vm.report(reason, note)
@@ -148,31 +180,107 @@ fun ThreadScreen(container: AppContainer, threadId: String, onBack: () -> Unit) 
 }
 
 @Composable
-private fun LetterCard(letter: LetterEntity, translation: Translation?, onTranslate: () -> Unit) {
-    val colors = if (letter.outgoing) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    Card(
-        colors = colors,
-        elevation = CardDefaults.cardElevation(defaultElevation = if (letter.outgoing) 0.dp else 2.dp),
-        modifier = Modifier.fillMaxWidth().padding(start = if (letter.outgoing) 32.dp else 0.dp, end = if (letter.outgoing) 0.dp else 32.dp),
+internal fun WaitingBanner() {
+    Column(
+        Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                stringResource(if (letter.outgoing) R.string.letter_from_me else R.string.letter_from_them) + " · " +
-                    DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(letter.sentAt)),
-                style = MaterialTheme.typography.labelSmall,
+        DriftingBottleScene()
+        Text(
+            stringResource(R.string.waiting_reply),
+            fontFamily = FontFamily.Serif,
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+        Text(
+            stringResource(R.string.waiting_reply_hint),
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 2.dp),
+        )
+    }
+}
+
+@Composable
+internal fun ClosedFooter(partnerLeft: Boolean, onDelete: () -> Unit) {
+    PaperSheet(Modifier.fillMaxWidth().padding(12.dp), tinted = true) {
+        Text(
+            stringResource(if (partnerLeft) R.string.partner_left else R.string.thread_closed),
+            fontFamily = FontFamily.Serif,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+        )
+        BottleButton(
+            stringResource(R.string.action_delete_thread),
+            onClick = onDelete,
+            icon = Icons.Filled.Delete,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+    }
+}
+
+@Composable
+internal fun ReplyBox(text: String, sending: Boolean, onChange: (String) -> Unit, onSend: () -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.Bottom) {
+        PaperSheet(Modifier.weight(1f), contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)) {
+            BasicTextField(
+                value = text,
+                onValueChange = onChange,
+                textStyle = LetterTextStyle.copy(color = Sea.InkText),
+                cursorBrush = SolidColor(Sea.Deep),
+                maxLines = 6,
+                modifier = Modifier.fillMaxWidth().ruledLines(LetterTextStyle.lineHeight),
+                decorationBox = { inner ->
+                    if (text.isEmpty()) Text(stringResource(R.string.reply_placeholder), style = LetterTextStyle, color = Sea.InkText.copy(alpha = 0.45f))
+                    inner()
+                },
             )
-            Text(letter.body, style = LetterTextStyle)
-            when (translation) {
-                is Translation.Shown -> Text(translation.text, style = LetterTextStyle, color = MaterialTheme.colorScheme.secondary)
-                is Translation.Error -> Text(stringResource(translation.message), style = MaterialTheme.typography.bodySmall)
-                Translation.Loading -> Text(stringResource(R.string.translate_loading), style = MaterialTheme.typography.bodySmall)
-                null -> {}
-            }
-            if (!letter.outgoing) {
-                TextButton(onClick = onTranslate, contentPadding = PaddingValues(0.dp)) {
-                    Text(stringResource(if (translation == null) R.string.action_translate else R.string.action_show_original))
-                }
+        }
+        Spacer(Modifier.width(8.dp))
+        IconButton(
+            onClick = onSend,
+            enabled = !sending,
+            modifier = Modifier.size(52.dp).clip(CircleShape).background(Brush.linearGradient(listOf(Sea.Deep, Sea.Teal))),
+        ) {
+            Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.compose_send), tint = Sea.Paper)
+        }
+    }
+}
+
+@Composable
+internal fun LetterCard(letter: LetterEntity, translation: Translation?, onTranslate: () -> Unit) {
+    PaperSheet(
+        tinted = letter.outgoing,
+        modifier = Modifier.fillMaxWidth().padding(start = if (letter.outgoing) 28.dp else 0.dp, end = if (letter.outgoing) 0.dp else 28.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(if (letter.outgoing) R.string.letter_from_me else R.string.letter_from_them),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = if (letter.outgoing) Sea.Teal else Sea.Wax,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(letter.sentAt)),
+                style = MaterialTheme.typography.labelSmall,
+                color = Sea.InkText.copy(alpha = 0.6f),
+            )
+        }
+        Text(letter.body, style = LetterTextStyle, modifier = Modifier.fillMaxWidth().ruledLines(LetterTextStyle.lineHeight))
+        when (translation) {
+            is Translation.Shown -> Text(translation.text, style = LetterTextStyle, color = Sea.Teal)
+            is Translation.Error -> Text(stringResource(translation.message), style = MaterialTheme.typography.bodySmall)
+            Translation.Loading -> Text(stringResource(R.string.translate_loading), style = MaterialTheme.typography.bodySmall)
+            null -> {}
+        }
+        if (!letter.outgoing) {
+            TextButton(onClick = onTranslate, contentPadding = PaddingValues(0.dp)) {
+                Text(stringResource(if (translation == null) R.string.action_translate else R.string.action_show_original), color = Sea.Deep)
             }
         }
     }

@@ -18,7 +18,7 @@ export const ENFORCE_APP_CHECK = process.env.FUNCTIONS_EMULATOR !== "true";
 export const LIMITS = {
   minAge: 18,
   bodyMaxChars: 1000,
-  bodyMinChars: 10,
+  bodyMinChars: 2,
   nicknameMaxChars: 20,
   maxTags: 3,
   dailyFirstLettersAnonymous: 3,

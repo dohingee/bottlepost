@@ -1,5 +1,5 @@
 export { createProfile, getProfile, updateProfile, registerPushToken, confirmGoogleLink, getBackupKey } from "./profile";
-export { sendLetter, replyLetter, onDeliveryDeleted } from "./letters";
+export { sendLetter, replyLetter, leaveThread, onDeliveryDeleted } from "./letters";
 export { blockThread, submitReport, onReportCreated, submitAppeal } from "./safety";
 export { deleteAccount, liftExpiredSuspensions } from "./account";
 export { adminReviewQueue, adminResolveReport } from "./admin";

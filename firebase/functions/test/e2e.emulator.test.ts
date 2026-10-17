@@ -44,7 +44,7 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     for (const c of cols) await db.recursiveDelete(db.collection(c));
   });
 
-  const A = "alice-uid", B = "bob-uid", C = "carol-uid", KID = "kid-uid";
+  const A = "alice-uid", B = "bob-uid", C = "carol-uid", D = "dan-uid", E = "eve-uid", KID = "kid-uid";
   let threadId = "";
   let first: Record<string, any>;
   let reply: Record<string, any>;
@@ -79,8 +79,9 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     expect((await db.doc(`users/${B}`).get()).get("pendingInbox")).toBe(0);
   });
 
-  it("routes replies by thread id only", async () => {
+  it("routes replies by thread id only, and letters alternate", async () => {
     reply = await call("replyLetter", B, { threadId, body: "Hi! Your letter made my day. How is the sea?" });
+    await expectCode(call("replyLetter", B, { threadId, body: "one more thing before you answer" }), "wait_for_reply");
     expect(await pickup(A)).toHaveLength(1);
     expect((await db.doc(`threads/${threadId}`).get()).get("replied")).toBe(true);
     await expectCode(call("replyLetter", C, { threadId, body: "can I join this conversation?" }), "not_a_participant");
@@ -90,7 +91,9 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     await budget(9.2, 10);
     clearPauseCache();
     await expectCode(call("sendLetter", A, { body: "a brand new letter for a stranger", wantGender: "F" }), "service_paused");
-    await call("replyLetter", B, { threadId, body: "Replies still work while paused, right?" });
+    await call("replyLetter", A, { threadId, body: "Replies still work while paused, right?" });
+    await pickup(B);
+    await call("replyLetter", B, { threadId, body: "Yes they do. Tell me more about you." });
     await pickup(A);
     await budget(0.4, 10); // next month: cost reset
     clearPauseCache();
@@ -132,5 +135,26 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     await call("deleteAccount", B);
     expect((await db.doc(`users/${B}`).get()).exists).toBe(false);
     expect((await db.collection("deliveries").where("to", "==", B).get()).size).toBe(0);
+  });
+
+  it("lets a participant leave and tells the other side, without any letter text", async () => {
+    await call("createProfile", D, { gender: "M", birthYear: 1993, lang: "ko", acceptedTerms: true });
+    await call("createProfile", E, { gender: "F", birthYear: 1994, lang: "ko", acceptedTerms: true });
+    const sent = await call("sendLetter", D, { body: "바다 건너 새로운 친구에게 보내는 편지", wantGender: "F" });
+    expect(await pickup(E)).toHaveLength(1); // Carol only receives from women, Bob is gone
+    await call("replyLetter", E, { threadId: sent.threadId, body: "반가워요! 저도 바다를 좋아해요." });
+    await pickup(D);
+
+    await call("leaveThread", D, { threadId: sent.threadId });
+    const notices = await pickup(E);
+    expect(notices).toHaveLength(1);
+    expect(notices[0].kind).toBe("left");
+    expect(notices[0].body).toBeUndefined();
+    await expectCode(call("replyLetter", E, { threadId: sent.threadId, body: "are you still there?" }), "thread_closed");
+
+    // The remaining person deleting the conversation sends nothing back.
+    await call("leaveThread", E, { threadId: sent.threadId });
+    expect(await pickup(D)).toHaveLength(0);
+    expect((await db.doc(`users/${E}`).get()).get("pendingInbox")).toBe(0);
   });
 });

@@ -36,7 +36,6 @@
     <string name="delete_title">Excluir sua conta?</string>
     <string name="empty_connections">Quando você e um desconhecido trocarem cartas, a conversa aparecerá aqui.</string>
     <string name="empty_inbox">Nenhuma carta ainda. Cartas de desconhecidos chegarão aqui.</string>
-    <string name="empty_sent">As cartas que você enviar ficam aqui até alguém responder.</string>
     <string name="error_appeal_pending">Você já tem um recurso em análise.</string>
     <string name="error_banned">Esta conta foi suspensa permanentemente.</string>
     <string name="error_contact_info">Remova links, telefones, e-mails ou IDs de mensageiros e tente novamente.</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">Sua conta está suspensa temporariamente.</string>
     <string name="error_thread_closed">Esta conversa foi encerrada.</string>
     <string name="error_too_long">Sua carta é longa demais (máx. 1.000 caracteres).</string>
-    <string name="error_too_short">Escreva pelo menos 10 caracteres.</string>
+    <string name="error_too_short">Escreva pelo menos 2 caracteres.</string>
     <string name="error_underage">O Bottlepost é só para maiores de 18 anos.</string>
     <string name="gender_any">Qualquer pessoa</string>
     <string name="gender_female">Mulheres</string>
@@ -109,7 +108,6 @@
     <string name="stranger">Um desconhecido</string>
     <string name="tab_connections">Conexões</string>
     <string name="tab_inbox">Recebidas</string>
-    <string name="tab_sent">Enviadas</string>
     <string name="tab_settings">Configurações</string>
     <string name="thread_closed">Esta conversa foi encerrada.</string>
     <string name="translate_failed">Não foi possível traduzir. Na primeira vez é baixado um pacote de idioma; verifique a conexão.</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">Não há conta Google neste celular. Adicione uma em Configurações > Contas e tente novamente.</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">Uma carta na garrafa para alguém, em algum lugar</string>
+    <string name="action_leave">Sair</string>
+    <string name="action_delete">Excluir</string>
+    <string name="action_delete_thread">Excluir conversa</string>
+    <string name="leave_title">Sair desta conversa?</string>
+    <string name="leave_body">A outra pessoa verá que você saiu e não será mais possível enviar cartas aqui. As cartas ficam no seu celular até você excluí-las.</string>
+    <string name="leave_done">Você saiu da conversa.</string>
+    <string name="delete_thread_title">Excluir esta conversa?</string>
+    <string name="delete_thread_body">As cartas serão apagadas deste celular e não poderão ser recuperadas.</string>
+    <string name="delete_active_title">A outra pessoa ainda está aqui</string>
+    <string name="delete_active_body">A outra pessoa não saiu desta conversa. Excluir também faz você sair, e ela verá que você saiu. Excluir mesmo assim?</string>
+    <string name="delete_done">Conversa excluída.</string>
+    <string name="partner_left">A outra pessoa saiu desta conversa.</string>
+    <string name="waiting_reply">Aguardando a carta da outra pessoa chegar.</string>
+    <string name="waiting_reply_hint">Sua garrafa está a caminho. Enquanto espera, role para reler suas cartas.</string>
+    <string name="error_wait_for_reply">Espere a resposta antes de escrever de novo.</string>
+    <string name="letter_launched">Sua garrafa foi lançada ao mar. Quando alguém responder, ela aparece em Conexões.</string>
 </resources>

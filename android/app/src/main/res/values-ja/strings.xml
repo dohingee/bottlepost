@@ -36,7 +36,6 @@
     <string name="delete_title">アカウントを削除しますか？</string>
     <string name="empty_connections">見知らぬ誰かと手紙を交わすと、ここに表示されます。</string>
     <string name="empty_inbox">まだ手紙はありません。見知らぬ誰かの手紙がここに流れ着きます。</string>
-    <string name="empty_sent">送った手紙は返事が来るまでここに表示されます。</string>
     <string name="error_appeal_pending">審査中の異議申し立てがすでにあります。</string>
     <string name="error_banned">このアカウントは永久停止されています。</string>
     <string name="error_contact_info">リンク、電話番号、メール、メッセンジャーIDを削除してもう一度お試しください。</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">アカウントは一時停止中です。</string>
     <string name="error_thread_closed">この会話は終了しました。</string>
     <string name="error_too_long">手紙が長すぎます（最大1,000文字）。</string>
-    <string name="error_too_short">10文字以上書いてください。</string>
+    <string name="error_too_short">2文字以上書いてください。</string>
     <string name="error_underage">Bottlepostは18歳以上の方のみ利用できます。</string>
     <string name="gender_any">誰でも</string>
     <string name="gender_female">女性</string>
@@ -109,7 +108,6 @@
     <string name="stranger">見知らぬ誰か</string>
     <string name="tab_connections">つながり</string>
     <string name="tab_inbox">受信</string>
-    <string name="tab_sent">送信済み</string>
     <string name="tab_settings">設定</string>
     <string name="thread_closed">この会話は終了しました。</string>
     <string name="translate_failed">翻訳できませんでした。初回は言語パックのダウンロードが必要です。接続を確認してください。</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">この端末にGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。</string>
     <string name="app_name">ボトルポスト</string>
     <string name="splash_tagline">どこかの誰かへ流す、ボトルの手紙</string>
+    <string name="action_leave">退出</string>
+    <string name="action_delete">削除</string>
+    <string name="action_delete_thread">会話を削除</string>
+    <string name="leave_title">この会話から退出しますか？</string>
+    <string name="leave_body">相手にはあなたが退出したことが表示され、この会話には手紙を送れなくなります。手紙は削除するまでスマホに残ります。</string>
+    <string name="leave_done">会話から退出しました。</string>
+    <string name="delete_thread_title">この会話を削除しますか？</string>
+    <string name="delete_thread_body">このスマホから手紙がすべて消え、元に戻せません。</string>
+    <string name="delete_active_title">相手はまだ退出していません</string>
+    <string name="delete_active_body">相手はまだこの会話に残っています。削除すると会話からも退出し、相手には退出したと表示されます。それでも削除しますか？</string>
+    <string name="delete_done">会話を削除しました。</string>
+    <string name="partner_left">相手が会話から退出しました。</string>
+    <string name="waiting_reply">相手からの手紙が届くのを待っています。</string>
+    <string name="waiting_reply_hint">あなたの手紙を入れたボトルが海を渡っています。待つ間、これまでの手紙をスクロールして読み返せます。</string>
+    <string name="error_wait_for_reply">相手の返事が届いてから、また手紙を書けます。</string>
+    <string name="letter_launched">手紙を入れたボトルを海に流しました。返事が届くと「つながり」に表示されます。</string>
 </resources>

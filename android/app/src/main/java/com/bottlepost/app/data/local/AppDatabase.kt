@@ -10,6 +10,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Upsert
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -41,6 +43,21 @@ abstract class MailDao {
     @Query("UPDATE threads SET closed = 1 WHERE threadId = :threadId")
     abstract suspend fun close(threadId: String)
 
+    @Query("UPDATE threads SET closed = 1, partnerLeft = 1 WHERE threadId = :threadId")
+    abstract suspend fun markPartnerLeft(threadId: String)
+
+    @Query("DELETE FROM threads WHERE threadId = :threadId")
+    abstract suspend fun deleteThreadRow(threadId: String)
+
+    @Query("DELETE FROM letters WHERE threadId = :threadId")
+    abstract suspend fun deleteLetters(threadId: String)
+
+    @Transaction
+    open suspend fun deleteThread(threadId: String) {
+        deleteLetters(threadId)
+        deleteThreadRow(threadId)
+    }
+
     @Query("SELECT * FROM threads")
     abstract suspend fun allThreads(): List<ThreadEntity>
 
@@ -62,12 +79,21 @@ abstract class MailDao {
     }
 }
 
-@Database(entities = [ThreadEntity::class, LetterEntity::class], version = 1, exportSchema = false)
+@Database(entities = [ThreadEntity::class, LetterEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mail(): MailDao
 
     companion object {
         fun create(context: Context): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, "bottlepost.db").build()
+            Room.databaseBuilder(context, AppDatabase::class.java, "bottlepost.db")
+                .addMigrations(MIGRATION_1_2)
+                .build()
+
+        /** v2: "partner left" flag for the leave-conversation feature. */
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE threads ADD COLUMN partnerLeft INTEGER NOT NULL DEFAULT 0")
+            }
+        }
     }
 }

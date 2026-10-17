@@ -39,13 +39,18 @@ export interface ThreadDoc {
   /** Per-participant reply counters for the day, keyed by uid. */
   replyDay: string;
   replyCounts: Record<string, number>;
+  /** Who wrote last. Letters alternate: nobody writes twice before the other replies. */
+  lastFrom?: string;
+  /** Set when a participant leaves; the thread is then closed for both. */
+  leftBy?: string | null;
 }
 
 /** Transient: lives only until the recipient device fetches and deletes it, or TTL. */
 export interface DeliveryDoc {
   to: string;
   threadId: string;
-  kind: "first" | "reply";
+  /** "left" carries no letter: it tells the remaining participant the other one left. */
+  kind: "first" | "reply" | "left";
   body: string;
   lang: string;
   senderNickname: string;

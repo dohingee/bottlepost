@@ -63,6 +63,12 @@ class MailRepository(
     private suspend fun ingest(docs: List<DocumentSnapshot>) = ingestLock.withLock {
         for (doc in docs) {
             val threadId = doc.getString("threadId") ?: continue
+            if (doc.getString("kind") == "left") {
+                // The other person left: keep the history readable, close the thread.
+                if (dao.thread(threadId) != null) dao.markPartnerLeft(threadId)
+                runCatching { doc.reference.delete().await() }
+                continue
+            }
             val body = doc.getString("body") ?: continue
             val sentAt = doc.getLong("sentAt") ?: System.currentTimeMillis()
             val letter = LetterEntity(
@@ -152,6 +158,21 @@ class MailRepository(
             recent.map { OutgoingReportMessage(it.deliveryId, it.body, it.sentAt, it.sig, it.outgoing) },
         )
         dao.close(threadId)
+    }
+
+    /** Leaves on the server (the other side is told). The letters stay readable here until deleted. */
+    suspend fun leave(threadId: String) {
+        api.leaveThread(threadId)
+        dao.close(threadId)
+    }
+
+    /**
+     * Removes a conversation from this phone. If the other person is still in it, this also leaves
+     * on the server so they are not left writing into the void.
+     */
+    suspend fun delete(thread: ThreadEntity) {
+        if (!thread.closed) api.leaveThread(thread.threadId)
+        dao.deleteThread(thread.threadId)
     }
 
     /** Called when the server says the thread no longer accepts replies. */

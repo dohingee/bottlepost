@@ -9,6 +9,7 @@ import com.bottlepost.app.data.local.LetterEntity
 import com.bottlepost.app.data.local.ThreadEntity
 import com.bottlepost.app.data.remote.ApiException
 import com.bottlepost.app.translate.TranslationResult
+import com.bottlepost.app.ui.compose.MIN_CHARS
 import com.bottlepost.app.ui.common.errorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,7 +52,7 @@ class ThreadViewModel(private val c: AppContainer, private val threadId: String)
 
     fun sendReply() {
         val body = _ui.value.reply.trim()
-        if (body.length < 10 || _ui.value.sending) {
+        if (body.length < MIN_CHARS || _ui.value.sending) {
             _ui.update { it.copy(error = R.string.error_too_short) }
             return
         }
@@ -98,6 +99,26 @@ class ThreadViewModel(private val c: AppContainer, private val threadId: String)
         viewModelScope.launch {
             runCatching { c.mail.report(threadId, reason, note) }
                 .onSuccess { _ui.update { it.copy(toast = R.string.report_done, leave = true) } }
+                .onFailure { e -> _ui.update { it.copy(error = errorMessage(e)) } }
+        }
+    }
+
+    fun leave() {
+        viewModelScope.launch {
+            runCatching { c.mail.leave(threadId) }
+                .onSuccess { _ui.update { it.copy(toast = R.string.leave_done) } }
+                .onFailure { e -> _ui.update { it.copy(error = errorMessage(e)) } }
+        }
+    }
+
+    fun delete() {
+        val t = thread.value ?: return
+        viewModelScope.launch {
+            runCatching { c.mail.delete(t) }
+                .onSuccess {
+                    c.notices.trySend(R.string.delete_done)
+                    _ui.update { it.copy(leave = true) }
+                }
                 .onFailure { e -> _ui.update { it.copy(error = errorMessage(e)) } }
         }
     }

@@ -95,6 +95,10 @@ class BottlepostApi(private val functions: FirebaseFunctions = FirebaseFunctions
     suspend fun replyLetter(threadId: String, body: String): SentLetter =
         call("replyLetter", mapOf("threadId" to threadId, "body" to body)).asMap().toSent()
 
+    suspend fun leaveThread(threadId: String) {
+        call("leaveThread", mapOf("threadId" to threadId))
+    }
+
     suspend fun blockThread(threadId: String) {
         call("blockThread", mapOf("threadId" to threadId))
     }

@@ -36,7 +36,6 @@
     <string name="delete_title">¿Eliminar tu cuenta?</string>
     <string name="empty_connections">Cuando tú y un desconocido se escriban, la conversación aparecerá aquí.</string>
     <string name="empty_inbox">Aún no hay cartas. Las cartas de desconocidos llegarán aquí.</string>
-    <string name="empty_sent">Las cartas que envíes aparecerán aquí hasta que respondan.</string>
     <string name="error_appeal_pending">Ya tienes una apelación en revisión.</string>
     <string name="error_banned">Esta cuenta ha sido suspendida permanentemente.</string>
     <string name="error_contact_info">Quita enlaces, teléfonos, correos o ID de mensajería e inténtalo de nuevo.</string>
@@ -50,7 +49,7 @@
     <string name="error_suspended">Tu cuenta está suspendida temporalmente.</string>
     <string name="error_thread_closed">Esta conversación terminó.</string>
     <string name="error_too_long">Tu carta es demasiado larga (máx. 1000 caracteres).</string>
-    <string name="error_too_short">Escribe al menos 10 caracteres.</string>
+    <string name="error_too_short">Escribe al menos 2 caracteres.</string>
     <string name="error_underage">Bottlepost es solo para mayores de 18 años.</string>
     <string name="gender_any">Cualquiera</string>
     <string name="gender_female">Mujeres</string>
@@ -109,7 +108,6 @@
     <string name="stranger">Un desconocido</string>
     <string name="tab_connections">Conexiones</string>
     <string name="tab_inbox">Recibidas</string>
-    <string name="tab_sent">Enviadas</string>
     <string name="tab_settings">Ajustes</string>
     <string name="thread_closed">Esta conversación terminó.</string>
     <string name="translate_failed">No se pudo traducir. La primera vez se descarga un paquete de idioma; revisa tu conexión.</string>
@@ -120,4 +118,20 @@
     <string name="error_no_google_account">No hay ninguna cuenta de Google en este teléfono. Añade una en Ajustes > Cuentas e inténtalo de nuevo.</string>
     <string name="app_name">Bottlepost</string>
     <string name="splash_tagline">Una carta en una botella para alguien, en algún lugar</string>
+    <string name="action_leave">Salir</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_delete_thread">Eliminar conversación</string>
+    <string name="leave_title">¿Salir de esta conversación?</string>
+    <string name="leave_body">La otra persona verá que saliste y ya no se podrán enviar cartas aquí. Las cartas seguirán en tu teléfono hasta que las elimines.</string>
+    <string name="leave_done">Saliste de la conversación.</string>
+    <string name="delete_thread_title">¿Eliminar esta conversación?</string>
+    <string name="delete_thread_body">Sus cartas se borrarán de este teléfono y no se podrán recuperar.</string>
+    <string name="delete_active_title">La otra persona sigue aquí</string>
+    <string name="delete_active_body">La otra persona no ha salido de esta conversación. Al eliminarla también saldrás y verá que saliste. ¿Eliminar de todos modos?</string>
+    <string name="delete_done">Conversación eliminada.</string>
+    <string name="partner_left">La otra persona salió de esta conversación.</string>
+    <string name="waiting_reply">Esperando a que llegue la carta de la otra persona.</string>
+    <string name="waiting_reply_hint">Tu botella va en camino. Mientras esperas, desplázate para releer tus cartas.</string>
+    <string name="error_wait_for_reply">Espera su respuesta antes de volver a escribir.</string>
+    <string name="letter_launched">Tu botella ya está en el mar. Cuando alguien responda, aparecerá en Conexiones.</string>
 </resources>

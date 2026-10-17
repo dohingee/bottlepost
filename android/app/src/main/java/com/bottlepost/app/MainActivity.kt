@@ -66,10 +66,7 @@ private fun AppNavHost(container: AppContainer, onAccountDeleted: () -> Unit) {
             )
         }
         composable("compose") {
-            ComposeScreen(container, onBack = { nav.popBackStack() }, onSent = {
-                nav.popBackStack()
-                nav.navigate("thread/$it")
-            })
+            ComposeScreen(container, onBack = { nav.popBackStack() }, onSent = { nav.popBackStack() })
         }
         composable("thread/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
             ThreadScreen(container, threadId = entry.arguments!!.getString("id")!!, onBack = { nav.popBackStack() })
