@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Not translated: brand name and each language's own name. -->
-    <string name="app_name" translatable="false">Bottlepost</string>
+    <!-- Not translated: each language's own name. -->
     <string name="lang_ko" translatable="false">한국어</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_ja" translatable="false">日本語</string>
@@ -128,4 +127,6 @@
     <string name="translate_unsupported">This language can\'t be translated yet.</string>
     <string name="error_service_paused">New letters are paused for a short while. You can still read and reply to your conversations.</string>
     <string name="error_no_google_account">No Google account on this phone. Add one in Settings > Accounts, then try again.</string>
+    <string name="app_name">Bottlepost</string>
+    <string name="splash_tagline">A letter in a bottle, to someone out there</string>
 </resources>

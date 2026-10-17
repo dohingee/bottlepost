@@ -118,4 +118,6 @@
     <string name="translate_unsupported">この言語はまだ翻訳できません。</string>
     <string name="error_service_paused">新しい手紙の送信を一時停止しています。進行中の会話は引き続き読んだり返事したりできます。</string>
     <string name="error_no_google_account">この端末にGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。</string>
+    <string name="app_name">ボトルポスト</string>
+    <string name="splash_tagline">どこかの誰かへ流す、ボトルの手紙</string>
 </resources>

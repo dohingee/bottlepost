@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Placeholder: a bottle with a rolled letter. Replace with the final icon before release. -->
+<!-- Glass bottle with a rolled, ribboned letter inside, floating in a wave. Generated from one shape list together with docs/brand/icon.svg. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#FF2B5D8C" android:pathData="M48,26h12v8l6,8v32a6,6 0,0 1,-6 6H48a6,6 0,0 1,-6 -6V42l6,-8z" />
-    <path android:fillColor="#FFFBF7F0" android:pathData="M48,50h12v18H48z" />
-    <path android:fillColor="#FFC9A66B" android:pathData="M47,22h14v6H47z" />
+    <group android:rotation="-20" android:scaleX="1.12" android:scaleY="1.12" android:translateY="4" android:pivotX="54" android:pivotY="54">
+        <path android:pathData="M49,30 L59,30 L59,40 C59,42 68,44 68,50 L68,74 Q68,80 62,80 L46,80 Q40,80 40,74 L40,50 C40,44 49,42 49,40 Z" android:fillColor="#FFFFFF" android:fillAlpha="0.16" />
+        <path android:pathData="M40.8,73 C45,71.5 49,74.5 54,73 C59,71.5 63,74.5 67.2,73 L67.2,74 Q67.2,79.2 62,79.2 L46,79.2 Q40.8,79.2 40.8,74 Z" android:fillColor="#7FD1D1" android:fillAlpha="0.45" />
+        <path android:pathData="M46,55.5 L62,55.5 Q63.5,55.5 63.5,57 L63.5,67 Q63.5,68.5 62,68.5 L46,68.5 Q44.5,68.5 44.5,67 L44.5,57 Q44.5,55.5 46,55.5 Z" android:fillColor="#F4E4C1" />
+        <path android:pathData="M44.5,57 Q42.6,62 44.5,67 Q46.4,62 44.5,57 Z" android:fillColor="#D9BF8C" />
+        <path android:pathData="M63.5,57 Q61.6,62 63.5,67 Q65.4,62 63.5,57 Z" android:fillColor="#D9BF8C" />
+        <path android:pathData="M47.5,59.2 L52,59.2 M47.5,62 L52,62 M47.5,64.8 L51,64.8 M56.5,59.2 L60.5,59.2 M56.5,62 L60.5,62 M56.5,64.8 L59.5,64.8" android:strokeColor="#B89A63" android:strokeWidth="0.7" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0.8" />
+        <path android:pathData="M53,55.5 L55.4,55.5 L55.4,68.5 L53,68.5 Z" android:fillColor="#C8483B" />
+        <path android:pathData="M54.2,62 L50.8,59.6 L50.8,64.4 Z M54.2,62 L57.6,59.6 L57.6,64.4 Z" android:fillColor="#E0574A" />
+        <path android:pathData="M49,30 L59,30 L59,40 C59,42 68,44 68,50 L68,74 Q68,80 62,80 L46,80 Q40,80 40,74 L40,50 C40,44 49,42 49,40 Z" android:strokeColor="#D8F3F5" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M43.6,52 L43.6,71" android:strokeColor="#FFFFFF" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0.6" />
+        <path android:pathData="M51,33.5 L51,39" android:strokeColor="#FFFFFF" android:strokeWidth="1.1" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0.5" />
+        <path android:pathData="M48,30 L60,30 L60,32.6 L48,32.6 Z" android:fillColor="#E6F7F8" android:fillAlpha="0.9" />
+        <path android:pathData="M50,21.5 L58,21.5 Q59,21.5 59,22.5 L59,30.5 L49,30.5 L49,22.5 Q49,21.5 50,21.5 Z" android:fillColor="#C9A06A" />
+        <path android:pathData="M49,25.2 L59,25.2 L59,26.4 L49,26.4 Z" android:fillColor="#A87F4C" />
+    </group>
+    <path android:pathData="M0,88 C14,84 24,92 40,88 C56,84 66,92 82,88 C94,85 102,90 108,88 L108,108 L0,108 Z" android:fillColor="#FF5FB8BE" android:fillAlpha="0.55" />
 </vector>

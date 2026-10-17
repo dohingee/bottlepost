@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Bottlepost" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/paper</item>
+        <item name="android:windowBackground">@color/night_sea</item>
     </style>
+
+    <!-- System splash (Android 12+ and the androidx backport): bottle icon on the night sea,
+         then MainActivity shows the branded launch screen with the app name. -->
+    <style name="Theme.Bottlepost.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/night_sea</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Bottlepost</item>
+    </style>
+
     <color name="paper">#FFFBF7F0</color>
     <color name="ink">#FF2B5D8C</color>
+    <color name="night_sea">#FF13283F</color>
 </resources>

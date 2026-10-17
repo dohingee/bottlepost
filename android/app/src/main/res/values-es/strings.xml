@@ -118,4 +118,6 @@
     <string name="translate_unsupported">Este idioma aún no se puede traducir.</string>
     <string name="error_service_paused">El envío de cartas nuevas está pausado por un tiempo. Puedes seguir leyendo y respondiendo tus conversaciones.</string>
     <string name="error_no_google_account">No hay ninguna cuenta de Google en este teléfono. Añade una en Ajustes > Cuentas e inténtalo de nuevo.</string>
+    <string name="app_name">Bottlepost</string>
+    <string name="splash_tagline">Una carta en una botella para alguien, en algún lugar</string>
 </resources>

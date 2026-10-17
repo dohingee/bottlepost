@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bottlepost.app.AppContainer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 sealed interface StartState {
@@ -25,10 +26,16 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
 
     fun start() {
         _state.value = StartState.Loading
+        val shownAt = System.currentTimeMillis()
+        // Keep the launch screen up long enough to read the app name instead of flashing it.
+        suspend fun settle(next: StartState) {
+            delay((MIN_SPLASH_MS - (System.currentTimeMillis() - shownAt)).coerceAtLeast(0))
+            _state.value = next
+        }
         viewModelScope.launch {
             val cached = c.profiles.current()
             if (cached != null) {
-                _state.value = StartState.Ready
+                settle(StartState.Ready)
                 c.onReady()
                 runCatching { c.profiles.refresh() }
                 return@launch
@@ -37,10 +44,10 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
                 c.auth.ensureSignedIn()
                 c.profiles.refresh()
             }.onSuccess { profile ->
-                _state.value = if (profile == null) StartState.NeedsOnboarding else StartState.Ready
+                settle(if (profile == null) StartState.NeedsOnboarding else StartState.Ready)
                 if (profile != null) c.onReady()
             }.onFailure {
-                _state.value = StartState.Offline
+                settle(StartState.Offline)
             }
         }
     }
@@ -48,6 +55,10 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
     fun onOnboarded() {
         _state.value = StartState.Ready
         viewModelScope.launch { c.onReady() }
+    }
+
+    private companion object {
+        const val MIN_SPLASH_MS = 900L
     }
 
     fun onAccountDeleted() {
