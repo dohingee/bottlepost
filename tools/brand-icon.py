@@ -129,4 +129,28 @@ open(os.path.join(OUT, "icon_squircle.svg"), "w").write(svg('<rect x="0" y="0" w
 open(os.path.join(OUT, "icon_mono.svg"), "w").write(svg('<circle cx="54" cy="54" r="54"/>', "", mono=True))
 os.makedirs("/home/user/bottlepost/docs/brand", exist_ok=True)
 open("/home/user/bottlepost/docs/brand/icon.svg", "w").write(svg('<rect x="0" y="0" width="108" height="108" rx="28"/>', ""))
+
+# ---- Play Store graphics (rendered to PNG by tools/store-graphics.sh) ----
+STORE = "/home/user/bottlepost/docs/store/graphics"
+os.makedirs(STORE, exist_ok=True)
+# Play masks the 512px icon itself, so it gets the full square.
+open(os.path.join(STORE, "play_icon.svg"), "w").write(svg("", "").replace('width="432" height="432"', 'width="512" height="512"'))
+
+def scene(width, height, bottle_x, bottle_scale):
+    """Night sea across a wide banner with the icon bottle floating at bottle_x."""
+    tf = (f"translate({bottle_x} {height * 0.64}) rotate({ROT}) scale({bottle_scale * SCALE}) translate(-54 -54)")
+    stars = "".join(f'<circle cx="{width * x / 108:.0f}" cy="{height * y / 108 * 0.8:.0f}" r="{r * 2.2}" fill="#fff" fill-opacity="0.8"/>' for x, y, r in STARS)
+    def wave(y0, amp, color, alpha, phase):
+        pts = " ".join(f"L{x},{y0 + amp * __import__('math').sin((x / width * 3 + phase) * 6.2832):.1f}" for x in range(0, width + 9, 8))
+        return f'<path d="M0,{height} {pts} L{width},{height} Z" fill="{color}" fill-opacity="{alpha}"/>'
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#13283F"/><stop offset="0.55" stop-color="#1F4A73"/><stop offset="1" stop-color="#2F7A86"/></linearGradient></defs>
+<rect width="{width}" height="{height}" fill="url(#g)"/>{stars}
+<circle cx="{width * 0.9:.0f}" cy="{height * 0.2:.0f}" r="30" fill="#F6E7C1" fill-opacity="0.9"/><circle cx="{width * 0.9 + 14:.0f}" cy="{height * 0.2 - 8:.0f}" r="26" fill="#16304B"/>
+{wave(height * 0.74, 10, "#3B93A0", 0.6, 0)}
+<g transform="{tf}">{"".join(svg_path(*s) for s in FG)}</g>
+{wave(height * 0.84, 8, "#5FB8BE", 0.55, 0.5)}
+</svg>'''
+
+open(os.path.join(STORE, "feature_bg.svg"), "w").write(scene(1024, 500, 790, 3.4))
 print("ok")

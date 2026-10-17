@@ -17,13 +17,29 @@ android {
         applicationId = "com.bottlepost.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
+        // CI passes the workflow run number so every uploaded bundle has a higher code.
+        versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
         versionName = "0.1.0"
+    }
+
+    // Upload key for Play (Play App Signing re-signs for users). Only set in the release workflow;
+    // local release builds stay unsigned.
+    val uploadKeystore = System.getenv("UPLOAD_KEYSTORE")
+    if (uploadKeystore != null) {
+        signingConfigs {
+            create("upload") {
+                storeFile = file(uploadKeystore)
+                storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("UPLOAD_KEY_ALIAS") ?: "upload"
+                keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            if (uploadKeystore != null) signingConfig = signingConfigs.getByName("upload")
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

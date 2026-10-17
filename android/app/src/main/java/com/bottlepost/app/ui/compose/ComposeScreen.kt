@@ -123,62 +123,73 @@ fun ComposeScreen(container: AppContainer, onBack: () -> Unit, onSent: () -> Uni
             )
         },
     ) { padding ->
-        SeaBackdrop(Modifier.fillMaxSize()) {
-            Column(
-                Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .imePadding()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
-                    .graphicsLayer {
-                        translationX = drift * size.width
-                        translationY = -drift * size.height * 0.3f
-                        rotationZ = drift * 12f
-                        alpha = 1f - drift
+        ComposeForm(s, drift, Modifier.padding(padding), vm::update) { vm.send(context.findActivity()) }
+    }
+}
+
+/** The letter form itself, without the view model (also rendered for store screenshots). */
+@Composable
+internal fun ComposeForm(
+    s: ComposeState,
+    drift: Float,
+    modifier: Modifier,
+    update: ((ComposeState) -> ComposeState) -> Unit,
+    onSend: () -> Unit,
+) {
+    SeaBackdrop(Modifier.fillMaxSize()) {
+        Column(
+            modifier
+                .fillMaxSize()
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+                .graphicsLayer {
+                    translationX = drift * size.width
+                    translationY = -drift * size.height * 0.3f
+                    rotationZ = drift * 12f
+                    alpha = 1f - drift
+                },
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(stringResource(R.string.compose_to), style = MaterialTheme.typography.titleSmall)
+            ChoiceChips(listOf("ANY", "F", "M"), s.wantGender, { stringResource(genderLabel(it)) }) { g ->
+                update { it.copy(wantGender = g) }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.compose_same_language), modifier = Modifier.weight(1f))
+                Switch(checked = s.sameLanguageOnly, onCheckedChange = { v -> update { it.copy(sameLanguageOnly = v) } })
+            }
+            PaperSheet(Modifier.fillMaxWidth(), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)) {
+                BasicTextField(
+                    value = s.body,
+                    onValueChange = { v -> update { it.copy(body = v.take(MAX_CHARS)) } },
+                    textStyle = LetterTextStyle.copy(color = Sea.InkText),
+                    cursorBrush = SolidColor(Sea.Deep),
+                    minLines = 10,
+                    modifier = Modifier.fillMaxWidth().ruledLines(LetterTextStyle.lineHeight),
+                    decorationBox = { inner ->
+                        if (s.body.isEmpty()) {
+                            Text(stringResource(R.string.compose_placeholder), style = LetterTextStyle, color = Sea.InkText.copy(alpha = 0.45f))
+                        }
+                        inner()
                     },
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(stringResource(R.string.compose_to), style = MaterialTheme.typography.titleSmall)
-                ChoiceChips(listOf("ANY", "F", "M"), s.wantGender, { stringResource(genderLabel(it)) }) { g ->
-                    vm.update { it.copy(wantGender = g) }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.compose_same_language), modifier = Modifier.weight(1f))
-                    Switch(checked = s.sameLanguageOnly, onCheckedChange = { v -> vm.update { it.copy(sameLanguageOnly = v) } })
-                }
-                PaperSheet(Modifier.fillMaxWidth(), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)) {
-                    BasicTextField(
-                        value = s.body,
-                        onValueChange = { v -> vm.update { it.copy(body = v.take(MAX_CHARS)) } },
-                        textStyle = LetterTextStyle.copy(color = Sea.InkText),
-                        cursorBrush = SolidColor(Sea.Deep),
-                        minLines = 10,
-                        modifier = Modifier.fillMaxWidth().ruledLines(LetterTextStyle.lineHeight),
-                        decorationBox = { inner ->
-                            if (s.body.isEmpty()) {
-                                Text(stringResource(R.string.compose_placeholder), style = LetterTextStyle, color = Sea.InkText.copy(alpha = 0.45f))
-                            }
-                            inner()
-                        },
-                    )
-                    Text(
-                        "${s.body.length} / $MAX_CHARS",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Sea.InkText.copy(alpha = 0.6f),
-                        modifier = Modifier.align(Alignment.End),
-                    )
-                }
-                Text(stringResource(R.string.compose_rules), style = MaterialTheme.typography.bodySmall)
-                s.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
-                BottleButton(
-                    stringResource(if (s.sending) R.string.compose_sending else R.string.compose_send),
-                    onClick = { vm.send(context.findActivity()) },
-                    enabled = s.canSend,
-                    icon = Icons.AutoMirrored.Filled.Send,
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                )
+                Text(
+                    "${s.body.length} / $MAX_CHARS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Sea.InkText.copy(alpha = 0.6f),
+                    modifier = Modifier.align(Alignment.End),
                 )
             }
+            Text(stringResource(R.string.compose_rules), style = MaterialTheme.typography.bodySmall)
+            s.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+            BottleButton(
+                stringResource(if (s.sending) R.string.compose_sending else R.string.compose_send),
+                onClick = onSend,
+                enabled = s.canSend,
+                icon = Icons.AutoMirrored.Filled.Send,
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+            )
         }
     }
 }

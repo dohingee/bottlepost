@@ -17,9 +17,13 @@ description: 보틀포스트 빌드·테스트·Play 출시 절차. 첫 출시, 
 - Firestore 콘솔에서 TTL 정책 활성 확인: deliveries.expireAt, reports.expireAt, bans.expireAt, appeals.expireAt
 
 ## 3. 앱 빌드
-- `versionCode` +1, `versionName` 갱신 (`android/app/build.gradle.kts`)
-- `./gradlew bundleRelease` → `.aab` (업로드 키로 서명, Play 앱 서명 사용)
-- 출시 노트 8개 언어 (localization-agent)
+- `versionName` 갱신 (`android/app/build.gradle.kts`). `versionCode`는 워크플로 실행 번호로 자동 증가
+- GitHub Actions **Android release bundle** 실행(`gh workflow run android-release.yml` 또는 Actions 탭) → 아티팩트 `bottlepost-aab`
+  - 업로드 키는 비밀값 `UPLOAD_KEYSTORE_BASE64`/`UPLOAD_KEYSTORE_PASSWORD`/`UPLOAD_KEY_PASSWORD`, google-services.json은 서비스 계정으로 받아 옴
+  - 실패 원인은 `::error` 주석으로 표시됨(`gh api repos/<repo>/check-runs/<id>/annotations`)
+- 출시 노트 8개 언어 (`docs/store/listing.md`, localization-agent)
+- 스토어 그래픽: `python3 tools/brand-icon.py && bash tools/store-graphics.sh`. 스크린샷은 `docs/store/screenshots/`(1080×2160)
+- 처음이면 `docs/RELEASE_GUIDE.md` 단계를 그대로 따름(Play Integrity·SHA 지문 등록 필수)
 
 ## 4. Play Console
 - 앱 콘텐츠: 개인정보처리방침 URL, 데이터 보안, 계정 삭제 URL, 타깃층 18+, 콘텐츠 등급, 아동 안전 표준 URL·담당자, 광고 포함 여부

@@ -137,37 +137,9 @@ fun MainScreen(
             })
         },
         bottomBar = {
-            NavigationBar(containerColor = Sea.Night, contentColor = Sea.Paper) {
-                Tab.entries.forEachIndexed { i, t ->
-                    val unread = threads.filter { t.matches(it) }.sumOf { it.unread }
-                    NavigationBarItem(
-                        selected = i == tabIndex,
-                        onClick = { tabIndex = i },
-                        icon = { BadgedBox(badge = { if (unread > 0) Badge(containerColor = Sea.Wax) { Text("$unread") } }) { TabIcon(t) } },
-                        label = { Text(stringResource(t.title)) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Sea.Paper,
-                            selectedTextColor = Sea.Paper,
-                            indicatorColor = Sea.Teal,
-                            unselectedIconColor = Sea.Paper.copy(alpha = 0.6f),
-                            unselectedTextColor = Sea.Paper.copy(alpha = 0.6f),
-                        ),
-                    )
-                }
-            }
+            MainNavBar(tabIndex, Tab.entries.map { t -> threads.filter { t.matches(it) }.sumOf { it.unread } }) { tabIndex = it }
         },
-        floatingActionButton = {
-            if (tab != Tab.Settings && profile?.status == "active") {
-                ExtendedFloatingActionButton(
-                    onClick = onCompose,
-                    containerColor = Sea.Deep,
-                    contentColor = Sea.Paper,
-                    shape = CircleShape,
-                    icon = { Icon(Icons.Filled.Create, contentDescription = null) },
-                    text = { Text(stringResource(R.string.action_write_letter), fontWeight = FontWeight.SemiBold) },
-                )
-            }
-        },
+        floatingActionButton = { if (tab != Tab.Settings && profile?.status == "active") WriteLetterFab(onCompose) },
     ) { padding ->
         SeaBackdrop(Modifier.fillMaxSize()) {
             Column(Modifier.padding(padding).fillMaxSize()) {
@@ -200,6 +172,40 @@ fun MainScreen(
             }
         }
     }
+}
+
+@Composable
+internal fun MainNavBar(selected: Int, unread: List<Int>, onSelect: (Int) -> Unit) {
+    NavigationBar(containerColor = Sea.Night, contentColor = Sea.Paper) {
+        Tab.entries.forEachIndexed { i, t ->
+            val count = unread.getOrElse(i) { 0 }
+            NavigationBarItem(
+                selected = i == selected,
+                onClick = { onSelect(i) },
+                icon = { BadgedBox(badge = { if (count > 0) Badge(containerColor = Sea.Wax) { Text("$count") } }) { TabIcon(t) } },
+                label = { Text(stringResource(t.title)) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Sea.Paper,
+                    selectedTextColor = Sea.Paper,
+                    indicatorColor = Sea.Teal,
+                    unselectedIconColor = Sea.Paper.copy(alpha = 0.6f),
+                    unselectedTextColor = Sea.Paper.copy(alpha = 0.6f),
+                ),
+            )
+        }
+    }
+}
+
+@Composable
+internal fun WriteLetterFab(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        containerColor = Sea.Deep,
+        contentColor = Sea.Paper,
+        shape = CircleShape,
+        icon = { Icon(Icons.Filled.Create, contentDescription = null) },
+        text = { Text(stringResource(R.string.action_write_letter), fontWeight = FontWeight.SemiBold) },
+    )
 }
 
 @Composable
