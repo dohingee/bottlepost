@@ -2,7 +2,7 @@
 
 > Effective date: ____ · Draft — have it reviewed by counsel before launch. The Korean version (`terms_ko.md`) prevails in case of conflict.
 
-1. **Purpose.** These Terms govern your use of the Bottlepost mobile app ("Service") operated by ______ ("we").
+1. **Purpose.** These Terms govern your use of the Bottlepost mobile app ("Service") operated by Kim Dohyeong ("we").
 2. **Eligibility.** You must be **18 or older**. Accounts found to belong to minors are removed. Users permanently banned may not create new accounts.
 3. **Accounts.** You can start without signing in (an anonymous account tied to your device). Anonymous accounts and their conversations cannot be recovered after uninstalling or changing devices. Linking a Google account keeps your account and lets you back up conversations to your own Google Drive app-data folder.
 4. **Letters.** You choose the recipient's gender; the recipient is picked at random. **We do not store letter content on our servers.** A letter waits on a relay server only until it is delivered to the recipient's device and is deleted immediately after delivery; undelivered letters are deleted after 7 days. Conversations live on your device (and your Google Drive backup, if enabled). We may limit daily sends, length, and links or contact details in letters.
