@@ -56,9 +56,25 @@ jobs:
           set -o pipefail
           npx -y firebase-tools@15 deploy --only functions,firestore,hosting --project "$PROJECT_ID" --non-interactive --force 2>&1 | tee deploy-output.txt
 
+      # Public pages Play Console links to, plus a callable that must reject anonymous calls.
+      - name: Smoke test
+        run: |
+          base="https://${PROJECT_ID}.web.app"
+          fail=0
+          for path in / /terms /terms-en /privacy /privacy-en /child-safety /delete-account /__/firebase/init.json; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$base$path")
+            echo "::notice title=smoke test::$base$path -> $code"
+            [ "$code" = "200" ] || fail=1
+          done
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"data":{}}' \
+            "https://asia-northeast3-${PROJECT_ID}.cloudfunctions.net/sendLetter")
+          echo "::notice title=smoke test::sendLetter without sign-in -> $code (expect 401 or 403)"
+          case "$code" in 401|403) ;; *) fail=1 ;; esac
+          exit $fail
+
       # Surface the reason as annotations so it is readable from the run summary and the API.
       - name: Report deploy errors
-        if: failure()
+        if: failure() && hashFiles('firebase/deploy-output.txt') != ''
         working-directory: firebase
         run: |
           { grep -iE "error|failed|denied|permission|not enabled|quota|invalid" deploy-output.txt || tail -n 20 deploy-output.txt; } \

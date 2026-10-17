@@ -20,7 +20,7 @@ import com.bottlepost.app.R
 
 /** Public pages served by Firebase Hosting (firebase/hosting). Replace with your domain. */
 object Links {
-    const val BASE = "https://YOUR_PROJECT.web.app"
+    const val BASE = "https://bottlepost.web.app"
     const val TERMS = "$BASE/terms"
     const val PRIVACY = "$BASE/privacy"
     const val CHILD_SAFETY = "$BASE/child-safety"
