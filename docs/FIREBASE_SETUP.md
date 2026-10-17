@@ -39,8 +39,9 @@
 ## 4단계. 배포용 서비스 계정 + GitHub 연결 (10분)
 - [ ] https://console.cloud.google.com/iam-admin/serviceaccounts?project=프로젝트ID → **서비스 계정 만들기**
   - 이름: `github-deployer`
-  - 역할 5개 추가: **편집자**, **Cloud Functions 관리자**, **Cloud Run 관리자**, **Secret Manager 관리자**, **서비스 계정 사용자**
+  - 역할 6개 추가: **편집자**, **Cloud Functions 관리자**, **Cloud Run 관리자**, **Secret Manager 관리자**, **서비스 계정 사용자**, **프로젝트 IAM 관리자**
     (Cloud Run 관리자: 2세대 함수가 Cloud Run 위에서 돌아서, 앱이 함수를 호출하도록 공개 설정할 때 필요. 검색이 안 되면 영어 이름 `Cloud Run Admin`)
+    (프로젝트 IAM 관리자: 첫 배포 때 Google 내부 서비스 계정(Pub/Sub, Eventarc)에 필요한 권한을 연결. 영어 이름 `Project IAM Admin`)
   - 세 번째 화면(사용자 액세스 권한)은 비워 두고 완료
 - [ ] 만든 계정 클릭 → **키** 탭 → 키 추가 → 새 키 만들기 → **JSON** → 파일이 다운로드됨
 - [ ] https://github.com/dohingee/bottlepost/settings/secrets/actions
