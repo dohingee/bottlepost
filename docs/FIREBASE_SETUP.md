@@ -17,7 +17,10 @@
   - 위치는 나중에 바꿀 수 없음
 - [ ] **Authentication** → 시작하기 → 로그인 방법
   - **익명** 사용 설정
-  - **Google** 사용 설정 (프로젝트 지원 이메일 선택)
+  - **Google** 사용 설정 (공개용 이름 `Bottlepost`, 프로젝트 지원 이메일 선택)
+  - Google 로그인을 켠 **다음에** 3단계에서 `google-services.json`을 받아야 함 (로그인용 클라이언트 ID가 그때 들어감)
+  - "Identity Platform으로 업그레이드" 안내는 무시
+- [ ] Google Cloud 콘솔 → **Google 인증 플랫폼(OAuth 동의 화면)** → 대상(Audience)에서 게시 상태가 **프로덕션 단계**인지 확인 (테스트 단계면 등록한 테스트 사용자만 로그인 가능)
 - [ ] **Hosting** → 시작하기 → 안내 화면은 모두 "다음"으로 넘기고 완료 (CLI 설치 안내는 무시)
 - [ ] 프로젝트 설정(톱니바퀴) → 내 앱 → **웹 앱 추가** (`</>` 아이콘)
   - 앱 닉네임: `bottlepost-web` / Firebase Hosting 설정 체크 안 함

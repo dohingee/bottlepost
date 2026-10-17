@@ -30,7 +30,8 @@ jobs:
             cloudfunctions.googleapis.com run.googleapis.com cloudbuild.googleapis.com \
             artifactregistry.googleapis.com eventarc.googleapis.com pubsub.googleapis.com \
             secretmanager.googleapis.com cloudscheduler.googleapis.com firestore.googleapis.com \
-            firebasehosting.googleapis.com cloudbilling.googleapis.com firebaseappcheck.googleapis.com
+            firebasehosting.googleapis.com cloudbilling.googleapis.com firebaseappcheck.googleapis.com \
+            drive.googleapis.com
 
       # The HMAC key signs every letter. Generated here once and never shown to anyone; re-running
       # this workflow keeps the existing key so signatures on old letters stay verifiable.
