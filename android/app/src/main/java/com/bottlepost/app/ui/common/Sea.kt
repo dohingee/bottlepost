@@ -190,27 +190,21 @@ fun BottleButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier,
+        // Gradient on the button itself so it fills whatever width the caller gives it.
+        modifier = modifier.background(
+            if (enabled) Brush.horizontalGradient(listOf(Sea.Deep, Sea.Teal))
+            else Brush.horizontalGradient(listOf(Sea.Rule, Sea.PaperEdge)),
+            CircleShape,
+        ),
         shape = CircleShape,
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = PaddingValues(horizontal = 22.dp, vertical = 12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, disabledContainerColor = Color.Transparent),
     ) {
-        Row(
-            Modifier
-                .background(
-                    if (enabled) Brush.horizontalGradient(listOf(Sea.Deep, Sea.Teal))
-                    else Brush.horizontalGradient(listOf(Sea.Rule, Sea.PaperEdge)),
-                )
-                .padding(horizontal = 22.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            if (icon != null) {
-                Icon(icon, contentDescription = null, tint = Sea.Paper, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-            }
-            Text(text, color = if (enabled) Sea.Paper else Sea.InkText.copy(alpha = 0.5f), fontWeight = FontWeight.SemiBold)
+        if (icon != null) {
+            Icon(icon, contentDescription = null, tint = if (enabled) Sea.Paper else Sea.InkText.copy(alpha = 0.5f), modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
         }
+        Text(text, color = if (enabled) Sea.Paper else Sea.InkText.copy(alpha = 0.5f), fontWeight = FontWeight.SemiBold)
     }
 }
 
