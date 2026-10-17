@@ -44,6 +44,8 @@ docs/               기획서, 정책 체크리스트, 운영 가이드, 앱 이
 8. **비용 자동 차단 설정** — [docs/OPERATIONS.md §7](docs/OPERATIONS.md) (예산 + Pub/Sub 연결 + 권한 1개)
 
 ### 2. Android
+> **단계별 가이드: [docs/ANDROID_SETUP.md](docs/ANDROID_SETUP.md)** — 설치, 실행, App Check 디버그 토큰, 기기 2대로 편지 시험
+
 1. Firebase 콘솔에서 Android 앱 추가 (패키지명: `com.bottlepost.app` → **본인 도메인으로 바꾸기 권장**, `app/build.gradle.kts`의 `namespace`/`applicationId`)
 2. 디버그·릴리스 키의 **SHA-1** 등록 (구글 로그인에 필요)
 3. `google-services.json`을 `android/app/`에 복사
