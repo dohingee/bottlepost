@@ -1,0 +1,37 @@
+{
+  "indexes": [
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "rand", "order": "ASCENDING" } ] },
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "gender", "order": "ASCENDING" },
+      { "fieldPath": "rand", "order": "ASCENDING" } ] },
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "lang", "order": "ASCENDING" },
+      { "fieldPath": "rand", "order": "ASCENDING" } ] },
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "gender", "order": "ASCENDING" },
+      { "fieldPath": "lang", "order": "ASCENDING" }, { "fieldPath": "rand", "order": "ASCENDING" } ] },
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "suspendedUntil", "order": "ASCENDING" } ] },
+    { "collectionGroup": "deliveries", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "to", "order": "ASCENDING" }, { "fieldPath": "threadId", "order": "ASCENDING" } ] },
+    { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "reporterUid", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
+    { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "reportedUid", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
+    { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
+    { "collectionGroup": "appeals", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "blocks", "fieldPath": "blockedUid", "ttl": false, "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" }, { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" } ] },
+    { "collectionGroup": "deliveries", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "deliveries", "fieldPath": "body", "ttl": false, "indexes": [] },
+    { "collectionGroup": "reports", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "reports", "fieldPath": "messages", "ttl": false, "indexes": [] },
+    { "collectionGroup": "bans", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "appeals", "fieldPath": "expireAt", "ttl": true, "indexes": [] }
+  ]
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계정 삭제 · Delete account</title><link rel="stylesheet" href="/style.css"></head>
+<body><main>
+<h1>보틀포스트 계정 삭제 · Delete your Bottlepost account</h1>
+
+<div class="card">
+  <h2>앱에서 삭제 (모든 계정) · In the app (all accounts)</h2>
+  <p>앱 실행 → <strong>설정 → 계정 삭제</strong>. 구글 계정을 연결하지 않은 익명 계정은 앱에서만 삭제할 수 있습니다.</p>
+  <p>Open the app → <strong>Settings → Delete account</strong>. Anonymous accounts (no Google link) can only be deleted in the app.</p>
+</div>
+
+<div class="card">
+  <h2>웹에서 삭제 (구글 연결 계정) · On the web (Google-linked accounts)</h2>
+  <p>앱에 연결한 구글 계정으로 로그인한 뒤 삭제하세요. · Sign in with the Google account you linked in the app.</p>
+  <p><button id="signin">Google로 로그인 · Sign in with Google</button>
+     <button id="delete" class="secondary" disabled>계정 영구 삭제 · Delete permanently</button></p>
+  <p id="status"></p>
+</div>
+
+<div class="card">
+  <h2>삭제되는 정보 · What is deleted</h2>
+  <ul>
+    <li>프로필(성별, 출생연도, 언어, 닉네임), 푸시 토큰, 대화 연결 정보, 전달 대기 중인 편지 — 즉시 삭제<br>
+        Profile, push token, conversation links and undelivered letters — deleted immediately.</li>
+    <li>처리 중인 신고 내용은 최대 90일, 제재 기록(이메일 해시)은 최대 3년 보관 후 삭제<br>
+        Open reports are kept up to 90 days and ban records (e-mail hash) up to 3 years.</li>
+    <li>기기와 본인 Google Drive의 백업은 앱 삭제 또는 Drive 설정 → 앱 관리에서 직접 삭제<br>
+        On-device data and your Google Drive backup: uninstall the app or remove it in Drive settings → Manage apps.</li>
+  </ul>
+</div>
+<p>문의 · Contact: privacy@______</p>
+</main>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-functions.js";
+
+  const status = document.getElementById("status");
+  const del = document.getElementById("delete");
+  // Firebase Hosting serves the project's web config at this reserved URL.
+  const config = await (await fetch("/__/firebase/init.json")).json();
+  const app = initializeApp(config);
+  const auth = getAuth(app);
+  const fn = httpsCallable(getFunctions(app, "asia-northeast3"), "deleteAccount");
+
+  document.getElementById("signin").onclick = async () => {
+    try {
+      const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
+      status.textContent = `${user.email} 로그인됨 · signed in`;
+      del.disabled = false;
+    } catch (e) { status.textContent = "로그인 실패 · Sign-in failed"; }
+  };
+  del.onclick = async () => {
+    if (!confirm("정말 삭제할까요? 되돌릴 수 없습니다. · Delete permanently? This cannot be undone.")) return;
+    del.disabled = true;
+    try {
+      await fn();
+      status.textContent = "삭제되었습니다 · Your account has been deleted.";
+      await auth.signOut();
+    } catch (e) { status.textContent = "삭제 실패, 이메일로 요청해 주세요 · Failed — please e-mail us."; del.disabled = false; }
+  };
+</script>
+</body></html>
