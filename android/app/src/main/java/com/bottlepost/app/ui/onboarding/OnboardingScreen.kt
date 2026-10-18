@@ -46,7 +46,6 @@ import com.bottlepost.app.ui.common.findActivity
 import com.bottlepost.app.ui.common.genderLabel
 import com.bottlepost.app.ui.common.langLabel
 import com.bottlepost.app.ui.common.openUrl
-import com.bottlepost.app.ui.common.selfGenderLabel
 
 @Composable
 fun OnboardingScreen(container: AppContainer, onDone: () -> Unit) {
@@ -91,7 +90,7 @@ fun OnboardingScreen(container: AppContainer, onDone: () -> Unit) {
         HorizontalDivider()
 
         Section(R.string.onboarding_my_gender) {
-            ChoiceChips(listOf("M", "F"), s.gender, { stringResource(selfGenderLabel(it)) }) { g -> vm.update { it.copy(gender = g) } }
+            ChoiceChips(listOf("M", "F"), s.gender, { stringResource(genderLabel(it)) }) { g -> vm.update { it.copy(gender = g) } }
         }
         Section(R.string.onboarding_birth_year) {
             OutlinedTextField(

@@ -130,7 +130,7 @@
     <string name="delete_active_body">상대방은 아직 이 대화에 남아 있어요. 삭제하면 대화에서도 나가게 되고, 상대방에게 퇴장한 것으로 표시돼요. 그래도 삭제할까요?</string>
     <string name="delete_done">대화를 삭제했어요.</string>
     <string name="partner_left">상대방이 대화에서 나갔어요.</string>
-    <string name="waiting_reply">상대방의 편지가 도착하길 기다리고 있어요.</string>
+    <string name="waiting_reply">상대방의 편지가 도착하길 기다리고 있습니다.</string>
     <string name="waiting_reply_hint">내 편지를 담은 병이 바다를 건너는 중이에요. 기다리는 동안 지난 편지를 스크롤해서 다시 읽어 볼 수 있어요.</string>
     <string name="error_wait_for_reply">상대방의 답장이 온 뒤에 다시 편지를 쓸 수 있어요.</string>
     <string name="letter_launched">편지를 담은 병을 바다에 띄웠어요. 답장이 오면 인연 탭에 나타나요.</string>
@@ -145,6 +145,4 @@
     <string name="restore_confirm_title">백업에서 복원할까요?</string>
     <string name="restore_confirm_body">이 휴대폰의 대화가 백업 내용으로 바뀌어요. 마지막 백업 이후에 받은 편지는 사라져요.</string>
     <string name="error_profile_required">계정이 더 이상 없어요. 처음부터 다시 시작해 주세요.</string>
-    <string name="gender_self_male">남성</string>
-    <string name="gender_self_female">여성</string>
 </resources>

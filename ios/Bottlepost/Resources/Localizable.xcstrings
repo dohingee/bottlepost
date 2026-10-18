@@ -1468,13 +1468,13 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Anda tidak akan lagi menerima surat dari orang ini dan percakapan akan ditutup. Orang tersebut tidak diberi tahu siapa yang memblokir."
+            "value": "Anda tidak akan lagi menerima surat dari orang ini dan percakapan akan ditutup. Mereka tidak diberi tahu siapa yang memblokir."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bạn sẽ không nhận thư từ người này nữa và cuộc trò chuyện sẽ đóng lại. Người kia sẽ không biết ai đã chặn."
+            "value": "Bạn sẽ không nhận thư từ người này nữa và cuộc trò chuyện sẽ đóng lại. Họ sẽ không biết ai đã chặn."
           }
         },
         "th": {
@@ -1627,7 +1627,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Untuk orang asing,\n\nCeritakan hari Anda, sebuah pikiran, atau pertanyaan…"
+            "value": "Untuk orang asing,\n\nCeritakan harimu, sebuah pikiran, atau pertanyaan…"
           }
         },
         "vi": {
@@ -1998,13 +1998,13 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Orang tersebut belum keluar dari percakapan ini. Menghapusnya juga membuat Anda keluar, dan dia akan melihat bahwa Anda keluar. Tetap hapus?"
+            "value": "Orang tersebut belum keluar dari percakapan ini. Menghapusnya juga membuatmu keluar, dan dia akan melihat bahwa kamu keluar. Tetap hapus?"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Người kia chưa rời cuộc trò chuyện này. Xóa cũng khiến bạn rời đi và người kia sẽ thấy bạn đã rời. Vẫn xóa?"
+            "value": "Người kia chưa rời cuộc trò chuyện này. Xóa cũng khiến bạn rời đi và họ sẽ thấy bạn đã rời. Vẫn xóa?"
           }
         },
         "th": {
@@ -2086,7 +2086,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバー上のプロフィール、会話のつながり、未配達の手紙が削除され、このスマホの手紙も消去されます。元に戻せません。"
+            "value": "サーバー上のプロフィール、会話のつながり、未配達の手紙が削除され、この端末の手紙も消去されます。元に戻せません。"
           }
         },
         "es": {
@@ -2881,7 +2881,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このスマホにGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。"
+            "value": "この端末にGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。"
           }
         },
         "es": {
@@ -3005,7 +3005,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Akun Anda sudah tidak ada. Silakan mulai lagi."
+            "value": "Akunmu sudah tidak ada. Silakan mulai lagi."
           }
         },
         "vi": {
@@ -3435,7 +3435,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hãy chờ người kia trả lời rồi mới viết tiếp."
+            "value": "Hãy chờ họ trả lời rồi mới viết tiếp."
           }
         },
         "th": {
@@ -3583,112 +3583,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homens"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laki-laki"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nam"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ผู้ชาย"
-          }
-        }
-      }
-    },
-    "gender_self_female": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Woman"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "여성"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "女性"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mujer"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mulher"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Perempuan"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nữ"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ผู้หญิง"
-          }
-        }
-      }
-    },
-    "gender_self_male": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Man"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "남성"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "男性"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hombre"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homem"
           }
         },
         "id": {
@@ -4171,7 +4065,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Orang tersebut akan melihat bahwa Anda keluar, dan surat tidak bisa dikirim lagi di sini. Surat tetap tersimpan di ponsel Anda sampai Anda menghapusnya."
+            "value": "Orang tersebut akan melihat bahwa kamu keluar, dan surat tidak bisa dikirim lagi di sini. Surat tetap tersimpan di ponselmu sampai kamu menghapusnya."
           }
         },
         "vi": {
@@ -4224,7 +4118,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Anda keluar dari percakapan."
+            "value": "Kamu keluar dari percakapan."
           }
         },
         "vi": {
@@ -4383,13 +4277,13 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dia"
+            "value": "Mereka"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Người kia"
+            "value": "Họ"
           }
         },
         "th": {
@@ -4436,7 +4330,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Botol Anda sudah berlayar. Saat ada yang membalas, percakapan muncul di Koneksi."
+            "value": "Botolmu sudah berlayar. Saat ada yang membalas, percakapan muncul di Koneksi."
           }
         },
         "vi": {
@@ -5266,7 +5160,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "登録は不要です。手紙はサーバーに保存しません。届いた時点でサーバーから削除され、スマホにのみ残ります。"
+            "value": "登録は不要です。手紙はサーバーに保存しません。届いた時点でサーバーから削除され、端末にのみ残ります。"
           }
         },
         "es": {
@@ -7510,7 +7404,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Giliran Anda menulis"
+            "value": "Giliranmu menulis"
           }
         },
         "vi": {
@@ -7604,19 +7498,19 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y las personas con las que hablas verán que saliste. Si esa cuenta de Google tiene una copia de seguridad, se restaurarán sus conversaciones. ¿Cambiar?"
+            "value": "Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y tus contactos verán que saliste. Si esa cuenta de Google tiene una copia de seguridad, se restaurarán sus conversaciones. ¿Cambiar?"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ao trocar, a conta que você usa agora é excluída, junto com as conversas neste celular, e as pessoas com quem você conversa verão que você saiu. Se essa conta Google tiver um backup, as conversas serão restauradas. Trocar?"
+            "value": "Ao trocar, a conta que você usa agora é excluída, junto com as conversas neste celular, e seus contatos verão que você saiu. Se essa conta Google tiver um backup, as conversas dele serão restauradas. Trocar?"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Beralih akan menghapus akun yang Anda pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicara Anda akan melihat Anda keluar. Jika akun Google itu punya cadangan, percakapannya akan dipulihkan. Beralih?"
+            "value": "Beralih akan menghapus akun yang kamu pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicaramu akan melihat kamu keluar. Jika akun Google itu punya cadangan, percakapannya akan dipulihkan. Beralih?"
           }
         },
         "vi": {
@@ -7757,7 +7651,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "受信箱"
+            "value": "受信"
           }
         },
         "es": {
@@ -8122,7 +8016,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "상대방의 편지가 도착하길 기다리고 있어요."
+            "value": "상대방의 편지가 도착하길 기다리고 있습니다."
           }
         },
         "ja": {
@@ -8199,7 +8093,7 @@
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Botol Anda sedang dalam perjalanan. Sambil menunggu, gulir untuk membaca ulang surat Anda."
+            "value": "Botolmu sedang dalam perjalanan. Sambil menunggu, gulir untuk membaca ulang suratmu."
           }
         },
         "vi": {

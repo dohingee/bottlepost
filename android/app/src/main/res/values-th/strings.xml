@@ -145,6 +145,4 @@
     <string name="restore_confirm_title">กู้คืนจากข้อมูลสำรองไหม</string>
     <string name="restore_confirm_body">บทสนทนาในโทรศัพท์เครื่องนี้จะถูกแทนที่ด้วยข้อมูลสำรอง จดหมายที่ได้รับหลังการสำรองครั้งล่าสุดจะหายไป</string>
     <string name="error_profile_required">ไม่พบบัญชีของคุณแล้ว โปรดเริ่มใหม่</string>
-    <string name="gender_self_male">ผู้ชาย</string>
-    <string name="gender_self_female">ผู้หญิง</string>
 </resources>

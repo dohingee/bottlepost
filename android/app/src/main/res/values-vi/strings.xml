@@ -22,7 +22,7 @@
     <string name="backup_never">Chưa sao lưu</string>
     <string name="backup_none">Không tìm thấy bản sao lưu trong tài khoản Google này.</string>
     <string name="backup_restored">Đã khôi phục cuộc trò chuyện.</string>
-    <string name="block_body">Bạn sẽ không nhận thư từ người này nữa và cuộc trò chuyện sẽ đóng lại. Người kia sẽ không biết ai đã chặn.</string>
+    <string name="block_body">Bạn sẽ không nhận thư từ người này nữa và cuộc trò chuyện sẽ đóng lại. Họ sẽ không biết ai đã chặn.</string>
     <string name="block_done">Đã chặn.</string>
     <string name="block_title">Chặn người này?</string>
     <string name="compose_placeholder">Gửi người lạ,\n\nHãy kể về ngày của bạn, một suy nghĩ, một câu hỏi…</string>
@@ -55,7 +55,7 @@
     <string name="gender_female">Nữ</string>
     <string name="gender_male">Nam</string>
     <string name="letter_from_me">Tôi</string>
-    <string name="letter_from_them">Người kia</string>
+    <string name="letter_from_them">Họ</string>
     <string name="notification_body">Mở Bottlepost để đọc.</string>
     <string name="notification_channel_letters">Thư</string>
     <string name="notification_letter_title">Một lá thư vừa trôi đến</string>
@@ -127,12 +127,12 @@
     <string name="delete_thread_title">Xóa cuộc trò chuyện này?</string>
     <string name="delete_thread_body">Các lá thư sẽ bị xóa khỏi điện thoại này và không thể khôi phục.</string>
     <string name="delete_active_title">Người kia vẫn còn ở đây</string>
-    <string name="delete_active_body">Người kia chưa rời cuộc trò chuyện này. Xóa cũng khiến bạn rời đi và người kia sẽ thấy bạn đã rời. Vẫn xóa?</string>
+    <string name="delete_active_body">Người kia chưa rời cuộc trò chuyện này. Xóa cũng khiến bạn rời đi và họ sẽ thấy bạn đã rời. Vẫn xóa?</string>
     <string name="delete_done">Đã xóa cuộc trò chuyện.</string>
     <string name="partner_left">Người kia đã rời cuộc trò chuyện này.</string>
     <string name="waiting_reply">Đang chờ thư của người kia đến.</string>
     <string name="waiting_reply_hint">Chai thư của bạn đang trên đường đi. Trong lúc chờ, hãy cuộn để đọc lại thư.</string>
-    <string name="error_wait_for_reply">Hãy chờ người kia trả lời rồi mới viết tiếp.</string>
+    <string name="error_wait_for_reply">Hãy chờ họ trả lời rồi mới viết tiếp.</string>
     <string name="letter_launched">Chai thư đã được thả ra biển. Khi có người trả lời, nó sẽ xuất hiện trong Kết nối.</string>
     <string name="status_waiting">Đang chờ hồi âm</string>
     <string name="status_new_letter">Có thư mới đến</string>
@@ -145,6 +145,4 @@
     <string name="restore_confirm_title">Khôi phục từ bản sao lưu?</string>
     <string name="restore_confirm_body">Các cuộc trò chuyện trên điện thoại này sẽ được thay bằng bản sao lưu. Thư nhận sau lần sao lưu cuối sẽ bị mất.</string>
     <string name="error_profile_required">Tài khoản của bạn không còn tồn tại. Hãy bắt đầu lại.</string>
-    <string name="gender_self_male">Nam</string>
-    <string name="gender_self_female">Nữ</string>
 </resources>

@@ -32,7 +32,7 @@
     <string name="compose_sending">送信中…</string>
     <string name="compose_title">新しい手紙</string>
     <string name="compose_to">宛先</string>
-    <string name="delete_body">サーバー上のプロフィール、会話のつながり、未配達の手紙が削除され、このスマホの手紙も消去されます。元に戻せません。</string>
+    <string name="delete_body">サーバー上のプロフィール、会話のつながり、未配達の手紙が削除され、この端末の手紙も消去されます。元に戻せません。</string>
     <string name="delete_title">アカウントを削除しますか？</string>
     <string name="empty_connections">見知らぬ誰かと手紙を交わすと、ここに表示されます。</string>
     <string name="empty_inbox">まだ手紙はありません。見知らぬ誰かの手紙がここに流れ着きます。</string>
@@ -71,7 +71,7 @@
     <string name="onboarding_my_gender">私の性別</string>
     <string name="onboarding_nickname">ニックネーム（任意）</string>
     <string name="onboarding_nickname_hint">手紙の最後に署名として表示されます</string>
-    <string name="onboarding_privacy_note">登録は不要です。手紙はサーバーに保存しません。届いた時点でサーバーから削除され、スマホにのみ残ります。</string>
+    <string name="onboarding_privacy_note">登録は不要です。手紙はサーバーに保存しません。届いた時点でサーバーから削除され、端末にのみ残ります。</string>
     <string name="onboarding_receive_from">最初の手紙を受け取りたい相手</string>
     <string name="onboarding_restore_google">以前使っていました — Googleで復元</string>
     <string name="onboarding_start">はじめる</string>
@@ -107,7 +107,7 @@
     <string name="status_suspended_until">%1$sまでアカウントは停止されています。</string>
     <string name="stranger">見知らぬ誰か</string>
     <string name="tab_connections">つながり</string>
-    <string name="tab_inbox">受信箱</string>
+    <string name="tab_inbox">受信</string>
     <string name="tab_settings">設定</string>
     <string name="thread_closed">この会話は終了しました。</string>
     <string name="translate_failed">翻訳できませんでした。初回は言語パックのダウンロードが必要です。接続を確認してください。</string>
@@ -115,7 +115,7 @@
     <string name="translate_same_language">すでにあなたの言語です。</string>
     <string name="translate_unsupported">この言語はまだ翻訳できません。</string>
     <string name="error_service_paused">新しい手紙の送信を一時停止しています。進行中の会話は引き続き読んだり返事したりできます。</string>
-    <string name="error_no_google_account">このスマホにGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。</string>
+    <string name="error_no_google_account">この端末にGoogleアカウントがありません。設定 > アカウントで追加してからもう一度お試しください。</string>
     <string name="app_name">ボトルポスト</string>
     <string name="splash_tagline">どこかの誰かへ流す、ボトルの手紙</string>
     <string name="action_leave">退出</string>
@@ -145,6 +145,4 @@
     <string name="restore_confirm_title">バックアップから復元しますか？</string>
     <string name="restore_confirm_body">このスマホの会話がバックアップの内容に置き換わります。最後のバックアップ以降に届いた手紙は失われます。</string>
     <string name="error_profile_required">アカウントが見つかりません。最初からやり直してください。</string>
-    <string name="gender_self_male">男性</string>
-    <string name="gender_self_female">女性</string>
 </resources>
