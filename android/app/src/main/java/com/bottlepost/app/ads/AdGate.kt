@@ -20,9 +20,13 @@ interface AdGate {
     val privacyOptionsRequired: StateFlow<Boolean>
 
     fun showPrivacyOptions(activity: Activity) {}
+
+    /** True once ads may be requested (consent given, ads switched on); the main screen then shows its banner. */
+    val bannersAllowed: StateFlow<Boolean>
 }
 
 object NoOpAdGate : AdGate {
     override suspend fun beforeSend(activity: Activity) = Unit
     override val privacyOptionsRequired: StateFlow<Boolean> = MutableStateFlow(false)
+    override val bannersAllowed: StateFlow<Boolean> = MutableStateFlow(false)
 }

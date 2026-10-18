@@ -25,7 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 
 /**
- * Interstitial shown after the user taps Send, before the letter leaves. Rules (also in
+ * Interstitial shown after the user taps Send, before the letter leaves (plus the main screen's
+ * bottom banner, [AdBanner], which follows the same consent and switch). Rules (also in
  * .claude/skills/enable-admob): consent first (UMP), never on launch/exit or while reading,
  * reporting or deleting, frequency-capped, and never blocks sending — no ad within 2 s means no ad.
  *
@@ -43,6 +44,9 @@ class AdMobAdGate(context: Context) : AdGate {
 
     private val _privacyOptionsRequired = MutableStateFlow(false)
     override val privacyOptionsRequired: StateFlow<Boolean> = _privacyOptionsRequired
+
+    private val _bannersAllowed = MutableStateFlow(false)
+    override val bannersAllowed: StateFlow<Boolean> = _bannersAllowed
 
     init {
         remote.setDefaultsAsync(
@@ -100,7 +104,10 @@ class AdMobAdGate(context: Context) : AdGate {
 
     private fun initAds() {
         if (!initialized.compareAndSet(false, true)) return
-        MobileAds.initialize(app) { preload() }
+        MobileAds.initialize(app) {
+            preload()
+            _bannersAllowed.value = BuildConfig.ADMOB_BANNER.isNotEmpty()
+        }
     }
 
     private fun preload() {

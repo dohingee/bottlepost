@@ -16,7 +16,7 @@
 
 **Processors.** Google (Firebase/Google Cloud: hosting, auth, push, crash reporting, integrity); OpenAI (Moderation API, **only for reported letters**); Google AdMob (showing and measuring ads, ad fraud prevention). Data may be processed in the United States.
 
-**Ads.** An interstitial ad may appear occasionally when you send a letter (at least 3 minutes apart, with a daily cap). Letter content is never used for ads. Where consent is required (EEA, UK, Switzerland and similar), we ask before showing ads; change your choice any time in Settings › Ad privacy settings. Reset or delete your advertising ID in your phone's Settings › Google › Ads. How Google uses data: https://policies.google.com/technologies/partner-sites
+**Ads.** An interstitial ad may appear occasionally when you send a letter (at least 3 minutes apart, with a daily cap), and a banner ad is shown at the bottom of the main screen (not while reading or writing letters). Letter content is never used for ads. Where consent is required (EEA, UK, Switzerland and similar), we ask before showing ads; change your choice any time in Settings › Ad privacy settings. Reset or delete your advertising ID in your phone's Settings › Google › Ads. How Google uses data: https://policies.google.com/technologies/partner-sites
 
 **Your rights.** Edit your profile in Settings. Delete your account in Settings › Delete account or at https://bottlepost.web.app/delete-account. Other requests: kimyeoware@gmail.com.
 

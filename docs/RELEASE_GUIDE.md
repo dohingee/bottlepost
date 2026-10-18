@@ -172,6 +172,7 @@ Play Console → **앱 만들기**:
    - 끄려면 `false`로 바꿔 게시합니다.
    - 간격·상한은 `ads_interstitial_min_interval_sec`(기본 180), `ads_skip_first_letters`(기본 1), `ads_max_per_day`(기본 5)로 조절합니다.
 3. 그 전까지 출시 앱에는 광고가 나오지 않습니다. 디버그 앱(Android Studio 실행)은 항상 Google **테스트 광고**만 보여 줍니다.
+4. 같은 스위치가 편지 보내기 전 전면광고와 메인 화면 하단 배너를 함께 켜고 끕니다.
 
 ---
 

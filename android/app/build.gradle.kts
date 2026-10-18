@@ -42,10 +42,13 @@ android {
         debug {
             manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
             buildConfigField("String", "ADMOB_INTERSTITIAL", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "ADMOB_BANNER", "\"ca-app-pub-3940256099942544/9214589741\"")
         }
         release {
             manifestPlaceholders["admobAppId"] = "ca-app-pub-7472495816861016~6125650483"
             buildConfigField("String", "ADMOB_INTERSTITIAL", "\"ca-app-pub-7472495816861016/7063327631\"")
+            // Empty until the banner ad unit exists in AdMob; no banner is shown while empty.
+            buildConfigField("String", "ADMOB_BANNER", "\"\"")
             isMinifyEnabled = true
             if (uploadKeystore != null) signingConfig = signingConfigs.getByName("upload")
             isShrinkResources = true

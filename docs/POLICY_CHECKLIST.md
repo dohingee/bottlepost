@@ -59,6 +59,8 @@
 
 ## G. 광고 (AdMob, `ads/AdMobAdGate.kt`)
 - [x] `AdMobAdGate` 연결. 디버그 빌드는 Google 테스트 광고 ID만 사용
+- [x] 하단 배너(`ads/AdBanner.kt`): 메인 화면에만, 탭 막대 아래 구분선으로 분리. 편지 읽기·쓰기 화면에는 없음
+- [ ] 배너 광고 단위 ID를 release `ADMOB_BANNER`에 입력 (비어 있으면 배너 미표시)
 - [ ] 출시 빌드 광고는 Remote Config `ads_enabled`(기본 false). AdMob 앱 검토 승인 후 Firebase 콘솔에서 true
 - [ ] Play Console > 앱 콘텐츠 > 광고: "예, 광고가 있습니다"
 - [ ] AdMob 차단 관리: 광고 콘텐츠 등급 최대 T/PG, 데이트·성인·도박 카테고리 차단

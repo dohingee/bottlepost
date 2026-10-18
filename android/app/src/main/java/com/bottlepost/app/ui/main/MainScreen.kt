@@ -2,23 +2,25 @@ package com.bottlepost.app.ui.main
 
 import android.Manifest
 import android.os.Build
+import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,9 +35,11 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
@@ -67,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bottlepost.app.AppContainer
 import com.bottlepost.app.R
+import com.bottlepost.app.ads.AdBanner
 import com.bottlepost.app.data.local.ThreadEntity
 import com.bottlepost.app.data.local.connected
 import com.bottlepost.app.ui.common.AirmailStripe
@@ -145,7 +150,18 @@ fun MainScreen(
             })
         },
         bottomBar = {
-            MainNavBar(tabIndex, Tab.entries.map { t -> threads.filter { t.matches(it) }.sumOf { it.unread } }) { tabIndex = it }
+            val banner by container.adGate.bannersAllowed.collectAsStateWithLifecycle()
+            val unread = Tab.entries.map { t -> threads.filter { t.matches(it) }.sumOf { it.unread } }
+            if (!banner) {
+                MainNavBar(tabIndex, unread) { tabIndex = it }
+            } else {
+                // Banner under the tabs, separated by a rule so it never reads as a tab button.
+                Column(Modifier.background(Sea.Night)) {
+                    MainNavBar(tabIndex, unread, windowInsets = WindowInsets(0)) { tabIndex = it }
+                    HorizontalDivider(color = Sea.Paper.copy(alpha = 0.15f))
+                    AdBanner(Modifier.padding(top = 4.dp).navigationBarsPadding())
+                }
+            }
         },
         floatingActionButton = { if (tab != Tab.Settings && profile?.status == "active") WriteLetterFab(onCompose) },
     ) { padding ->
@@ -183,8 +199,13 @@ fun MainScreen(
 }
 
 @Composable
-internal fun MainNavBar(selected: Int, unread: List<Int>, onSelect: (Int) -> Unit) {
-    NavigationBar(containerColor = Sea.Night, contentColor = Sea.Paper) {
+internal fun MainNavBar(
+    selected: Int,
+    unread: List<Int>,
+    windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
+    onSelect: (Int) -> Unit,
+) {
+    NavigationBar(containerColor = Sea.Night, contentColor = Sea.Paper, windowInsets = windowInsets) {
         Tab.entries.forEachIndexed { i, t ->
             val count = unread.getOrElse(i) { 0 }
             NavigationBarItem(
