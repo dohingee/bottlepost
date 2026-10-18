@@ -57,7 +57,7 @@ private struct ProfileCard: View {
         PaperSheet(tinted: true) {
             Text(L("settings_profile"))
                 .font(.system(.headline, design: .serif))
-            Text(L("settings_my_gender", genderLabel(profile.gender)) + " · \(profile.birthYear)")
+            Text(L("settings_my_gender", selfGenderLabel(profile.gender)) + " · \(profile.birthYear)")
             if !profile.nickname.isEmpty {
                 Text(profile.nickname)
             }
@@ -76,6 +76,11 @@ private struct ProfileCard: View {
         }
         return L("status_suspended_review")
     }
+}
+
+/** Singular form for the user's own gender; [genderLabel] is the plural recipient choice. */
+func selfGenderLabel(_ code: String) -> String {
+    L(code == "M" ? "gender_self_male" : "gender_self_female")
 }
 
 func genderLabel(_ code: String) -> String {
