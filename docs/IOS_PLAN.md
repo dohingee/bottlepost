@@ -29,6 +29,7 @@
 | App Check | Debug: 디버그 공급자 / Release: **App Attest** | Play Integrity의 iOS 대응 |
 | 로컬 저장 | SwiftData | Android Room 대응. 대화는 기기에만 |
 | 번역 | **Apple Translation 프레임워크**(기기 내) | ML Kit iOS는 CocoaPods 전용. Apple 번역은 8개 언어 모두 지원하고 본문이 외부로 나가지 않음 |
+| 나이 확인 | 중립적 출생연도 입력 + 서버 재검증 + **Declared Age Range**(iOS 26+) | 추가 비용·SDK·저장 데이터 없음. 아래 "18세 이상 확인" |
 | 계정 연결 | **Sign in with Apple + Google** | 가이드라인 4.8. Google 연결로 Android↔iOS 계정 이동도 가능 |
 | 백업 | **iCloud(CloudKit 비공개 DB)** 에 AES-GCM 암호문, 키는 `getBackupKey` | Drive appDataFolder 대응. iCloud만으로도, 서버만으로도 읽을 수 없음 |
 | 푸시 | FCM + APNs 인증 키 | 서버 `push.ts` 그대로 |
@@ -39,6 +40,34 @@
 `GoogleService-Info.plist`는 커밋하지 않는다(google-services.json과 같음).
 - TestFlight 워크플로가 서비스 계정으로 Firebase에서 받는다.
 - 첫 실행이면 Firebase에 iOS 앱(`com.bottlepost.app`)을 등록한다.
+
+## 18세 이상 확인 (세 겹)
+1. **App Store 연령 등급 18+** (제출 때, M8)
+   - 설문에 사실대로 답한다: 사용자 제작 콘텐츠 "예", 메시지·채팅 "예".
+   - 계산된 등급이 18+보다 낮으면 18+로 올린다.
+   - 이 등급은 자녀 보호 기능(스크린 타임)의 설치 차단에만 쓰이고, 나이를 확인해 주지는 않는다.
+2. **앱 안의 중립적 나이 입력** (M3)
+   - 출생연도를 빈 값으로 시작한다(기본 연도를 미리 고르지 않음).
+   - 입력 전에 "18세 이상만" 같은 기준을 안내하지 않는다. "18세 이상입니다" 체크박스도 두지 않는다.
+     - Android의 안내 문구·체크박스와 다르다. iOS 화면에는 쓰지 않는다.
+   - 서버 `createProfile`이 다시 검증하고, 미만이면 `underage`를 돌려준다(Android와 공유, 이미 있음).
+   - 미만으로 막히면 그 사실을 **키체인**에 기록한다.
+     - 앱을 지웠다 다시 깔거나 다른 연도로 다시 시도해도 막힌다.
+     - 키체인은 기기 안에만 있고 서버로 보내지 않는다.
+3. **Apple Declared Age Range** (M3, iOS 26 이상 기기)
+   - 온보딩에서 18세 기준으로 나이대 공유를 요청한다.
+     - SwiftUI `requestAgeRange` 또는 `AgeRangeService`. 정확한 이름은 구현할 때 SDK로 확인한다.
+   - 결과에 따라 이렇게 처리한다.
+     - "18세 미만": 출생연도와 관계없이 차단하고 2번처럼 키체인에 기록한다.
+     - "18세 이상": 출생연도 입력으로 진행한다. 출생연도가 미만이면 여전히 차단한다.
+     - 공유 거절, iOS 18~25 기기: 출생연도만으로 판단한다.
+   - 결과는 저장하지 않고 서버로 보내지 않는다.
+     - App Privacy 답안이나 개인정보처리방침에 새로 적을 항목이 없다.
+     - 비용도 없다(Apple 기본 기능).
+   - 필요한 설정
+     - App ID에 **Declared Age Range** 기능을 켠다.
+     - 엔타이틀먼트(`com.apple.developer.declared-age-range`)를 추가한다.
+   - 미국 일부 주(텍사스·유타·루이지애나 등)의 앱스토어 연령 확인 법은 시행·소송 상황이 바뀌고 있다. 제출 직전에 다시 확인한다.
 
 ## 서버 변경이 필요한 곳 (해당 마일스톤에서 함수 테스트와 함께)
 - **Apple 연결**
@@ -57,7 +86,7 @@
 |---|---|---|
 | M1 | 앱 골격: 익명 로그인 → `getProfile`, Sea 디자인, 문자열 카탈로그, 개인정보 매니페스트, CI 빌드·테스트, TestFlight 워크플로 | **완료** (CI 시뮬레이터 빌드·단위 테스트 8개 통과) |
 | M2 | 운영자가 `IOS_RELEASE_GUIDE.md`대로 키·시크릿·App Attest·APNs를 등록 → 첫 TestFlight 업로드 → iPhone에서 `getProfile` 성공 확인 | 운영자 차례 |
-| M3 | 온보딩(성별·출생연도 18+·약관 동의) → `createProfile`<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | |
+| M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | |
 | M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | |
 | M5 | Apple Translation 번역 토글, 언어 설정 | |
 | M6 | Sign in with Apple + Google 연결·복원, iCloud 암호화 백업 (서버 변경 포함) | |
@@ -76,7 +105,7 @@
 | **5.1.1(v)** 계정 삭제 | 앱 안에서 삭제 불가 시 거절 | 설정 > 계정 삭제(서버 `deleteAccount` 이미 있음) + Apple 토큰 철회 |
 | **5.1.2** 추적 | ATT 없이 IDFA 사용 시 거절 | UMP 동의 후 ATT 요청, 거부 시 비개인화 광고 |
 | **2.1** 완성도 | 심사자가 기능을 못 써 봄 | 로그인 불필요. 심사 중엔 매칭 상대가 없을 수 있어 운영자 테스트 계정이 답장하도록 준비 |
-| 연령 등급 | 낮게 답하면 거절·삭제 | 사용자 콘텐츠·메시지 "예" → 18+ |
+| 연령 등급·나이 확인 | 낮게 답하면 거절·삭제. 나이 입력이 기준을 미리 알려 주면 "우회 유도"로 봄 | 설문 사실대로 + 18+로 상향. 중립적 출생연도 입력 + Declared Age Range + 서버 재검증 ("18세 이상 확인") |
 | 개인정보 | 라벨·매니페스트 불일치 | `POLICY_CHECKLIST.md` I절 표 = `PrivacyInfo.xcprivacy` |
 
 ### 심사 메모 초안 (App Review Information > Notes, 영어)

@@ -40,10 +40,11 @@ Mac 없이 iPhone만으로 진행합니다. 순서대로 하세요.
 3. 다음과 같이 입력합니다.
    - Description: `Bottlepost`
    - Bundle ID: **Explicit** → `com.bottlepost.app`
-4. **Capabilities**에서 아래 3개를 체크합니다.
+4. **Capabilities**에서 아래 4개를 체크합니다.
    - **App Attest**: 서버가 "진짜 보틀포스트 앱"인지 확인할 때 씁니다(Android의 Play Integrity와 같은 역할).
    - **Push Notifications**: 새 편지 알림에 씁니다.
    - **Sign in with Apple**: 계정 연결에 씁니다. 나중에 쓰지만 지금 켜 둡니다.
+   - **Declared Age Range**: iPhone에 등록된 나이대로 18세 이상인지 확인할 때 씁니다(무료). 목록에 없으면 건너뛰고 Claude에게 알려 주세요.
 5. Continue → Register를 누릅니다.
 
 > "이미 사용 중인 번들 ID"라고 나오면 Claude에게 알려 주세요.

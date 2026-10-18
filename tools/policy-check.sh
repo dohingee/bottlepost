@@ -74,6 +74,7 @@ if [ -d $IOS ]; then
   if grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml; then
     grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && ok "tracking declared in privacy manifest" || bad "ATT prompt present but NSPrivacyTracking is false"
   fi
+  grep -rq 'DeclaredAgeRange' $IOS/Bottlepost && ok "Declared Age Range check (18+)" || warn "iOS: no Declared Age Range check yet (milestone 3)"
   grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"
   grep -rq '"minor"' $IOS/Bottlepost && ok "iOS report has a minor-safety reason" || warn "iOS: report/block not implemented yet (Guideline 1.2, milestone 4)"
   grep -rqi 'google' $IOS/Bottlepost/Data 2>/dev/null && ! grep -rq 'AuthenticationServices' $IOS/Bottlepost && bad "Google sign-in without Sign in with Apple (Guideline 4.8)" || ok "Sign in with Apple rule (4.8)"
