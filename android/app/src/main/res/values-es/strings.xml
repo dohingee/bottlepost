@@ -140,9 +140,11 @@
     <string name="preview_me">Yo: %1$s</string>
     <string name="settings_ad_privacy">Privacidad de anuncios</string>
     <string name="switch_account_title">Esta cuenta de Google tiene otra cuenta de Bottlepost</string>
-    <string name="switch_account_body">Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y tus contactos verán que saliste. Si esa cuenta de Google tiene una copia de seguridad, se restaurarán sus conversaciones. ¿Cambiar?</string>
+    <string name="switch_account_body">Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y las personas con las que hablas verán que saliste. Si esa cuenta de Google tiene una copia de seguridad, se restaurarán sus conversaciones. ¿Cambiar?</string>
     <string name="action_switch_account">Cambiar</string>
     <string name="restore_confirm_title">¿Restaurar desde la copia de seguridad?</string>
     <string name="restore_confirm_body">Las conversaciones de este teléfono se reemplazarán por la copia. Las cartas recibidas después de la última copia se perderán.</string>
     <string name="error_profile_required">Tu cuenta ya no existe. Vuelve a empezar.</string>
+    <string name="gender_self_male">Hombre</string>
+    <string name="gender_self_female">Mujer</string>
 </resources>

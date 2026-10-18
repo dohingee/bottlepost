@@ -154,4 +154,6 @@
     <string name="restore_confirm_title">Restore from backup?</string>
     <string name="restore_confirm_body">Your conversations on this phone will be replaced by the backup. Letters received after the last backup will be lost.</string>
     <string name="error_profile_required">Your account no longer exists. Please start again.</string>
+    <string name="gender_self_male">Man</string>
+    <string name="gender_self_female">Woman</string>
 </resources>

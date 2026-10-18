@@ -44,6 +44,7 @@ import com.bottlepost.app.ui.common.findActivity
 import com.bottlepost.app.ui.common.genderLabel
 import com.bottlepost.app.ui.common.langLabel
 import com.bottlepost.app.ui.common.openUrl
+import com.bottlepost.app.ui.common.selfGenderLabel
 import java.text.DateFormat
 import java.util.Date
 
@@ -83,7 +84,7 @@ fun SettingsScreen(container: AppContainer, onAccountDeleted: () -> Unit) {
         ui.message?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.secondary) }
 
         Header(R.string.settings_profile)
-        Text(stringResource(R.string.settings_my_gender, stringResource(genderLabel(p.gender))) + " · " + p.birthYear)
+        Text(stringResource(R.string.settings_my_gender, stringResource(selfGenderLabel(p.gender))) + " · " + p.birthYear)
         var nickname by remember(p.nickname) { mutableStateOf(p.nickname) }
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
