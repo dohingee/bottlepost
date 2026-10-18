@@ -37,7 +37,13 @@ class AppViewModel(private val c: AppContainer) : ViewModel() {
             if (cached != null) {
                 settle(StartState.Ready)
                 c.onReady()
-                runCatching { c.profiles.refresh() }
+                // The account may have been deleted elsewhere (web deletion page, admin). Start over.
+                runCatching { c.profiles.refresh() }.onSuccess { fresh ->
+                    if (fresh == null) {
+                        c.wipeLocal()
+                        _state.value = StartState.NeedsOnboarding
+                    }
+                }
                 return@launch
             }
             runCatching {

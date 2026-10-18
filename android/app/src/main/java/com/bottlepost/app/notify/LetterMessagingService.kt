@@ -17,6 +17,8 @@ import com.bottlepost.app.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Pushes are data-only and contain no letter text. On receipt we pull the letter from the relay
@@ -33,16 +35,20 @@ class LetterMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         if (message.data["type"] != "letter") return
         val kind = message.data["kind"]
-        container.appScope.launch {
-            val uid = container.auth.uid ?: return@launch
-            runCatching { container.mail.syncOnce(uid) }
-            // "left" only updates the conversation; no notification for someone leaving.
-            if (kind != "left") show(this@LetterMessagingService, kind == "reply")
+        val uid = container.auth.uid ?: return
+        // Runs on FCM's worker thread. Finish the pickup before returning: once this returns the
+        // process may be frozen or killed, which would delay the letter until the next app open.
+        runBlocking {
+            withTimeoutOrNull(SYNC_TIMEOUT_MS) { runCatching { container.mail.syncOnce(uid) } }
         }
+        // "left" only updates the conversation; no notification for someone leaving. The letter
+        // stays on the relay if the pickup timed out, so the notification is still accurate.
+        if (kind != "left") show(this, kind == "reply")
     }
 
     companion object {
         const val CHANNEL_ID = "letters"
+        private const val SYNC_TIMEOUT_MS = 8_000L
         private const val NOTIFICATION_ID = 1
 
         fun createChannel(context: Context) {

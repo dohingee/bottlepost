@@ -65,11 +65,16 @@ android {
         buildConfig = true
     }
 
+    testOptions {
+        // Robolectric (MigrationTest) fetches its Android jars; Google's Maven Central mirror avoids rate limits.
+        unitTests.all { it.systemProperty("robolectric.dependency.repo.url", "https://maven-central.storage-download.googleapis.com/maven2") }
+    }
+
     androidResources {
         // Builds the per-app language list (Settings > Apps > Language) from values-* folders.
         generateLocaleConfig = true
         // Ship only the UI languages we translate; drops library strings for ~80 other locales.
-        localeFilters += listOf("en", "ko", "ja", "es", "pt", "in", "vi", "th")
+        localeFilters += listOf("en", "ko", "ja", "es", "pt", "pt-rBR", "in", "vi", "th")
     }
 }
 
@@ -127,4 +132,6 @@ dependencies {
     implementation(libs.serialization.json)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
 }

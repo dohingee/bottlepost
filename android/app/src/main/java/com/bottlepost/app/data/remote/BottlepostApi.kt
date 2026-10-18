@@ -37,7 +37,11 @@ class BottlepostApi(private val functions: FirebaseFunctions = FirebaseFunctions
     private suspend fun call(name: String, data: Map<String, Any?> = emptyMap()): Any? = try {
         functions.getHttpsCallable(name).call(data).await().getData()
     } catch (e: FirebaseFunctionsException) {
-        throw ApiException(e.message ?: e.code.name.lowercase(), e)
+        // Offline and timeouts surface as UNAVAILABLE / DEADLINE_EXCEEDED, or INTERNAL wrapping an IOException.
+        val offline = e.code == FirebaseFunctionsException.Code.UNAVAILABLE ||
+            e.code == FirebaseFunctionsException.Code.DEADLINE_EXCEEDED ||
+            (e.code == FirebaseFunctionsException.Code.INTERNAL && e.cause is java.io.IOException)
+        throw ApiException(if (offline) "network" else e.message ?: e.code.name.lowercase(), e)
     } catch (e: Exception) {
         throw ApiException("network", e)
     }

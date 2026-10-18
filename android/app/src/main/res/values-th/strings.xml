@@ -139,4 +139,10 @@
     <string name="status_your_turn">ถึงตาคุณเขียนแล้ว</string>
     <string name="preview_me">ฉัน: %1$s</string>
     <string name="settings_ad_privacy">ความเป็นส่วนตัวของโฆษณา</string>
+    <string name="switch_account_title">บัญชี Google นี้มีบัญชี Bottlepost อื่นอยู่แล้ว</string>
+    <string name="switch_account_body">การสลับจะลบบัญชีที่คุณใช้อยู่และบทสนทนาในโทรศัพท์เครื่องนี้ และอีกฝ่ายจะเห็นว่าคุณออกไปแล้ว หากบัญชี Google นั้นมีข้อมูลสำรอง บทสนทนาจะถูกกู้คืน สลับไหม</string>
+    <string name="action_switch_account">สลับ</string>
+    <string name="restore_confirm_title">กู้คืนจากข้อมูลสำรองไหม</string>
+    <string name="restore_confirm_body">บทสนทนาในโทรศัพท์เครื่องนี้จะถูกแทนที่ด้วยข้อมูลสำรอง จดหมายที่ได้รับหลังการสำรองครั้งล่าสุดจะหายไป</string>
+    <string name="error_profile_required">ไม่พบบัญชีของคุณแล้ว โปรดเริ่มใหม่</string>
 </resources>

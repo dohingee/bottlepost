@@ -148,4 +148,10 @@
     <string name="status_your_turn">Your turn to write</string>
     <string name="preview_me">Me: %1$s</string>
     <string name="settings_ad_privacy">Ad privacy settings</string>
+    <string name="switch_account_title">This Google account has another Bottlepost account</string>
+    <string name="switch_account_body">Switching deletes the account you are using now, including its conversations on this phone, and your partners will see that you left. If that Google account has a backup, its conversations are restored. Switch?</string>
+    <string name="action_switch_account">Switch</string>
+    <string name="restore_confirm_title">Restore from backup?</string>
+    <string name="restore_confirm_body">Your conversations on this phone will be replaced by the backup. Letters received after the last backup will be lost.</string>
+    <string name="error_profile_required">Your account no longer exists. Please start again.</string>
 </resources>

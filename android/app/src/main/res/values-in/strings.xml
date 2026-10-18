@@ -139,4 +139,10 @@
     <string name="status_your_turn">Giliranmu menulis</string>
     <string name="preview_me">Saya: %1$s</string>
     <string name="settings_ad_privacy">Privasi iklan</string>
+    <string name="switch_account_title">Akun Google ini punya akun Bottlepost lain</string>
+    <string name="switch_account_body">Beralih akan menghapus akun yang kamu pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicaramu akan melihat kamu keluar. Jika akun Google itu punya cadangan, percakapannya akan dipulihkan. Beralih?</string>
+    <string name="action_switch_account">Beralih</string>
+    <string name="restore_confirm_title">Pulihkan dari cadangan?</string>
+    <string name="restore_confirm_body">Percakapan di ponsel ini akan diganti dengan isi cadangan. Surat yang diterima setelah cadangan terakhir akan hilang.</string>
+    <string name="error_profile_required">Akunmu sudah tidak ada. Silakan mulai lagi.</string>
 </resources>

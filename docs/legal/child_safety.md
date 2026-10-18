@@ -1,6 +1,6 @@
 # Bottlepost Child Safety Standards / 아동 안전 표준
 
-> Google Play "Child Safety Standards" policy requires social and dating apps to publish this page publicly (host it at `https://<domain>/child-safety`) and register a child safety point of contact in Play Console.
+> Bottlepost's standards against child sexual abuse and exploitation (CSAE). · 아동 성적 학대·착취(CSAE) 방지를 위한 보틀포스트의 기준입니다.
 
 **English**
 

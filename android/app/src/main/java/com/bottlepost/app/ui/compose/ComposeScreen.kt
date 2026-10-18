@@ -54,6 +54,7 @@ import com.bottlepost.app.ui.common.errorMessage
 import com.bottlepost.app.ui.common.findActivity
 import com.bottlepost.app.ui.common.genderLabel
 import com.bottlepost.app.ui.theme.LetterTextStyle
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -89,11 +90,12 @@ class ComposeViewModel(private val c: AppContainer) : ViewModel() {
             // Planned ad slot: shown after the tap, before the letter leaves (see ads/AdGate.kt).
             c.adGate.beforeSend(activity)
             val lang = c.profiles.current()?.lang ?: "en"
-            runCatching { c.mail.sendFirst(s.body.trim(), s.wantGender, s.sameLanguageOnly, lang) }
-                .onSuccess { id ->
-                    c.notices.trySend(R.string.letter_launched)
-                    _state.update { it.copy(sending = false, sentThreadId = id) }
-                }
+            // In the app scope, so leaving the screen mid-send cannot drop a letter the server already took.
+            c.appScope.async {
+                runCatching { c.mail.sendFirst(s.body.trim(), s.wantGender, s.sameLanguageOnly, lang) }
+                    .onSuccess { c.notices.trySend(R.string.letter_launched) }
+            }.await()
+                .onSuccess { id -> _state.update { it.copy(sending = false, sentThreadId = id) } }
                 .onFailure { e -> _state.update { it.copy(sending = false, error = errorMessage(e)) } }
         }
     }

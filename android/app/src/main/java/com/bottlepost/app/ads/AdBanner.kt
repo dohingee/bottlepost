@@ -24,26 +24,27 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 
 /**
- * Anchored adaptive banner for the bottom of the main screen. Takes no space until an ad has
- * loaded, so a failed request never leaves an empty strip.
+ * Anchored adaptive banner for the bottom of the main screen. Keeps the banner's height while
+ * loading (the SDK does not render into a zero-height view) and collapses if no ad is available.
  */
 @Composable
 fun AdBanner(modifier: Modifier = Modifier) {
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val context = LocalContext.current
         val width = maxWidth.value.toInt()
-        var loaded by remember { mutableStateOf(false) }
+        var failed by remember { mutableStateOf(false) }
+        val size = remember(width) { AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, width) }
         val view = remember(width) {
             AdView(context).apply {
                 adUnitId = BuildConfig.ADMOB_BANNER
-                setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, width))
+                setAdSize(size)
                 adListener = object : AdListener() {
                     override fun onAdLoaded() {
-                        loaded = true
+                        failed = false
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        loaded = false
+                        failed = true
                     }
                 }
                 loadAd(AdRequest.Builder().build())
@@ -66,7 +67,7 @@ fun AdBanner(modifier: Modifier = Modifier) {
         }
         AndroidView(
             factory = { view },
-            modifier = if (loaded) Modifier.fillMaxWidth() else Modifier.fillMaxWidth().height(0.dp),
+            modifier = Modifier.fillMaxWidth().height(if (failed) 0.dp else size.height.dp),
         )
     }
 }

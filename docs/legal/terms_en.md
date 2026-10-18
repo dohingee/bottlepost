@@ -1,6 +1,6 @@
-# Bottlepost Terms of Service (Draft)
+# Bottlepost Terms of Service
 
-> Effective date: ____ · Draft — have it reviewed by counsel before launch. The Korean version (`terms_ko.md`) prevails in case of conflict.
+> Effective date: October 18, 2026 · If this translation and the [Korean version](https://bottlepost.web.app/terms) differ, the Korean version prevails.
 
 1. **Purpose.** These Terms govern your use of the Bottlepost mobile app ("Service") operated by Dohyeong Kim ("we").
 2. **Eligibility.** You must be **18 or older**. Accounts found to belong to minors are removed. Users permanently banned may not create new accounts.

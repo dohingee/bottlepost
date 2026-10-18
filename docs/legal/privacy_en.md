@@ -1,6 +1,6 @@
-# Bottlepost Privacy Policy (Draft)
+# Bottlepost Privacy Policy
 
-> Draft. The Korean version (`privacy_ko.md`) has the full retention table and prevails in case of conflict.
+> Effective date: October 18, 2026 · The [Korean version](https://bottlepost.web.app/privacy) has the full retention table and prevails in case of conflict.
 
 **What we collect**
 - Required: gender, birth year (to confirm you are 18+), app language/country, preferred recipient gender.

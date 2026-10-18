@@ -1,6 +1,7 @@
 import { HttpsError, type CallableOptions, type CallableRequest } from "firebase-functions/https";
 import { Timestamp } from "firebase-admin/firestore";
-import { ENFORCE_APP_CHECK, LETTER_HMAC_KEY, REGION } from "./config";
+import { ENFORCE_APP_CHECK, REGION } from "./config";
+import { LETTER_HMAC_KEY } from "./secrets";
 import { col } from "./db";
 import type { UserDoc } from "./types";
 

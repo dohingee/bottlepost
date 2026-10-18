@@ -4,6 +4,7 @@
  *   npm run test:emulator
  */
 import { beforeAll, describe, expect, it } from "vitest";
+import { Timestamp } from "firebase-admin/firestore";
 
 process.env.LETTER_HMAC_KEY = "emulator-test-key";
 process.env.OPENAI_API_KEY = "disabled";
@@ -44,7 +45,7 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     for (const c of cols) await db.recursiveDelete(db.collection(c));
   });
 
-  const A = "alice-uid", B = "bob-uid", C = "carol-uid", D = "dan-uid", E = "eve-uid", KID = "kid-uid";
+  const A = "alice-uid", B = "bob-uid", C = "carol-uid", D = "dan-uid", E = "eve-uid", F = "fumi-uid", G = "gin-uid", KID = "kid-uid";
   let threadId = "";
   let first: Record<string, any>;
   let reply: Record<string, any>;
@@ -156,5 +157,28 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     await call("leaveThread", E, { threadId: sent.threadId });
     expect(await pickup(D)).toHaveLength(0);
     expect((await db.doc(`users/${E}`).get()).get("pendingInbox")).toBe(0);
+  });
+
+  it("lets a stalled turn reopen after the delivery TTL, and tells partners when an account is deleted", async () => {
+    await call("createProfile", F, { gender: "M", birthYear: 1990, lang: "ja", acceptedTerms: true });
+    await call("createProfile", G, { gender: "F", birthYear: 1991, lang: "ja", acceptedTerms: true });
+    const sent = await call("sendLetter", F, { body: "海の向こうの誰かへ、はじめての手紙です", wantGender: "F", sameLanguageOnly: true });
+    expect(await pickup(G)).toHaveLength(1);
+    await call("replyLetter", G, { threadId: sent.threadId, body: "お返事です。よろしくね。" });
+    await expectCode(call("replyLetter", G, { threadId: sent.threadId, body: "もう一通書きたい" }), "wait_for_reply");
+
+    // G's reply never reached F and expired: after the TTL either side may write again.
+    const eightDaysAgo = Timestamp.fromMillis(Date.now() - 8 * 86_400_000);
+    await db.doc(`threads/${sent.threadId}`).update({ lastAt: eightDaysAgo });
+    await call("replyLetter", G, { threadId: sent.threadId, body: "届いていますか?もう一度書きます" });
+    await pickup(F);
+
+    await call("deleteAccount", F);
+    const notices = await pickup(G);
+    expect(notices.map((n) => n.kind)).toEqual(["left"]);
+    const thread = (await db.doc(`threads/${sent.threadId}`).get()).data()!;
+    expect(thread.closed).toBe(true);
+    expect(thread.participants).not.toContain(F);
+    expect(JSON.stringify(thread)).not.toContain(F);
   });
 });

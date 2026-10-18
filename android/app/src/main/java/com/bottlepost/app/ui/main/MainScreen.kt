@@ -1,6 +1,7 @@
 package com.bottlepost.app.ui.main
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -68,11 +69,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bottlepost.app.AppContainer
 import com.bottlepost.app.R
 import com.bottlepost.app.ads.AdBanner
 import com.bottlepost.app.data.local.ThreadEntity
+import com.bottlepost.app.data.local.awaitingReply
 import com.bottlepost.app.data.local.connected
 import com.bottlepost.app.ui.common.AirmailStripe
 import com.bottlepost.app.ui.common.EmptyBottle
@@ -128,8 +131,14 @@ fun MainScreen(
     var deleting by remember { mutableStateOf<ThreadEntity?>(null) }
 
     val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    var askedNotifications by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Once per app session, not every time the user comes back from a conversation.
+        if (askedNotifications) return@LaunchedEffect
+        askedNotifications = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
@@ -318,7 +327,7 @@ private fun ThreadStatus(t: ThreadEntity) {
     val (text, color, icon) = when {
         t.partnerLeft -> Triple(R.string.partner_left, Sea.Wax, null)
         t.closed -> Triple(R.string.thread_closed, Sea.Wax, null)
-        t.lastOutgoing -> Triple(R.string.status_waiting, Sea.Teal, R.drawable.ic_notification)
+        t.awaitingReply() -> Triple(R.string.status_waiting, Sea.Teal, R.drawable.ic_notification)
         t.unread > 0 -> Triple(R.string.status_new_letter, Sea.Wax, null)
         else -> Triple(R.string.status_your_turn, Sea.Deep, null)
     }

@@ -1,10 +1,10 @@
-import { onCall } from "firebase-functions/https";
+import { HttpsError, onCall } from "firebase-functions/https";
 import { onSchedule } from "firebase-functions/scheduler";
 import { logger } from "firebase-functions";
 import { Timestamp } from "firebase-admin/firestore";
 import { REGION } from "./config";
 import { callableOpts, requireUid } from "./common";
-import { col, db } from "./db";
+import { auth, col, db } from "./db";
 import { deleteUserData } from "./accountData";
 
 /**
@@ -13,6 +13,12 @@ import { deleteUserData } from "./accountData";
  */
 export const deleteAccount = onCall({ ...callableOpts, enforceAppCheck: false }, async (req) => {
   const uid = requireUid(req);
+  // Web page: signing in with a Google account that was never linked in the app creates a new, empty
+  // Firebase user. Remove that stray sign-in and say so, instead of "deleting" nothing.
+  if (req.data?.fromWeb === true && !(await col.users().doc(uid).get()).exists) {
+    await auth.deleteUser(uid).catch(() => undefined);
+    throw new HttpsError("not-found", "no_account");
+  }
   await deleteUserData(uid);
   return { ok: true };
 });

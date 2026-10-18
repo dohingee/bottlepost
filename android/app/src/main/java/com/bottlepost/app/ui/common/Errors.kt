@@ -24,6 +24,9 @@ fun errorMessage(t: Throwable): Int = when ((t as? ApiException)?.code) {
     "appeal_pending" -> R.string.error_appeal_pending
     "google_link_required" -> R.string.error_google_required
     "no_google_account" -> R.string.error_no_google_account
+    "profile_required" -> R.string.error_profile_required
+    "google_not_linked", "email_unverified" -> R.string.error_google_required
+    "thread_not_found", "not_a_participant" -> R.string.error_thread_closed
     "network" -> R.string.error_network
     else -> R.string.error_generic
 }

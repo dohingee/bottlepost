@@ -93,7 +93,7 @@ class OnboardingViewModel(private val c: AppContainer) : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 c.auth.ensureSignedIn()
-                c.auth.connectGoogle(activity, discardCurrent = { c.api.deleteAccount() })
+                c.auth.connectGoogle(activity, confirmSwitch = { true }, discardCurrent = { c.api.deleteAccount() })
             }.onSuccess { result ->
                 when (result) {
                     GoogleResult.Cancelled -> _state.update { it.copy(busy = false) }

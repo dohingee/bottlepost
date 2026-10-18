@@ -139,4 +139,10 @@
     <string name="status_your_turn">내가 답장할 차례예요</string>
     <string name="preview_me">나: %1$s</string>
     <string name="settings_ad_privacy">광고 개인정보 설정</string>
+    <string name="switch_account_title">이 구글 계정에는 다른 보틀포스트 계정이 있어요</string>
+    <string name="switch_account_body">전환하면 지금 쓰는 계정과 이 휴대폰의 대화가 삭제되고, 상대방에게는 퇴장한 것으로 보여요. 그 구글 계정에 백업이 있으면 그 대화를 불러와요. 전환할까요?</string>
+    <string name="action_switch_account">전환</string>
+    <string name="restore_confirm_title">백업에서 복원할까요?</string>
+    <string name="restore_confirm_body">이 휴대폰의 대화가 백업 내용으로 바뀌어요. 마지막 백업 이후에 받은 편지는 사라져요.</string>
+    <string name="error_profile_required">계정이 더 이상 없어요. 처음부터 다시 시작해 주세요.</string>
 </resources>

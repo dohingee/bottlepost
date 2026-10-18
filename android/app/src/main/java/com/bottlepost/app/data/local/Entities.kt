@@ -34,8 +34,20 @@ data class ThreadEntity(
 /** Both sides have written: shown under "Connections". */
 val ThreadEntity.connected: Boolean get() = hasIncoming && hasOutgoing
 
-/** Letters alternate: after writing, wait for the other side (enforced by the server too). */
-fun List<LetterEntity>.awaitingReply(): Boolean = lastOrNull()?.outgoing == true
+/**
+ * Letters alternate: after writing, wait for the other side. After [TURN_TIMEOUT_MS] without a reply
+ * (the server's delivery TTL: the letter may have expired undelivered) either side may write again.
+ * Same rule as replyLetter in firebase/functions/src/letters.ts.
+ */
+fun List<LetterEntity>.awaitingReply(now: Long = System.currentTimeMillis()): Boolean =
+    lastOrNull()?.let { it.outgoing && now - it.sentAt < TURN_TIMEOUT_MS } == true
+
+/** List view of the same rule, from the thread row alone. */
+fun ThreadEntity.awaitingReply(now: Long = System.currentTimeMillis()): Boolean =
+    lastOutgoing && now - lastAt < TURN_TIMEOUT_MS
+
+/** Must match LIMITS.deliveryTtlDays in firebase/functions/src/config.ts. */
+const val TURN_TIMEOUT_MS = 7L * 24 * 60 * 60 * 1000
 
 /** One letter. [sig] is the server signature that lets a report prove the text is unaltered. */
 @Serializable

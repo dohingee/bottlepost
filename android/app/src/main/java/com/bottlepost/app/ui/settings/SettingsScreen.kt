@@ -60,6 +60,7 @@ fun SettingsScreen(container: AppContainer, onAccountDeleted: () -> Unit) {
         vm.onDriveConsent(it.data, consentForRestore)
     }
     var confirmDelete by remember { mutableStateOf(false) }
+    var confirmRestore by remember { mutableStateOf(false) }
     var showAppeal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -112,7 +113,7 @@ fun SettingsScreen(container: AppContainer, onAccountDeleted: () -> Unit) {
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = vm::backupNow, enabled = !ui.busy) { Text(stringResource(R.string.action_backup_now)) }
-                OutlinedButton(onClick = vm::restore, enabled = !ui.busy) { Text(stringResource(R.string.action_restore)) }
+                OutlinedButton(onClick = { confirmRestore = true }, enabled = !ui.busy) { Text(stringResource(R.string.action_restore)) }
             }
         } else {
             Text(stringResource(R.string.settings_google_explain), style = MaterialTheme.typography.bodyMedium)
@@ -157,6 +158,29 @@ fun SettingsScreen(container: AppContainer, onAccountDeleted: () -> Unit) {
                 }
             },
             dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.action_cancel)) } },
+        )
+    }
+    if (confirmRestore) {
+        // Restoring replaces this phone's letters; anything received since the backup is gone for good.
+        AlertDialog(
+            onDismissRequest = { confirmRestore = false },
+            title = { Text(stringResource(R.string.restore_confirm_title)) },
+            text = { Text(stringResource(R.string.restore_confirm_body)) },
+            confirmButton = { TextButton(onClick = { confirmRestore = false; vm.restore() }) { Text(stringResource(R.string.action_restore)) } },
+            dismissButton = { TextButton(onClick = { confirmRestore = false }) { Text(stringResource(R.string.action_cancel)) } },
+        )
+    }
+    if (ui.confirmSwitch) {
+        AlertDialog(
+            onDismissRequest = { vm.answerSwitch(false) },
+            title = { Text(stringResource(R.string.switch_account_title)) },
+            text = { Text(stringResource(R.string.switch_account_body)) },
+            confirmButton = {
+                TextButton(onClick = { vm.answerSwitch(true) }) {
+                    Text(stringResource(R.string.action_switch_account), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = { TextButton(onClick = { vm.answerSwitch(false) }) { Text(stringResource(R.string.action_cancel)) } },
         )
     }
     if (showAppeal) {

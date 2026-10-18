@@ -71,7 +71,10 @@ private fun AppNavHost(container: AppContainer, onAccountDeleted: () -> Unit) {
             )
         }
         composable("compose") {
-            ComposeScreen(container, onBack = { nav.popBackStack() }, onSent = { nav.popBackStack() })
+            // Pop only while compose is still on top: back during the "bottle drifts away" animation
+            // already left it, and a second pop would remove the main screen too.
+            val leaveCompose = { if (nav.currentDestination?.route == "compose") nav.popBackStack() }
+            ComposeScreen(container, onBack = { leaveCompose() }, onSent = { leaveCompose() })
         }
         composable("thread/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
             ThreadScreen(container, threadId = entry.arguments!!.getString("id")!!, onBack = { nav.popBackStack() })

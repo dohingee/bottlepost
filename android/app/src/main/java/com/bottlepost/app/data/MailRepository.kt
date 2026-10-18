@@ -61,7 +61,9 @@ class MailRepository(
     private fun deliveriesFor(uid: String) = firestore.collection("deliveries").whereEqualTo("to", uid)
 
     private suspend fun ingest(docs: List<DocumentSnapshot>) = ingestLock.withLock {
-        for (doc in docs) {
+        // Letters first: a "left" notice can arrive in the same batch as the letter that starts the
+        // thread (sender wrote, then left, while this phone was offline).
+        for (doc in docs.sortedBy { it.getString("kind") == "left" }) {
             val threadId = doc.getString("threadId") ?: continue
             if (doc.getString("kind") == "left") {
                 // The other person left: keep the history readable, close the thread.

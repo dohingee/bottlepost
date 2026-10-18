@@ -45,7 +45,8 @@ class ThreadViewModel(private val c: AppContainer, private val threadId: String)
     val ui: StateFlow<ThreadUiState> = _ui
 
     init {
-        viewModelScope.launch { c.mail.markRead(threadId) }
+        // Also on every new letter while the conversation is open, so no badge is left for letters already seen.
+        viewModelScope.launch { letters.collect { c.mail.markRead(threadId) } }
     }
 
     fun onReplyChange(text: String) = _ui.update { it.copy(reply = text.take(1000), error = null) }

@@ -2,7 +2,8 @@ import { onCall, HttpsError } from "firebase-functions/https";
 import { onDocumentCreated } from "firebase-functions/firestore";
 import { logger } from "firebase-functions";
 import { Timestamp } from "firebase-admin/firestore";
-import { LETTER_HMAC_KEY, LIMITS, OPENAI_API_KEY, REGION } from "./config";
+import { LIMITS, REGION } from "./config";
+import { LETTER_HMAC_KEY, OPENAI_API_KEY } from "./secrets";
 import { callableOpts, loadUser, requireUid } from "./common";
 import { col, daysFromNow, db } from "./db";
 import { applyAction, resolveReport } from "./enforcement";
@@ -27,7 +28,8 @@ async function block(uid: string, other: string, threadId: string) {
   const pending = await col.deliveries().where("to", "==", uid).where("threadId", "==", threadId).get();
   const batch = db.batch();
   batch.set(col.blocks(uid).doc(other), { blockedUid: other, threadId, at: Timestamp.now() });
-  batch.update(col.threads().doc(threadId), { closed: true });
+  // leftBy stops a later leaveThread from the blocked side sending the blocker a "left" notice.
+  batch.update(col.threads().doc(threadId), { closed: true, leftBy: uid });
   pending.docs.forEach((d) => batch.delete(d.ref));
   await batch.commit();
 }

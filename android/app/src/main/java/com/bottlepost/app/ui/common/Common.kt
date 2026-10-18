@@ -21,8 +21,11 @@ import com.bottlepost.app.R
 /** Public pages served by Firebase Hosting (firebase/hosting). Replace with your domain. */
 object Links {
     const val BASE = "https://bottlepost.web.app"
-    const val TERMS = "$BASE/terms"
-    const val PRIVACY = "$BASE/privacy"
+    // Korean originals; every other UI language gets the English translation.
+    private val korean
+        get() = (AppCompatDelegate.getApplicationLocales()[0] ?: java.util.Locale.getDefault()).language == "ko"
+    val TERMS get() = if (korean) "$BASE/terms" else "$BASE/terms-en"
+    val PRIVACY get() = if (korean) "$BASE/privacy" else "$BASE/privacy-en"
     const val CHILD_SAFETY = "$BASE/child-safety"
     const val SUPPORT_EMAIL = "kimyeoware@gmail.com"
 }

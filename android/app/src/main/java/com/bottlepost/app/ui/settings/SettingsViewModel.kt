@@ -13,6 +13,7 @@ import com.bottlepost.app.backup.BackupWorker
 import com.bottlepost.app.backup.DriveAccess
 import com.bottlepost.app.ui.common.applyAppLanguage
 import com.bottlepost.app.ui.common.errorMessage
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,6 +24,8 @@ import kotlinx.coroutines.launch
 data class SettingsUi(
     val busy: Boolean = false,
     @StringRes val message: Int? = null,
+    /** The chosen Google account belongs to another Bottlepost account: switching deletes this one. */
+    val confirmSwitch: Boolean = false,
 )
 
 sealed interface SettingsEvent {
@@ -55,8 +58,24 @@ class SettingsViewModel(private val c: AppContainer, private val app: android.ap
         applyAppLanguage(v)
     }
 
+    private var switchAnswer: CompletableDeferred<Boolean>? = null
+
+    fun answerSwitch(switch: Boolean) {
+        switchAnswer?.complete(switch)
+    }
+
+    private suspend fun askSwitch(): Boolean {
+        val answer = CompletableDeferred<Boolean>().also { switchAnswer = it }
+        _ui.update { it.copy(confirmSwitch = true) }
+        return try {
+            answer.await()
+        } finally {
+            _ui.update { it.copy(confirmSwitch = false) }
+        }
+    }
+
     fun linkGoogle(activity: Activity) = action {
-        when (c.auth.connectGoogle(activity, discardCurrent = { c.api.deleteAccount() })) {
+        when (c.auth.connectGoogle(activity, confirmSwitch = ::askSwitch, discardCurrent = { c.api.deleteAccount() })) {
             GoogleResult.Cancelled -> Unit
             GoogleResult.Linked -> {
                 c.profiles.confirmGoogleLink()

@@ -23,8 +23,10 @@
   <ul>
     <li>프로필(성별, 출생연도, 언어, 닉네임), 푸시 토큰, 대화 연결 정보, 전달 대기 중인 편지 — 즉시 삭제<br>
         Profile, push token, conversation links and undelivered letters — deleted immediately.</li>
-    <li>처리 중인 신고 내용은 최대 90일, 제재 기록(이메일 해시)은 최대 3년 보관 후 삭제<br>
-        Open reports are kept up to 90 days and ban records (e-mail hash) up to 3 years.</li>
+    <li>상대방의 대화 목록에는 "상대방이 나갔어요"로 표시되고, 계정 식별자는 지워집니다<br>
+        Your conversation partners see that you left; your account ID is removed from those conversations.</li>
+    <li>신고 내용은 최대 90일, 제재 기록(이메일 해시)은 최대 3년 보관 후 삭제<br>
+        Reports are kept up to 90 days and ban records (e-mail hash) up to 3 years.</li>
     <li>기기와 본인 Google Drive의 백업은 앱 삭제 또는 Drive 설정 → 앱 관리에서 직접 삭제<br>
         On-device data and your Google Drive backup: uninstall the app or remove it in Drive settings → Manage apps.</li>
   </ul>
@@ -55,10 +57,18 @@
     if (!confirm("정말 삭제할까요? 되돌릴 수 없습니다. · Delete permanently? This cannot be undone.")) return;
     del.disabled = true;
     try {
-      await fn();
+      await fn({ fromWeb: true });
       status.textContent = "삭제되었습니다 · Your account has been deleted.";
       await auth.signOut();
-    } catch (e) { status.textContent = "삭제 실패, 이메일로 요청해 주세요 · Failed — please e-mail us."; del.disabled = false; }
+    } catch (e) {
+      if (e.message === "no_account") {
+        status.textContent = "이 구글 계정에 연결된 보틀포스트 계정이 없어요. 앱에서 연결한 구글 계정으로 로그인해 주세요. · No Bottlepost account is linked to this Google account.";
+        await auth.signOut();
+      } else {
+        status.textContent = "삭제 실패, 이메일로 요청해 주세요 · Failed — please e-mail us.";
+        del.disabled = false;
+      }
+    }
   };
 </script>
 </body></html>

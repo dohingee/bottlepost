@@ -1,16 +1,6 @@
-import { defineSecret } from "firebase-functions/params";
-
+// Imported by tools/ as well: keep this file free of firebase-functions (secrets live in secrets.ts).
 /** Seoul region; change if most users are elsewhere. */
 export const REGION = "asia-northeast3";
-
-/** HMAC key that signs every letter so reports can prove a letter is genuine without the server keeping it. */
-export const LETTER_HMAC_KEY = defineSecret("LETTER_HMAC_KEY");
-
-/**
- * Optional AI classifier key. Set the secret to "disabled" to run without it: reports then use
- * rules + human review only.
- */
-export const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 
 /** App Check is enforced everywhere except the local Functions emulator (no Play Integrity there). */
 export const ENFORCE_APP_CHECK = process.env.FUNCTIONS_EMULATOR !== "true";

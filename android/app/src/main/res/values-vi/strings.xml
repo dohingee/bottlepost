@@ -139,4 +139,10 @@
     <string name="status_your_turn">Đến lượt bạn viết</string>
     <string name="preview_me">Tôi: %1$s</string>
     <string name="settings_ad_privacy">Quyền riêng tư quảng cáo</string>
+    <string name="switch_account_title">Tài khoản Google này có một tài khoản Bottlepost khác</string>
+    <string name="switch_account_body">Chuyển đổi sẽ xóa tài khoản bạn đang dùng cùng các cuộc trò chuyện trên điện thoại này, và người kia sẽ thấy bạn đã rời đi. Nếu tài khoản Google đó có bản sao lưu, các cuộc trò chuyện sẽ được khôi phục. Chuyển?</string>
+    <string name="action_switch_account">Chuyển</string>
+    <string name="restore_confirm_title">Khôi phục từ bản sao lưu?</string>
+    <string name="restore_confirm_body">Các cuộc trò chuyện trên điện thoại này sẽ được thay bằng bản sao lưu. Thư nhận sau lần sao lưu cuối sẽ bị mất.</string>
+    <string name="error_profile_required">Tài khoản của bạn không còn tồn tại. Hãy bắt đầu lại.</string>
 </resources>

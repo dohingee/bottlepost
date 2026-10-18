@@ -1,12 +1,13 @@
 import { createHash } from "node:crypto";
 import { onCall, HttpsError } from "firebase-functions/https";
 import { onDocumentDeleted } from "firebase-functions/firestore";
-import { logger } from "firebase-functions";
 import { FieldValue, Timestamp, type Query } from "firebase-admin/firestore";
 import { isPaused } from "./billing";
-import { LETTER_HMAC_KEY, LIMITS, REGION } from "./config";
+import { LIMITS, REGION } from "./config";
+import { LETTER_HMAC_KEY } from "./secrets";
 import { blockedSet, callableOpts, loadActiveUser, requireUid } from "./common";
-import { col, dayKey, daysFromNow, db, messaging } from "./db";
+import { col, dayKey, daysFromNow, db } from "./db";
+import { notify } from "./push";
 import { isEligible, pairKey, pickRecipient, type Candidate, type MatchRequest } from "./matching";
 import { preSendViolation } from "./moderation/rules";
 import { signLetter } from "./signing";
@@ -55,22 +56,6 @@ async function loadCandidates(base: Query, r: number): Promise<Candidate[]> {
     docs = docs.concat(before.docs);
   }
   return docs.map(toCandidate);
-}
-
-/** Pass knownToken when the recipient doc was already read, to save a billed read. */
-async function notify(toUid: string, kind: DeliveryDoc["kind"], knownToken?: string | null): Promise<void> {
-  const token =
-    knownToken !== undefined ? knownToken : ((await col.users().doc(toUid).get()).get("fcmToken") as string | undefined);
-  if (!token) return;
-  try {
-    // Data-only: the app builds a localized, content-free notification ("You've got a letter").
-    await messaging.send({ token, data: { type: "letter", kind }, android: { priority: "high" } });
-  } catch (err) {
-    logger.info("push failed", { code: (err as { code?: string }).code });
-    if ((err as { code?: string }).code === "messaging/registration-token-not-registered") {
-      await col.users().doc(toUid).update({ fcmToken: FieldValue.delete() });
-    }
-  }
 }
 
 function newDelivery(params: {
@@ -193,6 +178,8 @@ export const sendLetter = onCall(callableOpts, async (req) => {
   };
 });
 
+const DAY_MS = 86_400_000;
+
 /** Reply inside an existing thread. The client only knows the threadId, never the other uid. */
 export const replyLetter = onCall(callableOpts, async (req) => {
   const uid = requireUid(req);
@@ -209,8 +196,13 @@ export const replyLetter = onCall(callableOpts, async (req) => {
     const t = snap.data() as ThreadDoc;
     if (!t.participants.includes(uid)) throw new HttpsError("permission-denied", "not_a_participant");
     if (t.closed) throw new HttpsError("failed-precondition", "thread_closed");
-    // Letters alternate, like real mail: wait for the other side before writing again.
-    if (t.lastFrom === uid) throw new HttpsError("failed-precondition", "wait_for_reply");
+    // Letters alternate, like real mail: wait for the other side before writing again. After the
+    // delivery TTL the last letter may never have arrived (it expired undelivered), so either side
+    // may write again; the app applies the same rule (awaitingReply in the client's Entities.kt).
+    const lastMs = t.lastAt?.toMillis() ?? 0;
+    if (t.lastFrom === uid && Date.now() - lastMs < LIMITS.deliveryTtlDays * DAY_MS) {
+      throw new HttpsError("failed-precondition", "wait_for_reply");
+    }
     const other = t.participants[0] === uid ? t.participants[1] : t.participants[0];
 
     const counts = t.replyDay === today ? { ...t.replyCounts } : {};

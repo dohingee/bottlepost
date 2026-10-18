@@ -20,6 +20,8 @@
     { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "reportedUid", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
     { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "reportedUid", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "reports", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
     { "collectionGroup": "appeals", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] }

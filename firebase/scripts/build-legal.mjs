@@ -56,7 +56,7 @@ function render(md) {
 
 for (const [src, dest, lang] of pages) {
   const md = readFileSync(join(root, "docs", "legal", src), "utf8");
-  const title = (md.match(/^# (.*)/m)?.[1] ?? "Bottlepost").replace(/\s*\(.*\)$/, "");
+  const title = (md.match(/^# (.*)/m)?.[1] ?? "Bottlepost").replace(/\s*\([^()]*\)$/, "");
   const html = `<!doctype html>
 <html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title><link rel="stylesheet" href="/style.css"></head>

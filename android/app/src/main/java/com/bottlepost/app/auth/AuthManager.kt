@@ -38,10 +38,15 @@ class AuthManager(private val auth: FirebaseAuth = FirebaseAuth.getInstance()) {
 
     /**
      * [activityContext] must be an Activity so Credential Manager can show its bottom sheet.
-     * [discardCurrent] removes the fresh anonymous account (server data included) when the Google
-     * account turns out to belong to an earlier install.
+     * When the Google account turns out to belong to another Bottlepost account (reinstall, new
+     * phone), [confirmSwitch] decides whether to move to it; [discardCurrent] then removes the
+     * current account, server data included.
      */
-    suspend fun connectGoogle(activityContext: Context, discardCurrent: suspend () -> Unit): GoogleResult {
+    suspend fun connectGoogle(
+        activityContext: Context,
+        confirmSwitch: suspend () -> Boolean,
+        discardCurrent: suspend () -> Unit,
+    ): GoogleResult {
         val credential = try {
             googleCredential(activityContext)
         } catch (_: GetCredentialCancellationException) {
@@ -61,8 +66,9 @@ class AuthManager(private val auth: FirebaseAuth = FirebaseAuth.getInstance()) {
             current.getIdToken(true).await()
             GoogleResult.Linked
         } catch (_: FirebaseAuthUserCollisionException) {
-            // Reinstall / new phone: the Google account is attached to the old uid. The fresh anonymous
-            // user has nothing worth keeping, so delete it and continue as the old account.
+            // The Google account is attached to another uid. Switching deletes the current account,
+            // which during onboarding holds nothing yet but later may hold conversations: ask first.
+            if (!confirmSwitch()) return GoogleResult.Cancelled
             runCatching { discardCurrent() }.onFailure { runCatching { current.delete().await() } }
             auth.signInWithCredential(credential).await()
             GoogleResult.SwitchedToExisting

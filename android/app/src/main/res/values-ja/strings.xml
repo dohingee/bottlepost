@@ -139,4 +139,10 @@
     <string name="status_your_turn">あなたが返事を書く番です</string>
     <string name="preview_me">自分: %1$s</string>
     <string name="settings_ad_privacy">広告のプライバシー設定</string>
+    <string name="switch_account_title">このGoogleアカウントには別のボトルポストアカウントがあります</string>
+    <string name="switch_account_body">切り替えると、今使っているアカウントとこのスマホの会話は削除され、相手には退出したと表示されます。そのGoogleアカウントにバックアップがあれば、その会話を復元します。切り替えますか？</string>
+    <string name="action_switch_account">切り替える</string>
+    <string name="restore_confirm_title">バックアップから復元しますか？</string>
+    <string name="restore_confirm_body">このスマホの会話がバックアップの内容に置き換わります。最後のバックアップ以降に届いた手紙は失われます。</string>
+    <string name="error_profile_required">アカウントが見つかりません。最初からやり直してください。</string>
 </resources>
