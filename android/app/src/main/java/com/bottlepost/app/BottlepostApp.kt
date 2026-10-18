@@ -3,7 +3,7 @@ package com.bottlepost.app
 import android.app.Application
 import android.content.Context
 import com.bottlepost.app.ads.AdGate
-import com.bottlepost.app.ads.NoOpAdGate
+import com.bottlepost.app.ads.AdMobAdGate
 import com.bottlepost.app.auth.AuthManager
 import com.bottlepost.app.backup.BackupWorker
 import com.bottlepost.app.backup.DriveBackupManager
@@ -46,7 +46,7 @@ class AppContainer(context: Context) {
     val mail = MailRepository(db.mail(), api, FirebaseFirestore.getInstance(), appScope)
     val backup = DriveBackupManager(appContext, db.mail(), api)
     val translator = LetterTranslator()
-    val adGate: AdGate = NoOpAdGate
+    val adGate: AdGate = AdMobAdGate(appContext)
 
     /** One-off messages (string resource ids) shown as a snackbar on the main screen; buffered until it is back on screen. */
     val notices = Channel<Int>(Channel.BUFFERED)

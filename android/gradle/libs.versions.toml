@@ -19,6 +19,8 @@ credentials = "1.5.0"
 googleid = "1.1.1"
 playServicesAuth = "21.4.0"
 firebaseBom = "34.4.0"
+playServicesAds = "25.5.0"
+ump = "4.0.0"
 mlkitTranslate = "17.0.3"
 mlkitLanguageId = "17.0.6"
 coroutines = "1.10.2"
@@ -52,6 +54,9 @@ credentials-play-services = { group = "androidx.credentials", name = "credential
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config" }
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+ump = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-functions = { group = "com.google.firebase", name = "firebase-functions" }

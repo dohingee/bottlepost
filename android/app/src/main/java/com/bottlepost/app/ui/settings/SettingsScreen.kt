@@ -125,6 +125,12 @@ fun SettingsScreen(container: AppContainer, onAccountDeleted: () -> Unit) {
         Header(R.string.settings_help)
         TextButton(onClick = { context.openUrl(Links.TERMS) }) { Text(stringResource(R.string.settings_terms)) }
         TextButton(onClick = { context.openUrl(Links.PRIVACY) }) { Text(stringResource(R.string.settings_privacy)) }
+        val adPrivacy by container.adGate.privacyOptionsRequired.collectAsStateWithLifecycle()
+        if (adPrivacy) {
+            TextButton(onClick = { container.adGate.showPrivacyOptions(context.findActivity()) }) {
+                Text(stringResource(R.string.settings_ad_privacy))
+            }
+        }
         TextButton(onClick = { context.openUrl(Links.CHILD_SAFETY) }) { Text(stringResource(R.string.settings_child_safety)) }
         TextButton(onClick = { context.emailSupport("Bottlepost support") }) { Text(stringResource(R.string.settings_contact)) }
         if (p.status != "active") {

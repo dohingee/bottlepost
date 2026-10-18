@@ -36,7 +36,7 @@
 - [ ] 개인정보처리방침 URL 등록 (앱 내 + 스토어)
 - [ ] **데이터 보안 양식**: 아래 표와 실제 동작 일치
 - [ ] **계정 삭제**: 앱 내(`설정 > 계정 삭제`) + 웹 URL(`https://<도메인>/delete-account`) 모두 등록
-- [ ] 광고 ID 미사용 선언 (광고 도입 전). 광고 도입 시 `AD_ID` 권한·선언 업데이트
+- [ ] 광고 ID 사용 선언: Play Console > 앱 콘텐츠 > 광고 ID "예" — 목적: 광고 또는 마케팅, 분석 (AdMob SDK가 `AD_ID` 권한을 병합)
 
 | 데이터 유형 (Play 분류) | 수집 | 공유 | 필수/선택 | 목적 |
 |---|---|---|---|---|
@@ -45,7 +45,10 @@
 | 메시지 > 기타 인앱 메시지 | 예 (전송 중 일시 저장, 신고 시 보관) | 예 (신고 건만 OpenAI) | 필수 | 앱 기능, 사기 방지·보안 |
 | 앱 활동 > 기타 작업 (발송 횟수 등) | 예 | 아니요 | 필수 | 사기 방지·보안 |
 | 앱 정보 및 성능 > 비정상 종료 로그 | 예 | 아니요 | 필수 | 분석 |
-| 기기 또는 기타 ID (Firebase 설치 ID, 푸시 토큰) | 예 | 아니요 | 필수 | 앱 기능 |
+| 기기 또는 기타 ID (Firebase 설치 ID, 푸시 토큰, **광고 ID**) | 예 | 예 (광고 ID만 Google AdMob) | 필수 | 앱 기능, 광고 또는 마케팅, 분석 |
+| 위치 > 대략적인 위치 (IP 기반, AdMob) | 예 | 예 (Google AdMob) | 필수 | 광고 또는 마케팅 |
+| 앱 활동 > 앱 상호작용 (광고 노출·클릭, AdMob) | 예 | 예 (Google AdMob) | 필수 | 광고 또는 마케팅, 분석 |
+| 앱 정보 및 성능 > 진단 (AdMob SDK) | 예 | 예 (Google AdMob) | 필수 | 광고 또는 마케팅, 분석 |
 
 - 전송 중 암호화: 예 / 삭제 요청 가능: 예
 
@@ -54,12 +57,15 @@
 - [ ] Drive 스코프는 `drive.appdata`만 요청 (사용자 파일 접근 없음)
 - [ ] 로그인 없이 핵심 기능 사용 가능 (요구사항 3) — 리뷰어용 테스트 계정 불필요하지만 "앱 액세스" 항목에 설명 기재
 
-## G. 광고 (도입 시)
-- [ ] AdMob 계정 승인 후 `NoOpAdGate` → `AdMobAdGate` 교체
+## G. 광고 (AdMob, `ads/AdMobAdGate.kt`)
+- [x] `AdMobAdGate` 연결. 디버그 빌드는 Google 테스트 광고 ID만 사용
+- [ ] 출시 빌드 광고는 Remote Config `ads_enabled`(기본 false). AdMob 앱 검토 승인 후 Firebase 콘솔에서 true
+- [ ] Play Console > 앱 콘텐츠 > 광고: "예, 광고가 있습니다"
+- [ ] AdMob 차단 관리: 광고 콘텐츠 등급 최대 T/PG, 데이트·성인·도박 카테고리 차단
 - [ ] 전면광고는 "보내기" 버튼을 누른 뒤 자연스러운 전환 시점에만, 빈도 제한(예: 3분에 1회)
 - [ ] 앱 실행 직후·종료 시 전면광고 금지, 실수 클릭 유도 배치 금지
 - [ ] EEA/UK/스위스 사용자 대상 UMP(사용자 메시지 플랫폼) 동의 SDK
-- [ ] `app-ads.txt` 도메인 게시
+- [ ] `app-ads.txt` 도메인 게시 (`firebase/hosting/app-ads.txt`), 스토어 등록정보 웹사이트 = `https://bottlepost.web.app`
 
 ## H. 출시 절차
 단계별 안내: `docs/RELEASE_GUIDE.md` (업로드 키, GitHub Actions 빌드, Play Console 설문 답안, Play Integrity 등록)

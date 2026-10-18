@@ -138,4 +138,5 @@
     <string name="status_new_letter">새 편지가 도착했어요</string>
     <string name="status_your_turn">내가 답장할 차례예요</string>
     <string name="preview_me">나: %1$s</string>
+    <string name="settings_ad_privacy">광고 개인정보 설정</string>
 </resources>

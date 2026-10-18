@@ -138,4 +138,5 @@
     <string name="status_new_letter">Có thư mới đến</string>
     <string name="status_your_turn">Đến lượt bạn viết</string>
     <string name="preview_me">Tôi: %1$s</string>
+    <string name="settings_ad_privacy">Quyền riêng tư quảng cáo</string>
 </resources>

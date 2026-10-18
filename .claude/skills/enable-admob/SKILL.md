@@ -3,7 +3,11 @@ name: enable-admob
 description: AdMob 승인 후 "편지 보내기 전 전면광고"를 정책에 맞게 도입하는 절차.
 ---
 
-# AdMob 도입 (승인 후)
+# AdMob 도입
+
+현재 상태: `ads/AdMobAdGate.kt` 연결 완료. 앱 ID `ca-app-pub-7472495816861016~6125650483`, 전면광고 단위 `ca-app-pub-7472495816861016/7063327631`(release만), 디버그는 Google 테스트 ID.
+출시 앱 광고는 Remote Config `ads_enabled`(기본 false)로 켭니다 — AdMob 앱 검토 승인 후 (`docs/RELEASE_GUIDE.md` 13단계).
+
 
 ## 1. 준비
 - AdMob 앱 등록 → 앱 ID, 전면광고 단위 ID

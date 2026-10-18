@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,7 +46,11 @@ class MainActivity : AppCompatActivity() {
                         StartState.Loading -> BrandSplash()
                         StartState.Offline -> BrandSplash(stringResource(R.string.error_network), onRetry = appVm::start)
                         StartState.NeedsOnboarding -> OnboardingScreen(container, onDone = appVm::onOnboarded)
-                        StartState.Ready -> AppNavHost(container, onAccountDeleted = appVm::onAccountDeleted)
+                        StartState.Ready -> {
+                            // Consent (where required) after the user is in, not over the launch screen.
+                            LaunchedEffect(Unit) { container.adGate.start(this@MainActivity) }
+                            AppNavHost(container, onAccountDeleted = appVm::onAccountDeleted)
+                        }
                     }
                 }
             }

@@ -138,4 +138,5 @@
     <string name="status_new_letter">มีจดหมายฉบับใหม่มาถึง</string>
     <string name="status_your_turn">ถึงตาคุณเขียนแล้ว</string>
     <string name="preview_me">ฉัน: %1$s</string>
+    <string name="settings_ad_privacy">ความเป็นส่วนตัวของโฆษณา</string>
 </resources>

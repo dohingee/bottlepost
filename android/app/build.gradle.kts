@@ -37,7 +37,15 @@ android {
     }
 
     buildTypes {
+        // AdMob: debug builds always use Google's sample IDs, so testing never touches the real
+        // account (clicking your own live ads can get it suspended).
+        debug {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "ADMOB_INTERSTITIAL", "\"ca-app-pub-3940256099942544/1033173712\"")
+        }
         release {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-7472495816861016~6125650483"
+            buildConfigField("String", "ADMOB_INTERSTITIAL", "\"ca-app-pub-7472495816861016/7063327631\"")
             isMinifyEnabled = true
             if (uploadKeystore != null) signingConfig = signingConfigs.getByName("upload")
             isShrinkResources = true
@@ -104,6 +112,11 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.config)
+
+    // Pre-send interstitial (ads/AdMobAdGate.kt) and the consent message it needs first.
+    implementation(libs.play.services.ads)
+    implementation(libs.ump)
     debugImplementation(libs.firebase.appcheck.debug)
 
     implementation(libs.mlkit.translate)

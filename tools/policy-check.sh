@@ -28,13 +28,16 @@ MERGED=$(ls $APP/build/intermediates/merged_manifests/release/*/AndroidManifest.
 PM=${MERGED:-$M}
 [ -n "$MERGED" ] && ok "checking merged release manifest" || warn "no release build yet: checking source manifest only (run ./gradlew assembleRelease)"
 # Normal-protection permissions added by Firebase/WorkManager are expected; declare them in Data safety if asked.
-allowed="android.permission.INTERNET android.permission.POST_NOTIFICATIONS android.permission.ACCESS_NETWORK_STATE android.permission.WAKE_LOCK android.permission.RECEIVE_BOOT_COMPLETED com.google.android.c2dm.permission.RECEIVE com.bottlepost.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION com.google.android.providers.gsf.permission.READ_GSERVICES"
+# AdMob adds AD_ID and the Privacy Sandbox (ADSERVICES) permissions; both are in Data safety (POLICY_CHECKLIST E).
+allowed="com.google.android.gms.permission.AD_ID android.permission.ACCESS_ADSERVICES_AD_ID android.permission.ACCESS_ADSERVICES_ATTRIBUTION android.permission.ACCESS_ADSERVICES_TOPICS android.permission.INTERNET android.permission.POST_NOTIFICATIONS android.permission.ACCESS_NETWORK_STATE android.permission.WAKE_LOCK android.permission.RECEIVE_BOOT_COMPLETED com.google.android.c2dm.permission.RECEIVE com.bottlepost.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION com.google.android.providers.gsf.permission.READ_GSERVICES"
 for p in $(grep -v 'tools:node="remove"' $PM | grep -oE 'uses-permission android:name="[^"]+"' | sed -E 's/.*"([^"]+)"/\1/' | sort -u); do
   case " $allowed " in *" $p "*) ok "permission $p";; *) bad "unexpected permission $p (update Data safety + checklist first)";; esac
 done
 grep -q 'android:allowBackup="false"' $M && ok "allowBackup=false" || bad "allowBackup must be false (backups go to Drive appData only)"
 grep -q 'usesCleartextTraffic="true"' $M && bad "cleartext traffic enabled" || ok "no cleartext traffic"
-grep -q 'AD_ID' $M && warn "AD_ID permission present: declare advertising ID use in Play Console" || ok "no AD_ID (ads not enabled)"
+grep -q 'AD_ID' $PM && warn "AD_ID permission present: Play Console > App content > Advertising ID must say Yes" || ok "no AD_ID"
+grep -q 'ca-app-pub-3940256099942544' $APP/build.gradle.kts && grep -A3 'release {' $APP/build.gradle.kts | grep -q '3940256099942544' && bad "release build uses AdMob test IDs" || ok "release AdMob IDs are not the test IDs"
+[ -f firebase/hosting/app-ads.txt ] && ok "hosting/app-ads.txt" || bad "missing firebase/hosting/app-ads.txt"
 
 echo "== Required public pages"
 for f in terms privacy child-safety delete-account; do

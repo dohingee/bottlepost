@@ -138,4 +138,5 @@
     <string name="status_new_letter">Chegou uma carta nova</string>
     <string name="status_your_turn">Sua vez de escrever</string>
     <string name="preview_me">Eu: %1$s</string>
+    <string name="settings_ad_privacy">Privacidade de anúncios</string>
 </resources>

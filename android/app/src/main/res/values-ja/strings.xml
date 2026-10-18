@@ -138,4 +138,5 @@
     <string name="status_new_letter">新しい手紙が届きました</string>
     <string name="status_your_turn">あなたが返事を書く番です</string>
     <string name="preview_me">自分: %1$s</string>
+    <string name="settings_ad_privacy">広告のプライバシー設定</string>
 </resources>

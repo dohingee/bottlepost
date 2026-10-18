@@ -5,6 +5,7 @@
 **What we collect**
 - Required: gender, birth year (to confirm you are 18+), app language/country, preferred recipient gender.
 - Automatic: account ID (Firebase UID), push token, last-active time, send counters, conversation links (conversation ID and participant IDs — **never letter content**), crash logs, device-integrity verdicts.
+- Ads (processed by Google AdMob): advertising ID, approximate location inferred from IP address, ad impressions and clicks, device information.
 - Optional: nickname, up to 3 interest tags, Google account ID/email when you link Google.
 - When you report: the reported letter, up to 5 preceding letters in that conversation, and the reason. Kept 90 days after resolution.
 - When banned: account ID, a one-way hash of the linked Google email, and the reason, to prevent ban evasion (1 year after a temporary ban ends, 3 years for permanent bans).
@@ -13,7 +14,9 @@
 
 **Letter content.** A letter waits on our relay (Google Cloud Firestore) only until it reaches the recipient's device and is deleted immediately afterwards; undelivered letters are deleted after 7 days. Conversations live on your device. Optional backups are encrypted and stored in your own Google Drive app-data folder, which we cannot access. Translation runs on-device (Google ML Kit).
 
-**Processors.** Google (Firebase/Google Cloud: hosting, auth, push, crash reporting, integrity); OpenAI (Moderation API, **only for reported letters**); Google AdMob once ads are enabled. Data may be processed in the United States.
+**Processors.** Google (Firebase/Google Cloud: hosting, auth, push, crash reporting, integrity); OpenAI (Moderation API, **only for reported letters**); Google AdMob (showing and measuring ads, ad fraud prevention). Data may be processed in the United States.
+
+**Ads.** An interstitial ad may appear occasionally when you send a letter (at least 3 minutes apart, with a daily cap). Letter content is never used for ads. Where consent is required (EEA, UK, Switzerland and similar), we ask before showing ads; change your choice any time in Settings › Ad privacy settings. Reset or delete your advertising ID in your phone's Settings › Google › Ads. How Google uses data: https://policies.google.com/technologies/partner-sites
 
 **Your rights.** Edit your profile in Settings. Delete your account in Settings › Delete account or at https://bottlepost.web.app/delete-account. Other requests: kimyeoware@gmail.com.
 
