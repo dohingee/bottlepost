@@ -47,8 +47,7 @@ android {
         release {
             manifestPlaceholders["admobAppId"] = "ca-app-pub-7472495816861016~6125650483"
             buildConfigField("String", "ADMOB_INTERSTITIAL", "\"ca-app-pub-7472495816861016/7063327631\"")
-            // Empty until the banner ad unit exists in AdMob; no banner is shown while empty.
-            buildConfigField("String", "ADMOB_BANNER", "\"\"")
+            buildConfigField("String", "ADMOB_BANNER", "\"ca-app-pub-7472495816861016/1458365900\"")
             isMinifyEnabled = true
             if (uploadKeystore != null) signingConfig = signingConfigs.getByName("upload")
             isShrinkResources = true
