@@ -36,7 +36,7 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ios/build/spm
           key: spm-${{ hashFiles('ios/project.yml') }}

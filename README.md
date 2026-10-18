@@ -11,6 +11,7 @@
 ## 폴더 구조
 ```
 android/            Kotlin + Jetpack Compose 앱 (targetSdk 36, minSdk 26)
+ios/                SwiftUI 앱 (iOS 18+, XcodeGen) — 같은 Firebase 백엔드
 firebase/
   functions/        Cloud Functions (TypeScript): 편지 중계, 매칭, 신고 봇, 계정
   firestore.rules   클라이언트는 자기 앞으로 온 편지 읽기·삭제만 가능
@@ -52,7 +53,10 @@ docs/               기획서, 정책 체크리스트, 운영 가이드, 앱 이
 4. `ui/common/Common.kt`의 `Links.BASE`, 지원 이메일 교체
 5. Android Studio로 `android/` 열기 → 실행. 디버그 빌드는 Logcat에 App Check 디버그 토큰이 찍히니 Firebase 콘솔에 등록
 
-### 3. 문서 마무리
+### 3. iOS
+> **계획: [docs/IOS_PLAN.md](docs/IOS_PLAN.md) · 출시(TestFlight) 가이드: [docs/IOS_RELEASE_GUIDE.md](docs/IOS_RELEASE_GUIDE.md)** — Mac 없이 GitHub Actions(macOS)로 빌드·업로드
+
+### 4. 문서 마무리
 - `docs/legal/*.md`의 `______`(운영자명, 이메일) 채우기 → `node firebase/scripts/build-legal.mjs` → `firebase deploy --only hosting`
 - 출시 전 `bash tools/policy-check.sh` + `docs/POLICY_CHECKLIST.md`
 
@@ -63,6 +67,7 @@ cd firebase/functions && npm run test:emulator # 전체 흐름 (가입 → 발�
 cd firebase/rules-test && npm install && npm test   # Firestore 보안 규칙
 cd android && ./gradlew testDebugUnitTest lint
 cd tools && npm install && npx tsx check-strings.ts && bash policy-check.sh
+cd tools && npx tsx ios-strings.ts            # Android 문구 → iOS 문자열 카탈로그 (iOS 빌드·테스트는 CI: ios-build.yml)
 ```
 
 ## 운영
