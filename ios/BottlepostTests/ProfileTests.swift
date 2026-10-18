@@ -49,6 +49,12 @@ final class ProfileTests: XCTestCase {
             XCTAssertNotEqual(L(key), key, "missing string \(key)")
         }
     }
+
+    func testOwnGenderUsesSingularLabels() {
+        XCTAssertEqual(selfGenderLabel("M"), L("gender_self_male"))
+        XCTAssertEqual(selfGenderLabel("F"), L("gender_self_female"))
+        XCTAssertNotEqual(L("gender_self_male"), "gender_self_male", "missing string gender_self_male")
+    }
 }
 
 @MainActor
