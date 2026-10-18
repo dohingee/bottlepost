@@ -52,6 +52,10 @@ fun genderLabel(code: String): Int = when (code) {
     else -> R.string.gender_any
 }
 
+/** Singular form for the user's own gender ("I am a man"); [genderLabel] is the plural recipient choice. */
+@StringRes
+fun selfGenderLabel(code: String): Int = if (code == "M") R.string.gender_self_male else R.string.gender_self_female
+
 fun Context.findActivity(): Activity {
     var ctx = this
     while (ctx is ContextWrapper) {
