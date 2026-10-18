@@ -1,0 +1,86 @@
+# Xcode project definition. The .xcodeproj is generated (never committed):
+#   brew install xcodegen && cd ios && xcodegen generate
+# CI does the same (.github/workflows/ios-build.yml). Plan: docs/IOS_PLAN.md.
+name: Bottlepost
+options:
+  bundleIdPrefix: com.bottlepost
+  developmentLanguage: en
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    # The TestFlight workflow overrides this with the GitHub run number.
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    exactVersion: 12.19.2
+targets:
+  Bottlepost:
+    type: application
+    platform: iOS
+    sources:
+      - path: Bottlepost
+        excludes:
+          - Info.plist
+          - Bottlepost.entitlements
+    info:
+      path: Bottlepost/Info.plist
+      properties:
+        CFBundleDisplayName: Bottlepost
+        CFBundleDevelopmentRegion: en
+        LSRequiresIPhoneOS: true
+        # HTTPS and Apple's own crypto only: exempt from export documentation (App Store Connect asks otherwise).
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UIStatusBarStyle: UIStatusBarStyleLightContent
+        UIViewControllerBasedStatusBarAppearance: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    entitlements:
+      path: Bottlepost/Bottlepost.entitlements
+      properties:
+        # App Check (App Attest). Needs the App Attest capability on the App ID (docs/IOS_RELEASE_GUIDE.md).
+        com.apple.developer.devicecheck.appattest-environment: production
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bottlepost.app
+        PRODUCT_NAME: Bottlepost
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFunctions
+      - package: Firebase
+        product: FirebaseAppCheck
+  BottlepostTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [BottlepostTests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Bottlepost
+schemes:
+  Bottlepost:
+    build:
+      targets:
+        Bottlepost: all
+        BottlepostTests: [test]
+    test:
+      config: Debug
+      targets: [BottlepostTests]
+    archive:
+      config: Release

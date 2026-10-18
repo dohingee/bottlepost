@@ -8,6 +8,7 @@
     "matching": "tsx matching-stats.ts",
     "account": "tsx account-cli.ts",
     "strings": "tsx check-strings.ts",
+    "ios-strings": "tsx ios-strings.ts",
     "support": "tsx support-inbox.ts",
     "ads": "tsx ad-config.ts",
     "policy": "bash policy-check.sh",
