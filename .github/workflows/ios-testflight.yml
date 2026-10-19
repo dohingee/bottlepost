@@ -94,6 +94,8 @@ jobs:
             -skipPackagePluginValidation -skipMacroValidation \
             "${auth[@]}" DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" 2>&1 | tee ../xcodebuild-output.txt | grep -E "error:|\*\* " || true
           grep -q '\*\* ARCHIVE SUCCEEDED \*\*' ../xcodebuild-output.txt
+          built=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' build/Bottlepost.xcarchive/Products/Applications/Bottlepost.app/Info.plist)
+          if [ "$built" != "$BUILD_NUMBER" ]; then echo "::error::archive has build number $built, expected $BUILD_NUMBER"; exit 1; fi
           cat > build/ExportOptions.plist <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
