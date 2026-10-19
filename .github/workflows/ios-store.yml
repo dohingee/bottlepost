@@ -55,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           # Newest iOS runtime and the largest iPhone it offers (1320x2868 on the 16/17 Pro Max).
-          read -r runtime devtype <<<"$(xcrun simctl list -j runtimes devicetypes | python3 -c '
+          read -r runtime devtype <<<"$(xcrun simctl list -j | python3 -c '
           import json, sys
           d = json.load(sys.stdin)
           rt = sorted((r for r in d["runtimes"] if r["platform"] == "iOS" and r["isAvailable"]), key=lambda r: [int(x) for x in r["version"].split(".")])[-1]
