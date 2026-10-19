@@ -86,8 +86,8 @@
 |---|---|---|
 | M1 | 앱 골격: 익명 로그인 → `getProfile`, Sea 디자인, 문자열 카탈로그, 개인정보 매니페스트, CI 빌드·테스트, TestFlight 워크플로 | **완료** (CI 시뮬레이터 빌드·단위 테스트 8개 통과) |
 | M2 | 운영자가 `IOS_RELEASE_GUIDE.md`대로 키·시크릿·App Attest·APNs를 등록 → 첫 TestFlight 업로드 → iPhone에서 `getProfile` 성공 확인 | **완료** (2026-10-19) |
-| M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | **구현 완료**, 실기기 확인 대기 (서버: APNs 알림 `pushMessage.ts`) |
-| M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | |
+| M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | **완료** (실기기 확인, 서버: APNs 알림 `pushMessage.ts`) |
+| M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | **구현 완료**, 실기기 확인 대기 |
 | M5 | Apple Translation 번역 토글, 언어 설정 | |
 | M6 | Sign in with Apple + Google 연결·복원, iCloud 암호화 백업 (서버 변경 포함) | |
 | M7 | AdMob 테스트 광고(보내기 전 전면, 메인 하단 배너), UMP → ATT, SKAdNetwork, Remote Config `ads_enabled` | |

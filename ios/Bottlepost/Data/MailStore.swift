@@ -123,6 +123,26 @@ final class MailStore {
         save()
     }
 
+    /** Blocks on the server (the other side is not told) and closes the conversation here. */
+    func block(threadId: String) async throws {
+        try await service?.blockThread(threadId)
+        markClosed(threadId)
+    }
+
+    /**
+     * Uploads the most recent letters of the conversation, unchanged so their signatures verify
+     * (the user agreed to this in the report sheet). The server also blocks the other person.
+     */
+    func report(threadId: String, reason: String, note: String) async throws {
+        guard let service else { throw ApiError(code: "unknown") }
+        let recent = letters(threadId).suffix(reportLetters).map {
+            ReportMessage(deliveryId: $0.deliveryId, body: $0.body, sentAt: $0.sentAt, sig: $0.sig,
+                          direction: $0.outgoing ? "sent" : "received")
+        }
+        try await service.submitReport(threadId: threadId, reason: reason, note: note, messages: Array(recent))
+        markClosed(threadId)
+    }
+
     /** Leaves on the server (the other side is told). The letters stay readable here until deleted. */
     func leave(threadId: String) async throws {
         try await service?.leaveThread(threadId)

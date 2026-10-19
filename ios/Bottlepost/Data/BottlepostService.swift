@@ -79,6 +79,20 @@ struct SentLetter: Equatable, Sendable {
     }
 }
 
+/** One letter attached to a report, exactly as signed (signing.ts); the server verifies it. */
+struct ReportMessage: Equatable, Sendable {
+    let deliveryId: String
+    let body: String
+    let sentAt: Int64
+    let sig: String
+    /** "received" (written by the other person) or "sent". */
+    let direction: String
+
+    var payload: [String: Any] {
+        ["deliveryId": deliveryId, "body": body, "sentAt": sentAt, "sig": sig, "direction": direction]
+    }
+}
+
 /** What the screens need from the backend; tests substitute a fake. */
 protocol BottlepostService: Sendable {
     var uid: String? { get }
@@ -90,6 +104,11 @@ protocol BottlepostService: Sendable {
     func sendLetter(body: String, wantGender: String, sameLanguageOnly: Bool) async throws -> SentLetter
     func replyLetter(threadId: String, body: String) async throws -> SentLetter
     func leaveThread(_ threadId: String) async throws
+    func blockThread(_ threadId: String) async throws
+    func submitReport(threadId: String, reason: String, note: String, messages: [ReportMessage]) async throws
+    func submitAppeal(_ message: String) async throws
+    func deleteAccount() async throws
+    func signOut()
 }
 
 /** Thin wrapper over the callable Cloud Functions in firebase/functions/src. */
@@ -145,6 +164,27 @@ final class FirebaseService: BottlepostService {
 
     func leaveThread(_ threadId: String) async throws {
         _ = try await call("leaveThread", ["threadId": threadId])
+    }
+
+    func blockThread(_ threadId: String) async throws {
+        _ = try await call("blockThread", ["threadId": threadId])
+    }
+
+    func submitReport(threadId: String, reason: String, note: String, messages: [ReportMessage]) async throws {
+        _ = try await call("submitReport", ["threadId": threadId, "reason": reason, "note": note,
+                                            "messages": messages.map(\.payload)])
+    }
+
+    func submitAppeal(_ message: String) async throws {
+        _ = try await call("submitAppeal", ["message": message, "kind": "appeal"])
+    }
+
+    func deleteAccount() async throws {
+        _ = try await call("deleteAccount")
+    }
+
+    func signOut() {
+        try? Auth.auth().signOut()
     }
 
     private func call(_ name: String, _ data: [String: Any] = [:]) async throws -> Any? {

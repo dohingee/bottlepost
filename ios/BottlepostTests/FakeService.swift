@@ -10,6 +10,13 @@ final class FakeService: BottlepostService, @unchecked Sendable {
     var uid: String? = "me"
     private(set) var left: [String] = []
     private(set) var sentBodies: [String] = []
+    private(set) var blocked: [String] = []
+    private(set) var reports: [(threadId: String, reason: String, note: String, messages: [ReportMessage])] = []
+    private(set) var appeals: [String] = []
+    private(set) var deletedAccount = false
+    private(set) var signedOut = false
+    var appealFailure: ApiError?
+    var deleteFailure: ApiError?
     private var counter = 0
 
     init(profile: Profile? = nil, failure: ApiError? = nil, createFailure: ApiError? = nil) {
@@ -45,4 +52,21 @@ final class FakeService: BottlepostService, @unchecked Sendable {
     }
 
     func leaveThread(_ threadId: String) async throws { left.append(threadId) }
+    func blockThread(_ threadId: String) async throws { blocked.append(threadId) }
+
+    func submitReport(threadId: String, reason: String, note: String, messages: [ReportMessage]) async throws {
+        reports.append((threadId, reason, note, messages))
+    }
+
+    func submitAppeal(_ message: String) async throws {
+        if let appealFailure { throw appealFailure }
+        appeals.append(message)
+    }
+
+    func deleteAccount() async throws {
+        if let deleteFailure { throw deleteFailure }
+        deletedAccount = true
+    }
+
+    func signOut() { signedOut = true }
 }

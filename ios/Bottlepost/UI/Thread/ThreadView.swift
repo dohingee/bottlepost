@@ -13,6 +13,8 @@ struct ThreadView: View {
     @State private var sending = false
     @State private var confirmLeave = false
     @State private var startDelete = false
+    @State private var confirmBlock = false
+    @State private var showReport = false
 
     init(session: Session, threadId: String) {
         self.session = session
@@ -41,6 +43,11 @@ struct ThreadView: View {
                         Button(L("action_leave"), systemImage: "rectangle.portrait.and.arrow.right") { confirmLeave = true }
                     }
                     Button(L("action_delete_thread"), systemImage: "trash", role: .destructive) { startDelete = true }
+                    Divider()
+                    Button(L("action_report"), systemImage: "exclamationmark.bubble") { showReport = true }
+                    if !thread.closed {
+                        Button(L("action_block"), systemImage: "hand.raised") { confirmBlock = true }
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle").font(.title3)
                 }
@@ -67,6 +74,15 @@ struct ThreadView: View {
         .onAppear { session.mail?.markRead(threadId: threadId) }
         .onChange(of: letters.count) { _, _ in session.mail?.markRead(threadId: threadId) }
         .modifier(DeleteConversation(session: session, thread: thread, asMenu: false, start: $startDelete, onDeleted: { dismiss() }))
+        .alert(L("block_title"), isPresented: $confirmBlock) {
+            Button(L("action_cancel"), role: .cancel) {}
+            Button(L("action_block"), role: .destructive) { block() }
+        } message: {
+            Text(L("block_body"))
+        }
+        .sheet(isPresented: $showReport) {
+            ReportSheet { reason, note in report(reason: reason, note: note) }
+        }
         .alert(L("leave_title"), isPresented: $confirmLeave) {
             Button(L("action_cancel"), role: .cancel) {}
             Button(L("action_leave"), role: .destructive) { leave() }
@@ -130,6 +146,30 @@ struct ThreadView: View {
                 session.show(errorMessageKey(ApiError.from(error)))
             }
             sending = false
+        }
+    }
+
+    private func block() {
+        Task {
+            do {
+                try await session.mail?.block(threadId: threadId)
+                session.show("block_done")
+                dismiss()
+            } catch {
+                session.show(errorMessageKey(ApiError.from(error)))
+            }
+        }
+    }
+
+    private func report(reason: String, note: String) {
+        Task {
+            do {
+                try await session.mail?.report(threadId: threadId, reason: reason, note: note)
+                session.show("report_done")
+                dismiss()
+            } catch {
+                session.show(errorMessageKey(ApiError.from(error)))
+            }
         }
     }
 
