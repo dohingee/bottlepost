@@ -33,6 +33,9 @@ targets:
       path: Bottlepost/Info.plist
       properties:
         CFBundleDisplayName: Bottlepost
+        # From the build settings, so the TestFlight workflow's build number (run number) is used.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDevelopmentRegion: en
         LSRequiresIPhoneOS: true
         # HTTPS and Apple's own crypto only: exempt from export documentation (App Store Connect asks otherwise).
