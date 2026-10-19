@@ -59,6 +59,32 @@ else
   warn "run 'npm install' in tools/ to enable the strings check"
 fi
 
+echo "== iOS (App Store, docs/POLICY_CHECKLIST.md I)"
+IOS=ios
+if [ -d $IOS ]; then
+  [ -f $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy ] && ok "privacy manifest PrivacyInfo.xcprivacy" || bad "missing ios/Bottlepost/Resources/PrivacyInfo.xcprivacy"
+  git ls-files --error-unmatch $IOS/Bottlepost/GoogleService-Info.plist >/dev/null 2>&1 && bad "GoogleService-Info.plist is committed (CI fetches it)" || ok "GoogleService-Info.plist not committed"
+  grep -q 'ITSAppUsesNonExemptEncryption: false' $IOS/project.yml && ok "export compliance declared (exempt encryption only)" || bad "ITSAppUsesNonExemptEncryption missing from ios/project.yml"
+  grep -q 'appattest-environment: production' $IOS/project.yml && ok "App Attest entitlement (App Check)" || bad "App Attest entitlement missing (App Check would reject release builds)"
+  # Every permission prompt must be declared in the App Privacy answers first.
+  allowed_ios="NSUserTrackingUsageDescription"
+  for k in $(grep -oE 'NS[A-Za-z]+UsageDescription' $IOS/project.yml | sort -u); do
+    case " $allowed_ios " in *" $k "*) ok "usage description $k";; *) bad "unexpected permission $k (update App Privacy + checklist first)";; esac
+  done
+  if grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml; then
+    grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && ok "tracking declared in privacy manifest" || bad "ATT prompt present but NSPrivacyTracking is false"
+  fi
+  grep -rq 'DeclaredAgeRange' $IOS/Bottlepost && ok "Declared Age Range check (18+)" || warn "iOS: no Declared Age Range check yet (milestone 3)"
+  grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"
+  grep -rq '"minor"' $IOS/Bottlepost && ok "iOS report has a minor-safety reason" || warn "iOS: report/block not implemented yet (Guideline 1.2, milestone 4)"
+  grep -rqi 'google' $IOS/Bottlepost/Data 2>/dev/null && ! grep -rq 'AuthenticationServices' $IOS/Bottlepost && bad "Google sign-in without Sign in with Apple (Guideline 4.8)" || ok "Sign in with Apple rule (4.8)"
+  if command -v npx >/dev/null && [ -d tools/node_modules ]; then
+    (cd tools && npx tsx ios-strings.ts --check >/dev/null) && ok "iOS string catalogs match the Android strings" || bad "iOS string catalogs out of date (npx tsx tools/ios-strings.ts)"
+  fi
+else
+  warn "no ios/ directory"
+fi
+
 echo
 [ $fail -eq 0 ] && echo "Policy check passed. Now go through the manual items in docs/POLICY_CHECKLIST.md." || echo "Policy check FAILED."
 exit $fail

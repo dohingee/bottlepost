@@ -1,0 +1,117 @@
+# Builds, signs and uploads the iOS app to TestFlight. Run it manually from the Actions tab.
+# Setup (Apple Developer account, App Store Connect API key, GitHub secrets): docs/IOS_RELEASE_GUIDE.md.
+name: iOS TestFlight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+
+env:
+  BUNDLE_ID: com.bottlepost.app
+
+jobs:
+  upload:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - name: Check secrets
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          KEY: ${{ secrets.ASC_KEY_P8 }}
+          TEAM: ${{ vars.APPLE_TEAM_ID }}
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: |
+          missing=0
+          for name in KEY_ID:ASC_KEY_ID ISSUER:ASC_ISSUER_ID KEY:ASC_KEY_P8 SA:FIREBASE_SERVICE_ACCOUNT; do
+            var="${name%%:*}"
+            if [ -z "${!var}" ]; then echo "::error::GitHub secret ${name#*:} is not set (docs/IOS_RELEASE_GUIDE.md)"; missing=1; fi
+          done
+          if [ -z "$TEAM" ]; then echo "::error::GitHub variable APPLE_TEAM_ID is not set (docs/IOS_RELEASE_GUIDE.md)"; missing=1; fi
+          if [ -z "$PROJECT" ]; then echo "::error::GitHub variable FIREBASE_PROJECT_ID is not set"; missing=1; fi
+          exit $missing
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          project_id: ${{ vars.FIREBASE_PROJECT_ID }}
+
+      # GoogleService-Info.plist is not committed. Registers the iOS app in Firebase on the first run.
+      - name: Fetch GoogleService-Info.plist
+        env:
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: |
+          set -o pipefail
+          fb() { npx -y firebase-tools@15 "$@" --project "$PROJECT" --non-interactive; }
+          app=$(fb apps:list IOS --json | python3 -c '
+          import json, os, sys
+          apps = json.load(sys.stdin).get("result", [])
+          print(next((a["appId"] for a in apps if a.get("namespace", os.environ["BUNDLE_ID"]) == os.environ["BUNDLE_ID"]), ""))')
+          if [ -z "$app" ]; then
+            echo "Registering the iOS app $BUNDLE_ID in Firebase"
+            fb apps:create IOS "Bottlepost iOS" --bundle-id "$BUNDLE_ID" | tee create.txt
+            app=$(grep -oE '1:[0-9]+:ios:[0-9a-f]+' create.txt | head -1)
+          fi
+          fb apps:sdkconfig IOS "$app" --out ios/Bottlepost/GoogleService-Info.plist
+          /usr/libexec/PlistBuddy -c 'Print :BUNDLE_ID' ios/Bottlepost/GoogleService-Info.plist | grep -qx "$BUNDLE_ID"
+          echo "Firebase iOS app: $app" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Generate the Xcode project
+        working-directory: ios
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Archive and upload
+        working-directory: ios
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          KEY: ${{ secrets.ASC_KEY_P8 }}
+          TEAM: ${{ vars.APPLE_TEAM_ID }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -o pipefail
+          key="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
+          printf '%s\n' "$KEY" > "$key"
+          auth=(-allowProvisioningUpdates -authenticationKeyPath "$key" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER")
+          xcodebuild archive \
+            -project Bottlepost.xcodeproj -scheme Bottlepost -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/Bottlepost.xcarchive \
+            -skipPackagePluginValidation -skipMacroValidation \
+            "${auth[@]}" DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" 2>&1 | tee ../xcodebuild-output.txt | grep -E "error:|\*\* " || true
+          grep -q '\*\* ARCHIVE SUCCEEDED \*\*' ../xcodebuild-output.txt
+          cat > build/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath build/Bottlepost.xcarchive -exportPath build/export \
+            -exportOptionsPlist build/ExportOptions.plist "${auth[@]}" 2>&1 | tee -a ../xcodebuild-output.txt | grep -E "error:|Upload|\*\* " || true
+          grep -q '\*\* EXPORT SUCCEEDED \*\*' ../xcodebuild-output.txt
+          echo "Uploaded build $BUILD_NUMBER to App Store Connect. It appears in TestFlight after processing (5-30 min)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report build errors
+        if: failure() && hashFiles('xcodebuild-output.txt') != ''
+        run: |
+          { grep -E "error:|failed|No profiles|No Accounts|not have permission" xcodebuild-output.txt || tail -n 30 xcodebuild-output.txt; } \
+            | tail -n 30 | cut -c1-400 | sed -E 's/%/%25/g' | while IFS= read -r line; do echo "::error title=xcodebuild::${line}"; done

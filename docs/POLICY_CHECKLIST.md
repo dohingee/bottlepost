@@ -74,3 +74,64 @@
 - [ ] 개인 개발자 계정: **비공개 테스트 12명 이상 × 연속 14일** 후 프로덕션 신청
 - [ ] 개발자 신원 확인(신분증·연락처) 완료
 - [ ] 스토어 등록정보: 스크린샷에 실제 사용자 개인정보 노출 금지, "만남 보장" 등 과장 문구 금지
+
+## I. App Store (iOS 앱, `ios/`)
+계획·마일스톤: `docs/IOS_PLAN.md`, 출시 절차: `docs/IOS_RELEASE_GUIDE.md`. 자동 검사는 `tools/policy-check.sh`의 "iOS" 절입니다. 가이드라인 원문은 [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)에서 제출 직전에 다시 확인하세요.
+
+**기술 요구사항**
+- [ ] 최신 Xcode·iOS SDK로 빌드 (2026년 4월 말부터 Xcode 26 / iOS 26 SDK 필수. 매년 봄 상향되므로 제출 전 Apple 공지 확인. CI `macos-26` 러너의 Xcode 버전을 실행 요약에서 확인)
+- [x] 개인정보 매니페스트 `PrivacyInfo.xcprivacy` — 아래 App Privacy 답안과 일치
+- [x] `ITSAppUsesNonExemptEncryption = false` (HTTPS와 Apple 기본 암호화만 사용 → 수출 규정 서류 면제)
+- [x] 권한 요청 문구(`NS…UsageDescription`)는 실제로 쓰는 것만. 현재 없음. ATT(`NSUserTrackingUsageDescription`)는 광고 도입 때 추가
+- [x] App Check = App Attest (엔타이틀먼트 + Firebase 콘솔 등록)
+- [ ] 비공개 API·숨은 기능·원격 코드 다운로드 없음 (2.5.2, 2.3.1)
+
+**1.2 사용자 제작 콘텐츠 — 익명 랜덤 채팅 앱이 가장 많이 거절되는 항목**
+- [ ] 불쾌한 콘텐츠 필터링: 발송 전 링크·연락처·코인 필터(`moderation/rules.ts`) + 신고 시 규칙 엔진·OpenAI 모더레이션 + 관리자 검토
+- [ ] 신고 기능과 신속한 대응: 모든 편지에 신고(신고=즉시 차단), 미성년자 관련은 즉시 정지
+- [ ] 사용자 차단 기능
+- [ ] 연락처 공개: 앱 내 "문의하기" + 지원 URL
+- [ ] 이용약관(EULA) 동의 후 이용, 금지 행위에 무관용 명시 (온보딩)
+- [ ] 18+ 확인(출생연도, 서버 재검증), 턴제(답장 전 재발송 불가), 일일 발송 한도 — 심사 메모에 강조
+
+**18세 이상 확인** (설계: `docs/IOS_PLAN.md` "18세 이상 확인")
+- [ ] 연령 등급 **18+**: 설문에 사실대로 답하고, 계산된 등급이 낮으면 18+로 올림
+- [ ] 중립적 나이 입력
+  - 출생연도 기본값 없음
+  - 18세 기준을 입력 전에 안내하지 않음
+  - "18세 이상입니다" 체크박스 대신 입력값으로 판정
+- [ ] 미만 입력 시 키체인에 기록 → 재설치·다른 연도로 재시도해도 차단
+- [ ] 서버 재검증 `createProfile` → `underage`
+- [ ] **Declared Age Range**(iOS 26+): 18세 기준으로 요청
+  - 미만 → 차단
+  - 거절·미지원 → 출생연도로만 판단
+  - 결과는 저장·전송하지 않음 → App Privacy 변경 없음
+- [ ] App ID의 Declared Age Range 기능 + 엔타이틀먼트 `com.apple.developer.declared-age-range`
+- [ ] 미국 주별 앱스토어 연령 확인 법(텍사스·유타·루이지애나 등) 시행 상황을 제출 직전에 확인
+
+**계정 (4.8, 5.1.1)**
+- [ ] 로그인 없이 핵심 기능 사용 가능 (익명 계정)
+- [ ] Google 로그인을 제공하면 **Sign in with Apple**도 같은 화면에 제공 (4.8)
+- [ ] 앱 내 계정 삭제 (5.1.1(v)) — `deleteAccount`. Sign in with Apple 연결 계정은 삭제 시 Apple 토큰 철회(REST `revoke`)
+- [ ] 계정 삭제 웹 URL `https://bottlepost.web.app/delete-account`
+
+**광고 (5.1.2, 광고 도입 시)**
+- [ ] UMP 동의 → **ATT 허용 요청** → 광고 요청 순서. 거부해도 앱 사용 가능, 거부 시 IDFA 미사용
+- [ ] `SKAdNetworkItems`(Google 목록) Info.plist 등록
+- [ ] App Privacy에 "추적" 데이터 추가, `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking` 갱신
+
+**App Store Connect 답안**
+- 연령 등급: 설문에서 "사용자 생성 콘텐츠", "메시지·채팅"을 정확히 체크 → **18+**. 계산 결과가 낮으면 18+로 올림
+- 카테고리: 소셜 네트워킹
+- 개인정보처리방침 URL `https://bottlepost.web.app/privacy` / 지원 URL `https://bottlepost.web.app`
+- EU 디지털 서비스법(DSA) 거래자 여부: 광고 수익이 있으면 "거래자" → 주소·전화번호·이메일이 EU 스토어에 공개됨. 공개를 원치 않으면 EU 배포 제외 검토
+- App Privacy (데이터 수집 답안). "추적에 사용"은 모두 아니요(광고 도입 전)
+
+| Apple 데이터 유형 | 사용자와 연결 | 목적 | 비고 |
+|---|---|---|---|
+| 식별자 > 사용자 ID (Firebase UID) | 예 | 앱 기능 | |
+| 사용자 콘텐츠 > 기타 사용자 콘텐츠 (편지 중계, 신고된 편지) | 예 | 앱 기능 | 전달 즉시 삭제, 신고 건만 보관 |
+| 기타 데이터 (성별, 출생연도, 언어·국가) | 예 | 앱 기능 | |
+| 연락처 정보 > 이메일 주소 (Google·Apple 연결 시) | 예 | 앱 기능 | 계정 연결 기능 도입 시 추가 |
+| 진단 > 충돌 데이터 | 아니요 | 앱 기능 | Crashlytics 도입 시 추가 |
+| 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 (추적: ATT 허용 시 예) | AdMob 도입 시 추가 |
