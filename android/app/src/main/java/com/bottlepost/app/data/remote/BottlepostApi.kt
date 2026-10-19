@@ -29,6 +29,21 @@ data class OutgoingReportMessage(
 )
 
 /** Server error codes (HttpsError messages) mapped to string resources in ui/common/Errors.kt. */
+private val SERVER_CODE = Regex("^[a-z][a-z0-9_]*$")
+
+/**
+ * The server's own errors carry a snake_case code as their message, whatever the status (e.g.
+ * "unavailable" with no_recipient_available or service_paused). Only SDK-made errors (message is
+ * the status name or missing) for unreachable/timeout, or with an IOException cause, mean offline.
+ */
+internal fun errorCode(code: FirebaseFunctionsException.Code, message: String?, cause: Throwable?): String {
+    if (message != null && SERVER_CODE.matches(message)) return message
+    val offline = code == FirebaseFunctionsException.Code.UNAVAILABLE ||
+        code == FirebaseFunctionsException.Code.DEADLINE_EXCEEDED ||
+        cause is java.io.IOException
+    return if (offline) "network" else message ?: code.name.lowercase()
+}
+
 class ApiException(val code: String, cause: Throwable?) : Exception(code, cause)
 
 /** Thin wrapper over the callable Cloud Functions in firebase/functions/src. */
@@ -37,11 +52,7 @@ class BottlepostApi(private val functions: FirebaseFunctions = FirebaseFunctions
     private suspend fun call(name: String, data: Map<String, Any?> = emptyMap()): Any? = try {
         functions.getHttpsCallable(name).call(data).await().getData()
     } catch (e: FirebaseFunctionsException) {
-        // Offline and timeouts surface as UNAVAILABLE / DEADLINE_EXCEEDED, or INTERNAL wrapping an IOException.
-        val offline = e.code == FirebaseFunctionsException.Code.UNAVAILABLE ||
-            e.code == FirebaseFunctionsException.Code.DEADLINE_EXCEEDED ||
-            (e.code == FirebaseFunctionsException.Code.INTERNAL && e.cause is java.io.IOException)
-        throw ApiException(if (offline) "network" else e.message ?: e.code.name.lowercase(), e)
+        throw ApiException(errorCode(e.code, e.message, e.cause), e)
     } catch (e: Exception) {
         throw ApiException("network", e)
     }
