@@ -10,4 +10,5 @@
     <string name="ios_switch_title">Tài khoản Apple này có một tài khoản Bottlepost khác</string>
     <string name="ios_switch_body">Chuyển đổi sẽ xóa tài khoản bạn đang dùng cùng các cuộc trò chuyện trên điện thoại này, và người kia sẽ thấy bạn đã rời đi. Nếu tài khoản đó có bản sao lưu iCloud, các cuộc trò chuyện sẽ được khôi phục. Chuyển?</string>
     <string name="ios_link_required">Hãy liên kết tài khoản Apple trước.</string>
+    <string name="ios_att_purpose">Dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bottlepost không bao giờ chia sẻ thư của bạn.</string>
 </resources>

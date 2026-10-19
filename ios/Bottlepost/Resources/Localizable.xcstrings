@@ -3817,6 +3817,59 @@
         }
       }
     },
+    "ios_att_purpose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows ads that are more relevant to you. Bottlepost never shares your letters."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나에게 더 관련 있는 광고를 보여 주는 데 쓰여요. 편지 내용은 절대 공유하지 않아요."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたにより関連性の高い広告を表示するために使います。手紙の内容は共有しません。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite mostrarte anuncios más relevantes. Bottlepost nunca comparte tus cartas."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite mostrar anúncios mais relevantes para você. O Bottlepost nunca compartilha suas cartas."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digunakan untuk menampilkan iklan yang lebih relevan bagi Anda. Bottlepost tidak pernah membagikan surat Anda."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bottlepost không bao giờ chia sẻ thư của bạn."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ใช้เพื่อแสดงโฆษณาที่เกี่ยวข้องกับคุณมากขึ้น Bottlepost ไม่เคยแชร์จดหมายของคุณ"
+          }
+        }
+      }
+    },
     "ios_backup_done": {
       "extractionState": "manual",
       "localizations": {

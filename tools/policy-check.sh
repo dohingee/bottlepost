@@ -74,6 +74,11 @@ if [ -d $IOS ]; then
   if grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml; then
     grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && ok "tracking declared in privacy manifest" || bad "ATT prompt present but NSPrivacyTracking is false"
   fi
+  grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml && warn "iOS: AdMob test IDs (fine while Remote Config ads_enabled is false; put the real iOS app/unit IDs in ios/project.yml before turning ads on)" || ok "iOS AdMob IDs are not the test IDs"
+  if grep -q 'GoogleMobileAds' $IOS/project.yml; then
+    grep -q 'SKAdNetworkItems' $IOS/project.yml && ok "SKAdNetworkItems declared" || bad "AdMob without SKAdNetworkItems"
+    grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml && ok "ATT prompt text declared" || bad "AdMob without NSUserTrackingUsageDescription"
+  fi
   grep -rq 'DeclaredAgeRange' $IOS/Bottlepost && ok "Declared Age Range check (18+)" || warn "iOS: no Declared Age Range check yet (milestone 3)"
   grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"
   grep -rq '"minor"' $IOS/Bottlepost && ok "iOS report has a minor-safety reason" || warn "iOS: report/block not implemented yet (Guideline 1.2, milestone 4)"

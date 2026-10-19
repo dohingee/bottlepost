@@ -90,7 +90,7 @@
 | M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | **완료** (실기기 확인) |
 | M5 | Apple Translation 번역 토글(받은 편지마다), 원문 언어는 기기 안에서 감지(NaturalLanguage), 대상은 편지 언어(`lang`) — Android와 같음. 앱 화면 언어는 iPhone 설정 > 보틀포스트 > 언어 | **완료** (실기기 확인) |
 | M6 | Sign in with Apple 연결·복원(Google 없음, 사용자 결정), iCloud Drive 앱 전용 컨테이너에 AES-GCM 암호화 백업(하루 1회 자동 + 수동), 계정 삭제 시 Apple 토큰 철회·백업 삭제. 서버 `confirmAccountLink`(`identity.ts`) | **구현 완료** (사용자 설정: `IOS_RELEASE_GUIDE.md` "M6 준비") |
-| M7 | AdMob 테스트 광고(보내기 전 전면, 메인 하단 배너), UMP → ATT, SKAdNetwork, Remote Config `ads_enabled` | |
+| M7 | AdMob(테스트 ID): 보내기 전 전면광고(빈도 제한, 2초 대기 후 생략), 메인 하단 앵커 배너, UMP → ATT 순서, SKAdNetwork 50개, Remote Config `ads_enabled`(기본 false) — Android와 같은 키 | **구현 완료** (실제 ID는 AdMob iOS 앱 승인 후) |
 | M8 | 심사 제출: 스크린샷 8개 언어, App Privacy, 18+ 등급, 심사 메모, 단계적 출시 | |
 
 **M1 범위 밖:** Android ↔ iOS 대화 이전.

@@ -10,4 +10,5 @@
     <string name="ios_switch_title">このAppleアカウントには別のボトルポストアカウントがあります</string>
     <string name="ios_switch_body">切り替えると、今使っているアカウントとこのスマホの会話は削除され、相手には退出したと表示されます。そのアカウントのiCloudバックアップがあれば、その会話を復元します。切り替えますか？</string>
     <string name="ios_link_required">先にAppleアカウントを連携してください。</string>
+    <string name="ios_att_purpose">あなたにより関連性の高い広告を表示するために使います。手紙の内容は共有しません。</string>
 </resources>

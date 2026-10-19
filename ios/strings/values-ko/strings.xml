@@ -10,4 +10,5 @@
     <string name="ios_switch_title">이 Apple 계정에는 다른 보틀포스트 계정이 있어요</string>
     <string name="ios_switch_body">전환하면 지금 쓰는 계정과 이 휴대폰의 대화가 삭제되고, 상대방에게는 퇴장한 것으로 보여요. 그 계정의 iCloud 백업이 있으면 그 대화를 불러와요. 전환할까요?</string>
     <string name="ios_link_required">먼저 Apple 계정을 연결해 주세요.</string>
+    <string name="ios_att_purpose">나에게 더 관련 있는 광고를 보여 주는 데 쓰여요. 편지 내용은 절대 공유하지 않아요.</string>
 </resources>

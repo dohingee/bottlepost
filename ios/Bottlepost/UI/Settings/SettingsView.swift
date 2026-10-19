@@ -62,6 +62,9 @@ struct SettingsView: View {
                     Link(L("settings_privacy"), destination: Links.privacy)
                     Link(L("settings_child_safety"), destination: Links.childSafety)
                     Link(L("settings_contact"), destination: Links.contact)
+                    if session.ads?.privacyOptionsRequired == true {
+                        Button(L("settings_ad_privacy")) { Task { await session.ads?.showPrivacyOptions() } }
+                    }
                     if session.profile.map({ $0.status != "active" }) == true {
                         Button(L("settings_appeal")) { showAppeal = true }
                     }

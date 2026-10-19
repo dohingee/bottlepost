@@ -12,4 +12,6 @@
     <string name="ios_switch_title">This Apple account has another Bottlepost account</string>
     <string name="ios_switch_body">Switching deletes the account you are using now, including its conversations on this phone, and your partners will see that you left. If that account has an iCloud backup, its conversations are restored. Switch?</string>
     <string name="ios_link_required">Link your Apple account first.</string>
+    <!-- iPhone tracking permission prompt (InfoPlist NSUserTrackingUsageDescription). -->
+    <string name="ios_att_purpose">Allows ads that are more relevant to you. Bottlepost never shares your letters.</string>
 </resources>

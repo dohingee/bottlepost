@@ -10,4 +10,5 @@
     <string name="ios_switch_title">Esta cuenta de Apple tiene otra cuenta de Bottlepost</string>
     <string name="ios_switch_body">Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y las personas con las que hablas verán que saliste. Si esa cuenta tiene una copia en iCloud, se restaurarán sus conversaciones. ¿Cambiar?</string>
     <string name="ios_link_required">Primero vincula tu cuenta de Apple.</string>
+    <string name="ios_att_purpose">Permite mostrarte anuncios más relevantes. Bottlepost nunca comparte tus cartas.</string>
 </resources>

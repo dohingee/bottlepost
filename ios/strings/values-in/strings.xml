@@ -10,4 +10,5 @@
     <string name="ios_switch_title">Akun Apple ini punya akun Bottlepost lain</string>
     <string name="ios_switch_body">Beralih akan menghapus akun yang Anda pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicara Anda akan melihat Anda keluar. Jika akun itu punya cadangan iCloud, percakapannya akan dipulihkan. Beralih?</string>
     <string name="ios_link_required">Tautkan akun Apple Anda terlebih dahulu.</string>
+    <string name="ios_att_purpose">Digunakan untuk menampilkan iklan yang lebih relevan bagi Anda. Bottlepost tidak pernah membagikan surat Anda.</string>
 </resources>

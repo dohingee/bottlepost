@@ -119,10 +119,13 @@
 - [x] 앱 내 계정 삭제 (5.1.1(v)) — 설정 > 계정 삭제(`deleteAccount`), 확인 후 기기 데이터도 삭제. Sign in with Apple 연결 계정은 Apple 재인증 후 토큰 철회(`Auth.revokeToken`, Firebase Apple 제공업체의 OAuth 코드 흐름 구성 필요)와 iCloud 백업 삭제
 - [ ] 계정 삭제 웹 URL `https://bottlepost.web.app/delete-account`
 
-**광고 (5.1.2, 광고 도입 시)**
-- [ ] UMP 동의 → **ATT 허용 요청** → 광고 요청 순서. 거부해도 앱 사용 가능, 거부 시 IDFA 미사용
-- [ ] `SKAdNetworkItems`(Google 목록) Info.plist 등록
-- [ ] App Privacy에 "추적" 데이터 추가, `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking` 갱신
+**광고 (5.1.2)** — `ios/Bottlepost/Ads/AdsManager.swift`
+- [x] UMP 동의 → **ATT 허용 요청** → 광고 요청 순서. 거부해도 앱 사용 가능, 거부 시 IDFA 미사용
+- [x] `SKAdNetworkItems`(Google 목록 50개) Info.plist 등록
+- [x] `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking` = true (SDK 매니페스트가 도메인·데이터 선언)
+- [x] 보내기 전 전면광고(빈도 제한·2초 안에 없으면 생략), 메인 화면 하단 배너만. 편지 읽기·쓰기 화면엔 배너 없음
+- [ ] AdMob에 iOS 앱 등록 → 실제 앱 ID·광고 단위 ID를 `ios/project.yml`에 넣기(지금은 테스트 ID) → 승인 후 Remote Config `ads_enabled` = true
+- [ ] App Privacy에 광고 데이터(추적 포함) 답변 — 아래 표의 AdMob 줄
 
 **App Store Connect 답안**
 - 연령 등급: 설문에서 "사용자 생성 콘텐츠", "메시지·채팅"을 정확히 체크 → **18+**. 계산 결과가 낮으면 18+로 올림

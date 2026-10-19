@@ -25,13 +25,16 @@ final class Session {
     @ObservationIgnored private let sync: DeliverySync?
     @ObservationIgnored private var pushToken: String?
     @ObservationIgnored let backup: BackupManager?
+    /** AdMob (M7); nil in unit tests. */
+    let ads: AdsManager?
     /** Set while backing up or restoring, for the settings screen. */
     private(set) var backupBusy = false
     /** Shown in settings; read from the backup manager when it changes. */
     private(set) var lastBackupAt: Date?
 
     init(service: BottlepostService?, mail: MailStore?, sync: DeliverySync?, ageLock: UnderageLock,
-         backup: BackupManager? = nil) {
+         backup: BackupManager? = nil, ads: AdsManager? = nil) {
+        self.ads = ads
         self.service = service
         self.mail = mail
         self.sync = sync

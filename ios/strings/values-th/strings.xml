@@ -10,4 +10,5 @@
     <string name="ios_switch_title">บัญชี Apple นี้มีบัญชี Bottlepost อื่นอยู่แล้ว</string>
     <string name="ios_switch_body">การสลับจะลบบัญชีที่คุณใช้อยู่และบทสนทนาในโทรศัพท์เครื่องนี้ และอีกฝ่ายจะเห็นว่าคุณออกไปแล้ว หากบัญชีนั้นมีข้อมูลสำรองใน iCloud บทสนทนาจะถูกกู้คืน สลับไหม</string>
     <string name="ios_link_required">โปรดเชื่อมบัญชี Apple ก่อน</string>
+    <string name="ios_att_purpose">ใช้เพื่อแสดงโฆษณาที่เกี่ยวข้องกับคุณมากขึ้น Bottlepost ไม่เคยแชร์จดหมายของคุณ</string>
 </resources>

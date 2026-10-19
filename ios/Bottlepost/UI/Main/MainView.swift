@@ -38,6 +38,11 @@ struct MainView: View {
                         .tag(Tab.settings)
                 }
                 .tint(Sea.deep)
+                // Bottom banner below the tab bar, main screen only (not while reading or writing).
+                if session.ads?.bannersAllowed == true {
+                    Divider()
+                    BannerSlot()
+                }
             }
             .background(SeaBackdrop())
             .overlay(alignment: .bottomTrailing) {
@@ -54,11 +59,15 @@ struct MainView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .thread(let id): ThreadView(session: session, threadId: id)
-                case .compose: ComposeView(session: session)
+                case .compose: ComposeView(session: session, adGate: (session.ads as AdGate?) ?? NoAdGate())
                 }
             }
         }
-        .task { await askNotificationPermissionOnce() }
+        .task {
+            await askNotificationPermissionOnce()
+            // After the notification question: consent form and tracking prompt only if ads are on.
+            await session.ads?.start()
+        }
     }
 
     private var titleKey: String {
@@ -94,6 +103,17 @@ struct MainView: View {
         let center = UNUserNotificationCenter.current()
         guard await center.notificationSettings().authorizationStatus == .notDetermined else { return }
         _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
+    }
+}
+
+/** Fixed-height slot for the anchored adaptive banner, so the layout does not jump while it loads. */
+private struct BannerSlot: View {
+    var body: some View {
+        GeometryReader { geo in
+            AdBanner(width: geo.size.width)
+        }
+        .frame(height: 60)
+        .background(Sea.paper)
     }
 }
 
