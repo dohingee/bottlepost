@@ -18,7 +18,7 @@ struct ComposeView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var wantGender = "ANY"
     @State private var sameLanguageOnly = false
-    @State private var text = ""
+    @State private var text = Demo.draft
     @State private var sending = false
     @State private var launched = false
     @State private var error: ApiError?

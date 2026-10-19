@@ -91,7 +91,7 @@
 | M5 | Apple Translation 번역 토글(받은 편지마다), 원문 언어는 기기 안에서 감지(NaturalLanguage), 대상은 편지 언어(`lang`) — Android와 같음. 앱 화면 언어는 iPhone 설정 > 보틀포스트 > 언어 | **완료** (실기기 확인) |
 | M6 | Sign in with Apple 연결·복원(Google 없음, 사용자 결정), iCloud Drive 앱 전용 컨테이너에 AES-GCM 암호화 백업(하루 1회 자동 + 수동), 계정 삭제 시 Apple 토큰 철회·백업 삭제. 서버 `confirmAccountLink`(`identity.ts`) | **구현 완료** (사용자 설정: `IOS_RELEASE_GUIDE.md` "M6 준비") |
 | M7 | AdMob(테스트 ID): 보내기 전 전면광고(빈도 제한, 2초 대기 후 생략), 메인 하단 앵커 배너, UMP → ATT 순서, SKAdNetwork 50개, Remote Config `ads_enabled`(기본 false) — Android와 같은 키 | **구현 완료** (실제 ID는 AdMob iOS 앱 승인 후) |
-| M8 | 심사 제출: 스크린샷 8개 언어, App Privacy, 18+ 등급, 심사 메모, 단계적 출시 | |
+| M8 | 심사 제출 준비: 8개 언어 스토어 문구(`ios/fastlane/metadata`), 6.9인치 스크린샷 8개 언어 × 5장(데모 모드로 실제 화면을 CI 시뮬레이터에서 촬영), `ios-store.yml`이 App Store Connect에 업로드(제출은 하지 않음), 심사 메모, 연령 등급·App Privacy 답안(`IOS_RELEASE_GUIDE.md` "M8") | **구현 완료** (제출은 사용자) |
 
 **M1 범위 밖:** Android ↔ iOS 대화 이전.
 - 백업 저장소가 Drive와 iCloud로 서로 다르기 때문이다.
@@ -108,25 +108,8 @@
 | 연령 등급·나이 확인 | 낮게 답하면 거절·삭제. 나이 입력이 기준을 미리 알려 주면 "우회 유도"로 봄 | 설문 사실대로 + 18+로 상향. 중립적 출생연도 입력 + Declared Age Range + 서버 재검증 ("18세 이상 확인") |
 | 개인정보 | 라벨·매니페스트 불일치 | `POLICY_CHECKLIST.md` I절 표 = `PrivacyInfo.xcprivacy` |
 
-### 심사 메모 초안 (App Review Information > Notes, 영어)
-```
-Bottlepost lets adults (18+) send one anonymous letter to a random adult; a conversation only
-continues if the recipient replies, and each side must wait for the other's reply (turn-taking).
-It is not a real-time chat: letters are limited per day and are delivered once.
-
-Safety (Guideline 1.2):
-- Terms of use with zero tolerance for objectionable content must be accepted before use.
-- Before sending, a server filter blocks links, phone numbers, e-mails, messenger IDs and crypto.
-- Every letter has Report (also blocks the sender immediately) and Block. Reports are analysed
-  by a rules engine and the OpenAI moderation model and reviewed by the operator within 24 hours;
-  child-safety reports suspend the sender at once.
-- Age gate: birth year at onboarding, re-checked on the server.
-- Support contact in Settings > Contact support; child-safety page: https://bottlepost.web.app/child-safety
-- Account deletion: Settings > Delete account (also https://bottlepost.web.app/delete-account).
-
-No login is needed to review the app. To receive a reply during review, send a letter choosing
-"Anyone": our test account replies within a few minutes.
-```
+### 심사 메모 (App Review Information > Notes, 영어)
+원문: `ios/fastlane/metadata/review_information/notes.txt` (`ios-store.yml`이 업로드).
 
 ## 검증 방법
 - 매 push: `ios-build.yml`이 시뮬레이터 빌드와 단위 테스트를 한다.

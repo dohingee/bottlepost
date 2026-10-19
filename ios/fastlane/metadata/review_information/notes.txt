@@ -1,0 +1,15 @@
+Bottlepost lets adults (18+) send one anonymous letter to a random adult. A conversation only continues if the recipient replies, and each side must wait for the other's reply (turn-taking). It is not a real-time chat: letters are limited per day and each letter is delivered once.
+
+Safety (Guideline 1.2):
+- Terms of use with zero tolerance for objectionable content and abusive users must be accepted before use.
+- Before sending, a server filter blocks links, phone numbers, e-mail addresses, messenger IDs and crypto addresses.
+- Every received letter has Report (which also blocks the sender at once) and Block. Reports are checked by a rules engine and a moderation model and reviewed by the operator within 24 hours; child-safety reports suspend the sender immediately.
+- Age: neutral birth-year entry at onboarding, re-checked on the server; on iOS 26 Apple's Declared Age Range is also asked. The age rating is 18+.
+- Support: Settings > Contact support. Child safety: https://bottlepost.web.app/child-safety
+- Account deletion: Settings > Delete account (Sign in with Apple is revoked too).
+
+No login is needed: onboarding asks only gender and birth year. Sign in with Apple (Settings) is optional and only used to restore the account and its encrypted iCloud backup on a new iPhone; it requests no name or e-mail.
+
+To receive a reply during review, send a letter choosing "Anyone": the operator's test account replies, usually within a few hours.
+
+Ads: an interstitial may show after sending a letter and a banner on the main screen; Google's consent form and the App Tracking Transparency prompt are shown first, and declining keeps the app fully usable.

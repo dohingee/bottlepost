@@ -82,7 +82,7 @@
 - [ ] 최신 Xcode·iOS SDK로 빌드 (2026년 4월 말부터 Xcode 26 / iOS 26 SDK 필수. 매년 봄 상향되므로 제출 전 Apple 공지 확인. CI `macos-26` 러너의 Xcode 버전을 실행 요약에서 확인)
 - [x] 개인정보 매니페스트 `PrivacyInfo.xcprivacy` — 아래 App Privacy 답안과 일치
 - [x] `ITSAppUsesNonExemptEncryption = false` (HTTPS와 Apple 기본 암호화만 사용 → 수출 규정 서류 면제)
-- [x] 권한 요청 문구(`NS…UsageDescription`)는 실제로 쓰는 것만. 현재 없음. ATT(`NSUserTrackingUsageDescription`)는 광고 도입 때 추가
+- [x] 권한 요청 문구(`NS…UsageDescription`)는 실제로 쓰는 것만: ATT(`NSUserTrackingUsageDescription`, 8개 언어)뿐
 - [x] App Check = App Attest (엔타이틀먼트 + Firebase 콘솔 등록)
 - [ ] 비공개 API·숨은 기능·원격 코드 다운로드 없음 (2.5.2, 2.3.1)
 
@@ -126,13 +126,15 @@
 - [x] 보내기 전 전면광고(빈도 제한·2초 안에 없으면 생략), 메인 화면 하단 배너만. 편지 읽기·쓰기 화면엔 배너 없음
 - [ ] AdMob에 iOS 앱 등록 → 실제 앱 ID·광고 단위 ID를 `ios/project.yml`에 넣기(지금은 테스트 ID) → 승인 후 Remote Config `ads_enabled` = true
 - [ ] App Privacy에 광고 데이터(추적 포함) 답변 — 아래 표의 AdMob 줄
+- [x] 스토어 문구에 다른 플랫폼(Android·Google Play·Google Drive) 언급 없음 (2.3.10) — `policy-check.sh`
+- [x] 스크린샷은 실제 앱 화면(데모 모드, 디버그 빌드 전용), 실제 사용자 정보 없음 (2.3.3)
 
 **App Store Connect 답안**
 - 연령 등급: 설문에서 "사용자 생성 콘텐츠", "메시지·채팅"을 정확히 체크 → **18+**. 계산 결과가 낮으면 18+로 올림
 - 카테고리: 소셜 네트워킹
 - 개인정보처리방침 URL `https://bottlepost.web.app/privacy` / 지원 URL `https://bottlepost.web.app`
 - EU 디지털 서비스법(DSA) 거래자 여부: 광고 수익이 있으면 "거래자" → 주소·전화번호·이메일이 EU 스토어에 공개됨. 공개를 원치 않으면 EU 배포 제외 검토
-- App Privacy (데이터 수집 답안). "추적에 사용"은 모두 아니요(광고 도입 전)
+- App Privacy (데이터 수집 답안). 입력 순서: `docs/IOS_RELEASE_GUIDE.md` "M8" 3번
 
 | Apple 데이터 유형 | 사용자와 연결 | 목적 | 비고 |
 |---|---|---|---|
@@ -140,5 +142,6 @@
 | 사용자 콘텐츠 > 기타 사용자 콘텐츠 (편지 중계, 신고된 편지) | 예 | 앱 기능 | 전달 즉시 삭제, 신고 건만 보관 |
 | 기타 데이터 (성별, 출생연도, 언어·국가) | 예 | 앱 기능 | |
 | 연락처 정보 > 이메일 주소 | — | — | **수집 안 함**: iOS는 Sign in with Apple만 쓰고 이메일·이름 scope를 요청하지 않음. Apple 식별자는 해시로만 보관(사용자 ID 항목에 포함) |
-| 진단 > 충돌 데이터 | 아니요 | 앱 기능 | Crashlytics 도입 시 추가 |
-| 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 (추적: ATT 허용 시 예) | AdMob 도입 시 추가 |
+| 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 | **추적: 예** (ATT 허용 시에만 IDFA) — AdMob SDK |
+| 사용 데이터 > 제품 상호작용 | 예 | 타사 광고, 분석 | AdMob SDK |
+| 진단 > 충돌·성능 데이터 | 아니요 | 분석 | AdMob SDK (Crashlytics는 없음) |

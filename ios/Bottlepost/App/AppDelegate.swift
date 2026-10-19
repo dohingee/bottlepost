@@ -11,7 +11,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        guard !Runtime.isUnitTest else { return true }
+        guard !Runtime.isOffline else { return true }
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         // Gets an APNs token even before the user allows alerts (silent "left" pushes still work).

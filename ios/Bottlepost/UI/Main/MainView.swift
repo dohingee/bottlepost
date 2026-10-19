@@ -12,8 +12,8 @@ struct MainView: View {
     let session: Session
 
     @Query(sort: \LetterThread.lastAt, order: .reverse) private var threads: [LetterThread]
-    @State private var tab = Tab.inbox
-    @State private var path: [Route] = []
+    @State private var tab = Demo.isOn ? MainView.demoTab : Tab.inbox
+    @State private var path: [Route] = Demo.isOn ? MainView.demoPath : []
 
     enum Tab: Hashable { case inbox, connections, settings }
 
@@ -64,9 +64,21 @@ struct MainView: View {
             }
         }
         .task {
+            guard !Demo.isOn else { return }
             await askNotificationPermissionOnce()
             // After the notification question: consent form and tracking prompt only if ads are on.
             await session.ads?.start()
+        }
+    }
+
+    /** Store screenshots open straight on the screen being captured (App/Demo.swift). */
+    private static var demoTab: Tab { Demo.screen == .connections ? .connections : .inbox }
+    private static var demoPath: [Route] {
+        switch Demo.screen {
+        case .compose: [.compose]
+        case .thread: [.thread(Demo.threadId)]
+        case .waiting: [.thread(Demo.waitingId)]
+        case .inbox, .connections: []
         }
     }
 

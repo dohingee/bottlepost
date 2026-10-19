@@ -11,3 +11,6 @@ DerivedData/
 xcuserdata/
 *.ipa
 *.p8
+# Rendered by .github/workflows/ios-store.yml
+fastlane/screenshots/
+fastlane/report.xml

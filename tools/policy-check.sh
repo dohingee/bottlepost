@@ -83,6 +83,22 @@ if [ -d $IOS ]; then
   grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"
   grep -rq '"minor"' $IOS/Bottlepost && ok "iOS report has a minor-safety reason" || warn "iOS: report/block not implemented yet (Guideline 1.2, milestone 4)"
   grep -rqi 'google' $IOS/Bottlepost/Data 2>/dev/null && ! grep -rq 'AuthenticationServices' $IOS/Bottlepost && bad "Google sign-in without Sign in with Apple (Guideline 4.8)" || ok "Sign in with Apple rule (4.8)"
+  # App Store text (ios/fastlane/metadata): Apple's length limits, and no other platform or store (2.3.10).
+  META=$IOS/fastlane/metadata
+  if [ -d "$META" ]; then
+    long=$(python3 - "$META" <<'PY'
+import pathlib, sys
+limits = {"name.txt": 30, "subtitle.txt": 30, "keywords.txt": 100, "promotional_text.txt": 170, "description.txt": 4000}
+for f in pathlib.Path(sys.argv[1]).glob("*/*.txt"):
+    n = len(f.read_text().rstrip("\n"))
+    if f.name in limits and n > limits[f.name]: print(f"{f.parent.name}/{f.name} {n}>{limits[f.name]}")
+PY
+)
+    [ -z "$long" ] && ok "App Store text within Apple's limits" || bad "App Store text too long: $long"
+    grep -rliE 'android|google play|play store|google drive' "$META" --include=description.txt --include=promotional_text.txt --include=keywords.txt --include=subtitle.txt --include=name.txt \
+      && bad "App Store text mentions another platform (Guideline 2.3.10)" || ok "App Store text names no other platform"
+    grep -q 'if DEBUG' $IOS/Bottlepost/App/Demo.swift && ok "screenshot demo mode is debug-only" || bad "Demo.swift must stay #if DEBUG"
+  fi
   if command -v npx >/dev/null && [ -d tools/node_modules ]; then
     (cd tools && npx tsx ios-strings.ts --check >/dev/null) && ok "iOS string catalogs match the Android strings" || bad "iOS string catalogs out of date (npx tsx tools/ios-strings.ts)"
   fi
