@@ -85,8 +85,8 @@
 | | 내용 | 상태 |
 |---|---|---|
 | M1 | 앱 골격: 익명 로그인 → `getProfile`, Sea 디자인, 문자열 카탈로그, 개인정보 매니페스트, CI 빌드·테스트, TestFlight 워크플로 | **완료** (CI 시뮬레이터 빌드·단위 테스트 8개 통과) |
-| M2 | 운영자가 `IOS_RELEASE_GUIDE.md`대로 키·시크릿·App Attest·APNs를 등록 → 첫 TestFlight 업로드 → iPhone에서 `getProfile` 성공 확인 | 운영자 차례 |
-| M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | |
+| M2 | 운영자가 `IOS_RELEASE_GUIDE.md`대로 키·시크릿·App Attest·APNs를 등록 → 첫 TestFlight 업로드 → iPhone에서 `getProfile` 성공 확인 | **완료** (2026-10-19) |
+| M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | **구현 완료**, 실기기 확인 대기 (서버: APNs 알림 `pushMessage.ts`) |
 | M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | |
 | M5 | Apple Translation 번역 토글, 언어 설정 | |
 | M6 | Sign in with Apple + Google 연결·복원, iCloud 암호화 백업 (서버 변경 포함) | |
@@ -134,3 +134,9 @@ No login is needed to review the app. To receive a reply during review, send a l
 - 로컬(Linux): `bash tools/policy-check.sh`(iOS 절), `cd tools && npx tsx ios-strings.ts --check`
 - 실기기: TestFlight 빌드(App Attest)로 iPhone에서 확인한다.
   - 시뮬레이터에서 서버를 호출하려면 App Check 디버그 토큰을 등록해야 한다(`ios/README.md`).
+
+## Android와 다르게 동작하는 부분 (의도적)
+- **나이 확인**: iOS는 출생연도를 빈 칸으로 시작하고 "18세 이상" 안내·체크박스를 두지 않는다. 미만이면 키체인에 기록해 재시도를 막고, iOS 26+에서는 Apple Declared Age Range도 확인한다. Android는 기존 방식(안내 문구 + 체크박스) 그대로다.
+- **앱 화면 언어**: iOS는 iPhone 설정 > 보틀포스트 > 언어(앱별 언어)를 따른다. 앱 안의 언어 선택은 편지 매칭·번역용 언어(`lang`)만 바꾼다.
+- **푸시**: Android는 data 메시지를 받아 앱이 알림을 만들고, iOS는 서버가 보낸 APNs 알림(지역화 키, 편지 내용 없음)을 시스템이 표시한다. "상대가 나감" 알림은 둘 다 표시하지 않는다.
+- **서버 오류 `no_recipient_available`·`service_paused`**: iOS는 해당 안내 문구를 보여 준다. Android는 이 둘을 `unavailable` 상태 때문에 "연결할 수 없어요"로 보여 주는 버그가 있다(`BottlepostApi.kt`의 offline 판정) — Android 세션에 전달 필요.
