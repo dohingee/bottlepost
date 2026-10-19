@@ -25,8 +25,9 @@ struct BottlepostApp: App {
         }
         let service: BottlepostService? = unitTest ? nil : FirebaseService()
         let mail = MailStore(context: container.mainContext, service: service)
+        let backup = service.map { BackupManager(mail: mail, service: $0, storage: ICloudBackupStorage()) }
         let session = Session(service: service, mail: mail, sync: unitTest ? nil : DeliverySync(mail: mail),
-                              ageLock: KeychainUnderageLock())
+                              ageLock: KeychainUnderageLock(), backup: backup)
         _session = State(initialValue: session)
         // A push can launch the app in the background, before any view exists.
         AppDelegate.session = session

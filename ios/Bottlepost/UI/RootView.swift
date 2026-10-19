@@ -12,7 +12,18 @@ struct RootView: View {
             .onChange(of: scenePhase) { _, phase in
                 // The listener may have been suspended in the background: catch up once.
                 if phase == .active { Task { await session.syncOnce() } }
+                if phase == .background { backupInBackground() }
             }
+    }
+
+    /** Daily backup when leaving the app, with the time iOS grants a finishing task. */
+    private func backupInBackground() {
+        var task = UIBackgroundTaskIdentifier.invalid
+        task = UIApplication.shared.beginBackgroundTask { UIApplication.shared.endBackgroundTask(task) }
+        Task {
+            await session.backupIfDue()
+            UIApplication.shared.endBackgroundTask(task)
+        }
     }
 
     @ViewBuilder

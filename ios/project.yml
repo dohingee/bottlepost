@@ -58,6 +58,12 @@ targets:
         aps-environment: production
         # 18+ check with Apple's age range (iOS 26+); see Data/AgeGate.swift.
         com.apple.developer.declared-age-range: true
+        # Sign in with Apple (account restore) and the private iCloud Drive container for the
+        # encrypted backup (Data/CloudBackup.swift). Container: docs/IOS_RELEASE_GUIDE.md "M6".
+        com.apple.developer.applesignin: [Default]
+        com.apple.developer.icloud-services: [CloudDocuments]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.bottlepost.app]
+        com.apple.developer.ubiquity-container-identifiers: [iCloud.com.bottlepost.app]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bottlepost.app

@@ -115,8 +115,8 @@
 
 **계정 (4.8, 5.1.1)**
 - [x] 로그인 없이 핵심 기능 사용 가능 (익명 계정)
-- [ ] Google 로그인을 제공하면 **Sign in with Apple**도 같은 화면에 제공 (4.8)
-- [x] 앱 내 계정 삭제 (5.1.1(v)) — 설정 > 계정 삭제(`deleteAccount`), 확인 후 기기 데이터도 삭제. Sign in with Apple 연결 계정은 삭제 시 Apple 토큰 철회(REST `revoke`)
+- [x] Google 로그인을 제공하면 **Sign in with Apple**도 같은 화면에 제공 (4.8) — iOS는 Apple만 제공하므로 해당 없음
+- [x] 앱 내 계정 삭제 (5.1.1(v)) — 설정 > 계정 삭제(`deleteAccount`), 확인 후 기기 데이터도 삭제. Sign in with Apple 연결 계정은 Apple 재인증 후 토큰 철회(`Auth.revokeToken`, Firebase Apple 제공업체의 OAuth 코드 흐름 구성 필요)와 iCloud 백업 삭제
 - [ ] 계정 삭제 웹 URL `https://bottlepost.web.app/delete-account`
 
 **광고 (5.1.2, 광고 도입 시)**
@@ -136,6 +136,6 @@
 | 식별자 > 사용자 ID (Firebase UID) | 예 | 앱 기능 | |
 | 사용자 콘텐츠 > 기타 사용자 콘텐츠 (편지 중계, 신고된 편지) | 예 | 앱 기능 | 전달 즉시 삭제, 신고 건만 보관 |
 | 기타 데이터 (성별, 출생연도, 언어·국가) | 예 | 앱 기능 | |
-| 연락처 정보 > 이메일 주소 (Google·Apple 연결 시) | 예 | 앱 기능 | 계정 연결 기능 도입 시 추가 |
+| 연락처 정보 > 이메일 주소 | — | — | **수집 안 함**: iOS는 Sign in with Apple만 쓰고 이메일·이름 scope를 요청하지 않음. Apple 식별자는 해시로만 보관(사용자 ID 항목에 포함) |
 | 진단 > 충돌 데이터 | 아니요 | 앱 기능 | Crashlytics 도입 시 추가 |
 | 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 (추적: ATT 허용 시 예) | AdMob 도입 시 추가 |

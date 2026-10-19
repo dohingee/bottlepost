@@ -20,10 +20,11 @@ struct ApiError: Error, Equatable {
             case .unavailable, .deadlineExceeded: return ApiError(code: "network")
             default: return ApiError(code: message)
             }
-        case AuthErrorDomain where ns.code == AuthErrorCode.networkError.rawValue:
+        case AuthErrorDomain where ns.code == AuthErrorCode.networkError.rawValue, NSURLErrorDomain:
             return ApiError(code: "network")
         default:
-            return ApiError(code: "network")
+            // Local failures (file, crypto, sign-in): the generic message, not "check your connection".
+            return ApiError(code: "unknown")
         }
     }
 }
@@ -93,6 +94,14 @@ struct ReportMessage: Equatable, Sendable {
     }
 }
 
+/** Result of linking Sign in with Apple to the current (anonymous) user. */
+enum LinkOutcome: Equatable, Sendable {
+    /** Linked; the uid and everything on it stay. */
+    case linked
+    /** That Apple ID already belongs to another Bottlepost account (reinstall, new phone). */
+    case belongsToAnother
+}
+
 /** What the screens need from the backend; tests substitute a fake. */
 protocol BottlepostService: Sendable {
     var uid: String? { get }
@@ -109,10 +118,21 @@ protocol BottlepostService: Sendable {
     func submitAppeal(_ message: String) async throws
     func deleteAccount() async throws
     func signOut()
+
+    var isAppleLinked: Bool { get }
+    func linkApple(_ credential: AppleCredential) async throws -> LinkOutcome
+    /** After .belongsToAnother: signs in to the account that owns the Apple ID. */
+    func switchToLinkedApple() async throws
+    /** Removes the Firebase user itself; only for an anonymous user without a profile. */
+    func deleteCurrentUser() async throws
+    func confirmAccountLink() async throws -> Profile
+    /** 32-byte AES key for the backup (getBackupKey). */
+    func getBackupKey() async throws -> Data
+    func revokeApple(authorizationCode: String) async throws
 }
 
 /** Thin wrapper over the callable Cloud Functions in firebase/functions/src. */
-final class FirebaseService: BottlepostService {
+final class FirebaseService: BottlepostService, @unchecked Sendable {
     static let region = "asia-northeast3"
 
     var uid: String? { Auth.auth().currentUser?.uid }
@@ -185,6 +205,69 @@ final class FirebaseService: BottlepostService {
 
     func signOut() {
         try? Auth.auth().signOut()
+    }
+
+    /** Credential handed back by Firebase when the Apple ID is already linked elsewhere. */
+    private var pendingApple: AuthCredential?
+
+    var isAppleLinked: Bool {
+        Auth.auth().currentUser?.providerData.contains { $0.providerID == "apple.com" } == true
+    }
+
+    func linkApple(_ c: AppleCredential) async throws -> LinkOutcome {
+        let credential = OAuthProvider.appleCredential(withIDToken: c.idToken, rawNonce: c.rawNonce, fullName: nil)
+        guard let user = Auth.auth().currentUser else {
+            pendingApple = credential
+            return .belongsToAnother
+        }
+        do {
+            _ = try await user.link(with: credential)
+            // Fresh ID token so the server sees the apple.com identity.
+            _ = try await user.getIDTokenResult(forcingRefresh: true)
+            return .linked
+        } catch let error as NSError where error.code == AuthErrorCode.credentialAlreadyInUse.rawValue {
+            pendingApple = error.userInfo[AuthErrorUserInfoUpdatedCredentialKey] as? AuthCredential ?? credential
+            return .belongsToAnother
+        } catch {
+            throw ApiError.from(error)
+        }
+    }
+
+    func switchToLinkedApple() async throws {
+        guard let pendingApple else { throw ApiError(code: "unknown") }
+        do {
+            _ = try await Auth.auth().signIn(with: pendingApple)
+            self.pendingApple = nil
+        } catch {
+            throw ApiError.from(error)
+        }
+    }
+
+    func deleteCurrentUser() async throws {
+        do {
+            try await Auth.auth().currentUser?.delete()
+        } catch {
+            throw ApiError.from(error)
+        }
+    }
+
+    func confirmAccountLink() async throws -> Profile {
+        guard let profile = Profile(callable: try await call("confirmAccountLink")) else { throw ApiError(code: "unknown") }
+        return profile
+    }
+
+    func getBackupKey() async throws -> Data {
+        guard let m = try await call("getBackupKey") as? [String: Any], let b64 = m["key"] as? String,
+              let key = Data(base64Encoded: b64), key.count == 32 else { throw ApiError(code: "unknown") }
+        return key
+    }
+
+    func revokeApple(authorizationCode: String) async throws {
+        do {
+            try await Auth.auth().revokeToken(withAuthorizationCode: authorizationCode)
+        } catch {
+            throw ApiError.from(error)
+        }
     }
 
     private func call(_ name: String, _ data: [String: Any] = [:]) async throws -> Any? {

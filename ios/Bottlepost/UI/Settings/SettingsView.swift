@@ -1,6 +1,7 @@
+import AuthenticationServices
 import SwiftUI
 
-/** Profile, help links, appeal (when suspended) and account deletion. Backup comes in M6. */
+/** Profile, Apple account and iCloud backup, help links, appeal (when suspended) and account deletion. */
 struct SettingsView: View {
     let session: Session
 
@@ -11,6 +12,9 @@ struct SettingsView: View {
     @State private var showAppeal = false
     @State private var confirmDelete = false
     @State private var deleting = false
+    @State private var appleNonce = ""
+    @State private var confirmSwitch = false
+    @State private var confirmRestore = false
 
     var body: some View {
         ScrollView {
@@ -50,6 +54,8 @@ struct SettingsView: View {
                     }
                 }
 
+                accountSection
+
                 PaperSheet {
                     Text(L("settings_help")).font(.system(.headline, design: .serif))
                     Link(L("settings_terms"), destination: Links.terms)
@@ -78,6 +84,18 @@ struct SettingsView: View {
             .padding(16)
             .padding(.bottom, 40)
         }
+        .alert(L("ios_switch_title"), isPresented: $confirmSwitch) {
+            Button(L("action_cancel"), role: .cancel) {}
+            Button(L("action_switch_account"), role: .destructive) { switchAccount() }
+        } message: {
+            Text(L("ios_switch_body"))
+        }
+        .alert(L("restore_confirm_title"), isPresented: $confirmRestore) {
+            Button(L("action_cancel"), role: .cancel) {}
+            Button(L("action_restore"), role: .destructive) { Task { await session.restoreBackup() } }
+        } message: {
+            Text(L("restore_confirm_body"))
+        }
         .alert(L("delete_title"), isPresented: $confirmDelete) {
             Button(L("action_cancel"), role: .cancel) {}
             Button(L("action_delete_account"), role: .destructive) { deleteAccount() }
@@ -89,11 +107,77 @@ struct SettingsView: View {
         }
     }
 
+    /** Linked: backup status and actions. Not linked: why to link, and the Apple button. */
+    private var accountSection: some View {
+        PaperSheet {
+            Text(L("settings_account")).font(.system(.headline, design: .serif))
+            if session.isAppleLinked {
+                Label(L("ios_apple_linked"), systemImage: "apple.logo").font(.subheadline.weight(.semibold))
+                Text(session.lastBackupAt.map { L("backup_last", $0.formatted(date: .abbreviated, time: .shortened)) }
+                     ?? L("backup_never"))
+                    .font(.footnote)
+                HStack(spacing: 12) {
+                    Button(L("action_backup_now")) { Task { await session.backupNow() } }
+                    Button(L("action_restore")) { confirmRestore = true }
+                    if session.backupBusy { ProgressView() }
+                }
+                .disabled(session.backupBusy)
+                .tint(Sea.deep)
+            } else {
+                Text(L("ios_link_explain")).font(.footnote)
+                SignInWithAppleButton(.signIn) { request in
+                    appleNonce = AppleSignIn.randomNonce()
+                    AppleSignIn.configure(request, nonce: appleNonce)
+                } onCompletion: { result in
+                    link(result)
+                }
+                .signInWithAppleButtonStyle(.black)
+                .frame(height: 46)
+            }
+        }
+    }
+
+    private func link(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard let credential = AppleCredential(authorization: authorization, rawNonce: appleNonce) else { return }
+            Task {
+                do {
+                    if try await session.linkApple(credential) == .needsSwitchConfirm { confirmSwitch = true }
+                } catch {
+                    session.show(errorMessageKey(ApiError.from(error)))
+                }
+            }
+        case .failure(let failure):
+            if !AppleSignIn.isCancel(failure) { session.show(errorMessageKey(ApiError.from(failure))) }
+        }
+    }
+
+    private func switchAccount() {
+        Task {
+            do {
+                try await session.switchToAppleAccount()
+            } catch {
+                session.show(errorMessageKey(ApiError.from(error)))
+            }
+        }
+    }
+
     private func deleteAccount() {
         deleting = true
         Task {
             do {
-                try await session.deleteAccount()
+                // Apple-linked: sign in with Apple once more so the token can be revoked.
+                var reauth: AppleCredential?
+                if session.isAppleLinked {
+                    do {
+                        reauth = try await AppleReauth().run()
+                    } catch let cancel where AppleSignIn.isCancel(cancel) {
+                        deleting = false
+                        return
+                    }
+                }
+                try await session.deleteAccount(appleReauth: reauth)
             } catch {
                 session.show(errorMessageKey(ApiError.from(error)))
             }

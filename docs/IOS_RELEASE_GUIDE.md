@@ -158,6 +158,31 @@ GitHub `dohingee/bottlepost` → **Settings** → **Secrets and variables** → 
    - 빌드 번호는 실행할 때마다 1씩 커집니다.
 3. ✋ iPhone의 TestFlight 앱에서 **업데이트**를 누릅니다.
 
+## M6 준비: Apple 계정 연결과 iCloud 백업 (한 번만)
+iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해제)가 동작하려면 아래 3가지가 필요합니다.
+
+1. ✋ **Firebase에서 Apple 로그인 켜기**
+   - Firebase 콘솔 → **Authentication** → **로그인 방법** → **새 제공업체 추가** → **Apple** → **사용 설정** → 저장
+2. ✋ **Apple 토큰 철회용 키** (계정 삭제 때 Apple 연결을 끊는 데 필요, Apple 심사 요구사항)
+   - https://developer.apple.com/account/resources/authkeys/list → **＋**
+   - Key Name: `Bottlepost Sign in with Apple`
+   - ☑ **Sign in with Apple** → **Configure** → Primary App ID: `com.bottlepost.app` → Save → Continue → Register
+   - **Download**로 `.p8`을 받습니다(한 번만 가능). **Key ID**를 메모합니다.
+   - Firebase 콘솔 → Authentication → 로그인 방법 → **Apple** → **OAuth 코드 흐름 구성**:
+     - Apple 팀 ID: `DZVPW5CX52`
+     - 키 ID: 방금 메모한 Key ID
+     - 비공개 키: `.p8` 파일을 메모장으로 열어 전체 내용 붙여넣기
+     - 서비스 ID는 비워 둬도 됩니다(웹 로그인용).
+   - 저장합니다.
+3. ✋ **iCloud 컨테이너 만들기**
+   - https://developer.apple.com/account/resources/identifiers/list → **＋** → **iCloud Containers** → Continue
+   - Description: `Bottlepost backup`, Identifier: `iCloud.com.bottlepost.app` → Register
+   - 다시 **Identifiers** 목록에서 **App IDs**의 `com.bottlepost.app`을 누릅니다.
+   - **iCloud** 체크 → 옆 **Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
+   - "프로비저닝 프로파일이 무효화된다"는 안내가 나오면 확인을 누릅니다. 다음 TestFlight 빌드가 자동으로 새로 만듭니다.
+
+> 3번을 하기 전에 TestFlight 빌드를 돌리면 서명 단계에서 iCloud 관련 오류로 실패합니다. 3번을 마친 뒤 다시 실행하면 됩니다.
+
 ## 나중에: App Store 심사 제출 (M8)
 `docs/IOS_PLAN.md` "App Store 심사 위험과 대응"과 `docs/POLICY_CHECKLIST.md` I절을 따라 다음을 채웁니다.
 - 연령 등급 18+

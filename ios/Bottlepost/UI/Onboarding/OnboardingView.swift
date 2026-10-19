@@ -1,3 +1,4 @@
+import AuthenticationServices
 import SwiftUI
 #if canImport(DeclaredAgeRange)
 import DeclaredAgeRange
@@ -19,6 +20,8 @@ struct OnboardingView: View {
     @State private var agreePrivacy = false
     @State private var busy = false
     @State private var error: ApiError?
+    @State private var appleNonce = ""
+    @State private var appleLinked = false
 
     private var year: Int? { Int(birthYear) }
 
@@ -33,6 +36,23 @@ struct OnboardingView: View {
                 PaperSheet {
                     Text(L("onboarding_tagline")).font(.system(.title3, design: .serif))
                     Text(L("onboarding_privacy_note")).font(.callout)
+                }
+
+                if appleLinked {
+                    Text(L("ios_apple_new")).font(.callout).foregroundStyle(Sea.teal)
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L("ios_restore_apple")).font(.subheadline).foregroundStyle(Sea.inkText)
+                        SignInWithAppleButton(.continue) { request in
+                            appleNonce = AppleSignIn.randomNonce()
+                            AppleSignIn.configure(request, nonce: appleNonce)
+                        } onCompletion: { result in
+                            handleApple(result)
+                        }
+                        .signInWithAppleButtonStyle(.black)
+                        .frame(height: 46)
+                        .disabled(busy)
+                    }
                 }
 
                 section("onboarding_my_gender") {
@@ -104,6 +124,26 @@ struct OnboardingView: View {
                 .toggleStyle(CheckboxStyle())
             Spacer()
             Link(L("action_view"), destination: link).font(.subheadline)
+        }
+    }
+
+    private func handleApple(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard let credential = AppleCredential(authorization: authorization, rawNonce: appleNonce) else { return }
+            busy = true
+            error = nil
+            Task {
+                do {
+                    // true: an existing account was restored and the app moves on by itself.
+                    if !(try await session.restoreWithApple(credential)) { appleLinked = true }
+                } catch {
+                    self.error = ApiError.from(error)
+                }
+                busy = false
+            }
+        case .failure(let failure):
+            if !AppleSignIn.isCancel(failure) { error = ApiError.from(failure) }
         }
     }
 

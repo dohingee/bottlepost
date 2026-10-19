@@ -88,8 +88,8 @@
 | M2 | 운영자가 `IOS_RELEASE_GUIDE.md`대로 키·시크릿·App Attest·APNs를 등록 → 첫 TestFlight 업로드 → iPhone에서 `getProfile` 성공 확인 | **완료** (2026-10-19) |
 | M3 | 온보딩(성별·출생연도·약관 동의) → `createProfile`<br>18세 확인: 중립적 출생연도 입력, Declared Age Range(iOS 26+), 미만이면 키체인 기록으로 재시도 차단<br>받은편지/인연 탭<br>쓰기(2~1,000자, 받을 성별)<br>스레드(교대 편지, 대기 배너·떠다니는 병, 나가기, 상대가 남아 있으면 이중 확인 삭제)<br>deliveries 수신·삭제, FCM 푸시 | **완료** (실기기 확인, 서버: APNs 알림 `pushMessage.ts`) |
 | M4 | 신고(`sig` 포함, "미성년자" 사유)·차단·계정 삭제·이의 제기·문의하기 | **완료** (실기기 확인) |
-| M5 | Apple Translation 번역 토글(받은 편지마다), 원문 언어는 기기 안에서 감지(NaturalLanguage), 대상은 편지 언어(`lang`) — Android와 같음. 앱 화면 언어는 iPhone 설정 > 보틀포스트 > 언어 | **구현 완료**, 실기기 확인 대기 |
-| M6 | Sign in with Apple + Google 연결·복원, iCloud 암호화 백업 (서버 변경 포함) | |
+| M5 | Apple Translation 번역 토글(받은 편지마다), 원문 언어는 기기 안에서 감지(NaturalLanguage), 대상은 편지 언어(`lang`) — Android와 같음. 앱 화면 언어는 iPhone 설정 > 보틀포스트 > 언어 | **완료** (실기기 확인) |
+| M6 | Sign in with Apple 연결·복원(Google 없음, 사용자 결정), iCloud Drive 앱 전용 컨테이너에 AES-GCM 암호화 백업(하루 1회 자동 + 수동), 계정 삭제 시 Apple 토큰 철회·백업 삭제. 서버 `confirmAccountLink`(`identity.ts`) | **구현 완료** (사용자 설정: `IOS_RELEASE_GUIDE.md` "M6 준비") |
 | M7 | AdMob 테스트 광고(보내기 전 전면, 메인 하단 배너), UMP → ATT, SKAdNetwork, Remote Config `ads_enabled` | |
 | M8 | 심사 제출: 스크린샷 8개 언어, App Privacy, 18+ 등급, 심사 메모, 단계적 출시 | |
 
