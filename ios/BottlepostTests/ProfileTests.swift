@@ -59,29 +59,52 @@ final class ProfileTests: XCTestCase {
 
 @MainActor
 final class SessionTests: XCTestCase {
-    private struct FakeService: BottlepostService {
-        var profile: Profile?
-        var failure: ApiError?
-        func signInIfNeeded() async throws { if let failure { throw failure } }
-        func getProfile() async throws -> Profile? { profile }
+    private func session(_ fake: FakeService, lock: UnderageLock = MemoryUnderageLock()) -> Session {
+        Session(service: fake, mail: nil, sync: nil, ageLock: lock)
     }
 
     func testNoProfileGoesToOnboarding() async {
-        let session = Session(service: FakeService())
-        await session.start()
-        XCTAssertEqual(session.state, .needsOnboarding)
+        let s = session(FakeService())
+        await s.start()
+        XCTAssertEqual(s.state, .needsOnboarding)
     }
 
     func testProfileLoads() async throws {
         let profile = try XCTUnwrap(Profile(callable: ["gender": "M", "birthYear": 1990]))
-        let session = Session(service: FakeService(profile: profile))
-        await session.start()
-        XCTAssertEqual(session.state, .ready(profile))
+        let s = session(FakeService(profile: profile))
+        await s.start()
+        XCTAssertEqual(s.state, .ready)
+        XCTAssertEqual(s.profile, profile)
     }
 
     func testFailureIsShown() async {
-        let session = Session(service: FakeService(failure: ApiError(code: "network")))
-        await session.start()
-        XCTAssertEqual(session.state, .failed(ApiError(code: "network")))
+        let s = session(FakeService(failure: ApiError(code: "network")))
+        await s.start()
+        XCTAssertEqual(s.state, .failed(ApiError(code: "network")))
     }
+
+    func testLockedPhoneStaysBlocked() async {
+        let lock = MemoryUnderageLock()
+        lock.lock()
+        let s = session(FakeService(), lock: lock)
+        await s.start()
+        XCTAssertEqual(s.state, .underage)
+    }
+
+    func testServerUnderageLocksThePhone() async {
+        let lock = MemoryUnderageLock()
+        let s = session(FakeService(createFailure: ApiError(code: "underage")), lock: lock)
+        await s.start()
+        let p = NewProfile(gender: "F", birthYear: 2000, lang: "ko", country: "KR", receiveFrom: "ANY", nickname: "")
+        await XCTAssertThrowsErrorAsync(try await s.createProfile(p))
+        XCTAssertTrue(lock.isLocked)
+        XCTAssertEqual(s.state, .underage)
+    }
+}
+
+func XCTAssertThrowsErrorAsync(_ expression: @autoclosure () async throws -> Void, file: StaticString = #filePath, line: UInt = #line) async {
+    do {
+        try await expression()
+        XCTFail("expected an error", file: file, line: line)
+    } catch {}
 }

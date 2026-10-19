@@ -96,18 +96,22 @@
 
 **18세 이상 확인** (설계: `docs/IOS_PLAN.md` "18세 이상 확인")
 - [ ] 연령 등급 **18+**: 설문에 사실대로 답하고, 계산된 등급이 낮으면 18+로 올림
-- [ ] 중립적 나이 입력
+- [x] 중립적 나이 입력 (`ios/Bottlepost/UI/Onboarding/OnboardingView.swift`)
   - 출생연도 기본값 없음
   - 18세 기준을 입력 전에 안내하지 않음
   - "18세 이상입니다" 체크박스 대신 입력값으로 판정
-- [ ] 미만 입력 시 키체인에 기록 → 재설치·다른 연도로 재시도해도 차단
+- [x] 미만 입력 시 키체인에 기록 → 재설치·다른 연도로 재시도해도 차단
 - [ ] 서버 재검증 `createProfile` → `underage`
-- [ ] **Declared Age Range**(iOS 26+): 18세 기준으로 요청
+- [x] **Declared Age Range**(iOS 26+): 18세 기준으로 요청
   - 미만 → 차단
   - 거절·미지원 → 출생연도로만 판단
   - 결과는 저장·전송하지 않음 → App Privacy 변경 없음
-- [ ] App ID의 Declared Age Range 기능 + 엔타이틀먼트 `com.apple.developer.declared-age-range`
+- [x] App ID의 Declared Age Range 기능 + 엔타이틀먼트 `com.apple.developer.declared-age-range`
 - [ ] 미국 주별 앱스토어 연령 확인 법(텍사스·유타·루이지애나 등) 시행 상황을 제출 직전에 확인
+
+**알림 (4.5.4)**
+- [x] 알림 권한은 메인 화면에서 한 번만 요청. 거절해도 모든 기능 사용 가능
+- [x] 알림에 편지 내용 없음 (서버 `pushMessage.ts`의 APNs 지역화 키만 사용), 광고·마케팅 알림 없음
 
 **계정 (4.8, 5.1.1)**
 - [ ] 로그인 없이 핵심 기능 사용 가능 (익명 계정)

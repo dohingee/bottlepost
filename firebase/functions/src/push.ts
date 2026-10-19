@@ -1,9 +1,10 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { col, messaging } from "./db";
+import { buildPushMessage } from "./pushMessage";
 import type { DeliveryDoc } from "./types";
 
 /**
- * Data-only push: the app builds a localized, content-free notification ("You've got a letter").
+ * Content-free push ("You've got a letter"); see pushMessage.ts for the Android/iOS payloads.
  * Pass knownToken when the recipient doc was already read, to save a billed read.
  * No firebase-functions import: accountData.ts (also used by tools/) sends "left" notices with it.
  */
@@ -12,7 +13,7 @@ export async function notify(toUid: string, kind: DeliveryDoc["kind"], knownToke
     knownToken !== undefined ? knownToken : ((await col.users().doc(toUid).get()).get("fcmToken") as string | undefined);
   if (!token) return;
   try {
-    await messaging.send({ token, data: { type: "letter", kind }, android: { priority: "high" } });
+    await messaging.send(buildPushMessage(token, kind));
   } catch (err) {
     console.info("push failed", { code: (err as { code?: string }).code });
     if ((err as { code?: string }).code === "messaging/registration-token-not-registered") {

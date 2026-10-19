@@ -44,11 +44,17 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        # Wake-up for letter pushes, so the letter is already there when the user opens the app.
+        UIBackgroundModes: [remote-notification]
     entitlements:
       path: Bottlepost/Bottlepost.entitlements
       properties:
         # App Check (App Attest). Needs the App Attest capability on the App ID (docs/IOS_RELEASE_GUIDE.md).
         com.apple.developer.devicecheck.appattest-environment: production
+        # New-letter notifications (APNs key uploaded to Firebase Cloud Messaging).
+        aps-environment: production
+        # 18+ check with Apple's age range (iOS 26+); see Data/AgeGate.swift.
+        com.apple.developer.declared-age-range: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bottlepost.app
@@ -64,6 +70,10 @@ targets:
         product: FirebaseFunctions
       - package: Firebase
         product: FirebaseAppCheck
+      - package: Firebase
+        product: FirebaseFirestore
+      - package: Firebase
+        product: FirebaseMessaging
   BottlepostTests:
     type: bundle.unit-test
     platform: iOS

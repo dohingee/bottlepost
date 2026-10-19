@@ -29,11 +29,12 @@
 | Google LLC (Firebase, Google Cloud) | 서버, 인증, 푸시, 오류 분석, 기기 무결성 확인 | 미국 등 Google 데이터센터 |
 | OpenAI, L.L.C. (Moderation API) | **신고된 편지에 한해** 유해성 자동 분류 | 미국 |
 | Google LLC (AdMob) | 광고 게재·측정, 광고 사기 방지 | 미국 등 Google 데이터센터 |
-| Apple Inc. (App Attest) | iPhone 앱의 기기 무결성 확인(정품 앱 여부) | 미국 |
+| Apple Inc. (App Attest, APNs) | iPhone 앱의 기기 무결성 확인(정품 앱 여부), 새 편지 알림 전달 | 미국 |
 
 ## 4. iPhone(iOS) 앱
 - iPhone 앱도 위와 같은 정보를 같은 목적으로 처리하며, 편지 본문을 서버에 보관하지 않는 원칙도 같습니다.
 - 정품 앱 확인에는 Google Play Integrity 대신 Apple App Attest를 사용합니다. Apple은 이 과정에서 기기를 식별할 수 있는 정보를 운영자에게 제공하지 않습니다.
+- 새 편지 알림은 Apple 푸시 알림 서비스(APNs)로 전달됩니다. 알림에는 "편지가 도착했어요" 같은 안내 문구만 있고 편지 내용은 들어가지 않습니다.
 - iPhone 앱은 현재 광고 식별자(IDFA)를 수집하지 않으며, 앱 추적 투명성(ATT) 허용을 요청하지 않습니다. 광고를 도입하면 사전에 이 방침을 변경하고 앱에서 허용 여부를 묻습니다.
 
 ## 5. 이용자의 권리
