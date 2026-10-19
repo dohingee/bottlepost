@@ -13,11 +13,12 @@
 <li>번역은 기기 안의 Google ML Kit로 처리되며, 본문이 외부로 전송되지 않습니다.</li>
 </ul>
 <h2>3. 처리 위탁 및 국외 이전</h2>
-<table><thead><tr><th>수탁자</th><th>업무</th><th>이전 국가</th></tr></thead><tbody><tr><td>Google LLC (Firebase, Google Cloud)</td><td>서버, 인증, 푸시, 오류 분석, 기기 무결성 확인</td><td>미국 등 Google 데이터센터</td></tr><tr><td>OpenAI, L.L.C. (Moderation API)</td><td><strong>신고된 편지에 한해</strong> 유해성 자동 분류</td><td>미국</td></tr><tr><td>Google LLC (AdMob)</td><td>광고 게재·측정, 광고 사기 방지</td><td>미국 등 Google 데이터센터</td></tr><tr><td>Apple Inc. (App Attest)</td><td>iPhone 앱의 기기 무결성 확인(정품 앱 여부)</td><td>미국</td></tr></tbody></table>
+<table><thead><tr><th>수탁자</th><th>업무</th><th>이전 국가</th></tr></thead><tbody><tr><td>Google LLC (Firebase, Google Cloud)</td><td>서버, 인증, 푸시, 오류 분석, 기기 무결성 확인</td><td>미국 등 Google 데이터센터</td></tr><tr><td>OpenAI, L.L.C. (Moderation API)</td><td><strong>신고된 편지에 한해</strong> 유해성 자동 분류</td><td>미국</td></tr><tr><td>Google LLC (AdMob)</td><td>광고 게재·측정, 광고 사기 방지</td><td>미국 등 Google 데이터센터</td></tr><tr><td>Apple Inc. (App Attest, APNs)</td><td>iPhone 앱의 기기 무결성 확인(정품 앱 여부), 새 편지 알림 전달</td><td>미국</td></tr></tbody></table>
 <h2>4. iPhone(iOS) 앱</h2>
 <ul>
 <li>iPhone 앱도 위와 같은 정보를 같은 목적으로 처리하며, 편지 본문을 서버에 보관하지 않는 원칙도 같습니다.</li>
 <li>정품 앱 확인에는 Google Play Integrity 대신 Apple App Attest를 사용합니다. Apple은 이 과정에서 기기를 식별할 수 있는 정보를 운영자에게 제공하지 않습니다.</li>
+<li>새 편지 알림은 Apple 푸시 알림 서비스(APNs)로 전달됩니다. 알림에는 "편지가 도착했어요" 같은 안내 문구만 있고 편지 내용은 들어가지 않습니다.</li>
 <li>iPhone 앱은 현재 광고 식별자(IDFA)를 수집하지 않으며, 앱 추적 투명성(ATT) 허용을 요청하지 않습니다. 광고를 도입하면 사전에 이 방침을 변경하고 앱에서 허용 여부를 묻습니다.</li>
 </ul>
 <h2>5. 이용자의 권리</h2>
