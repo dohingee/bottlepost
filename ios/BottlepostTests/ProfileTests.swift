@@ -1,3 +1,4 @@
+import SwiftData
 import XCTest
 import FirebaseFunctions
 @testable import Bottlepost
@@ -99,6 +100,51 @@ final class SessionTests: XCTestCase {
         await XCTAssertThrowsErrorAsync(try await s.createProfile(p))
         XCTAssertTrue(lock.isLocked)
         XCTAssertEqual(s.state, .underage)
+    }
+}
+
+@MainActor
+final class AccountTests: XCTestCase {
+    func testDeleteAccountWipesSignsOutAndRestarts() async throws {
+        let container = try ModelContainer(for: LetterThread.self, Letter.self,
+                                           configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let fake = FakeService(profile: Profile(callable: ["gender": "F", "birthYear": 1990]))
+        let mail = MailStore(context: container.mainContext, service: fake)
+        await mail.ingest([IncomingDelivery(id: "d1", data: ["threadId": "t1", "body": "hi there", "sentAt": NSNumber(value: 1)],
+                                            delete: {})])
+        let lock = MemoryUnderageLock()
+        let s = Session(service: fake, mail: mail, sync: nil, ageLock: lock)
+        await s.start()
+        try await s.deleteAccount()
+        XCTAssertTrue(fake.deletedAccount)
+        XCTAssertTrue(fake.signedOut)
+        XCTAssertTrue(mail.isEmpty)
+        XCTAssertNil(s.profile)
+        XCTAssertEqual(s.state, .needsOnboarding)
+    }
+
+    func testFailedDeleteKeepsEverything() async throws {
+        let fake = FakeService(profile: Profile(callable: ["gender": "F", "birthYear": 1990]))
+        fake.deleteFailure = ApiError(code: "network")
+        let s = Session(service: fake, mail: nil, sync: nil, ageLock: MemoryUnderageLock())
+        await s.start()
+        await XCTAssertThrowsErrorAsync(try await s.deleteAccount())
+        XCTAssertFalse(fake.signedOut)
+        XCTAssertEqual(s.state, .ready)
+    }
+
+    func testAppealErrorsReachTheScreen() async throws {
+        let fake = FakeService(profile: Profile(callable: ["gender": "F", "birthYear": 1990, "status": "suspended"]))
+        fake.appealFailure = ApiError(code: "appeal_pending")
+        let s = Session(service: fake, mail: nil, sync: nil, ageLock: MemoryUnderageLock())
+        await s.start()
+        do {
+            try await s.submitAppeal("please review this")
+            XCTFail("expected appeal_pending")
+        } catch {
+            XCTAssertEqual(errorMessageKey(ApiError.from(error)), "error_appeal_pending")
+        }
+        XCTAssertEqual(errorMessageKey(ApiError(code: "report_limit")), "error_report_limit")
     }
 }
 

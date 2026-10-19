@@ -9,6 +9,8 @@ import SwiftData
 /** Undelivered letters expire after 7 days; then either side may write again (replyLetter in letters.ts). */
 let turnTimeoutMs: Int64 = 7 * 24 * 60 * 60 * 1000
 let previewChars = 80
+/** Must not exceed LIMITS.reportMaxMessages on the server. */
+let reportLetters = 6
 
 func nowMs() -> Int64 { Int64(Date().timeIntervalSince1970 * 1000) }
 

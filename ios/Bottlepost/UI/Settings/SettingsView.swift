@@ -1,6 +1,6 @@
 import SwiftUI
 
-/** Profile and help links. Account deletion, appeals (M4) and backup (M6) come later. */
+/** Profile, help links, appeal (when suspended) and account deletion. Backup comes in M6. */
 struct SettingsView: View {
     let session: Session
 
@@ -8,6 +8,9 @@ struct SettingsView: View {
     @State private var receiveFrom = "ANY"
     @State private var lang = "en"
     @State private var loaded = false
+    @State private var showAppeal = false
+    @State private var confirmDelete = false
+    @State private var deleting = false
 
     var body: some View {
         ScrollView {
@@ -53,12 +56,48 @@ struct SettingsView: View {
                     Link(L("settings_privacy"), destination: Links.privacy)
                     Link(L("settings_child_safety"), destination: Links.childSafety)
                     Link(L("settings_contact"), destination: Links.contact)
+                    if session.profile.map({ $0.status != "active" }) == true {
+                        Button(L("settings_appeal")) { showAppeal = true }
+                    }
                 }
                 .tint(Sea.deep)
+
+                Button(role: .destructive) { confirmDelete = true } label: {
+                    Group {
+                        if deleting { ProgressView().tint(Sea.paper) } else { Text(L("action_delete_account")) }
+                    }
+                    .font(.headline)
+                    .foregroundStyle(Sea.paper)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Capsule().fill(Sea.wax))
+                }
+                .disabled(deleting)
             }
             .foregroundStyle(Sea.inkText)
             .padding(16)
             .padding(.bottom, 40)
+        }
+        .alert(L("delete_title"), isPresented: $confirmDelete) {
+            Button(L("action_cancel"), role: .cancel) {}
+            Button(L("action_delete_account"), role: .destructive) { deleteAccount() }
+        } message: {
+            Text(L("delete_body"))
+        }
+        .sheet(isPresented: $showAppeal) {
+            AppealSheet(session: session)
+        }
+    }
+
+    private func deleteAccount() {
+        deleting = true
+        Task {
+            do {
+                try await session.deleteAccount()
+            } catch {
+                session.show(errorMessageKey(ApiError.from(error)))
+            }
+            deleting = false
         }
     }
 
@@ -70,6 +109,53 @@ struct SettingsView: View {
             } catch {
                 session.show(errorMessageKey(ApiError.from(error)))
             }
+        }
+    }
+}
+
+/** Appeal a suspension or ban: 5 to 1000 characters, answered by e-mail within 14 days. */
+private struct AppealSheet: View {
+    let session: Session
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var text = ""
+    @State private var sending = false
+
+    private var valid: Bool { (5...1000).contains(text.trimmingCharacters(in: .whitespacesAndNewlines).count) }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("", text: $text, axis: .vertical)
+                    .lineLimit(4...12)
+                    .onChange(of: text) { _, new in
+                        if new.count > 1000 { text = String(new.prefix(1000)) }
+                    }
+            }
+            .navigationTitle(L("settings_appeal"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L("action_cancel")) { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L("action_send")) { send() }.disabled(!valid || sending)
+                }
+            }
+        }
+    }
+
+    private func send() {
+        sending = true
+        Task {
+            do {
+                try await session.submitAppeal(text)
+                session.show("appeal_sent")
+                dismiss()
+            } catch {
+                session.show(errorMessageKey(ApiError.from(error)))
+            }
+            sending = false
         }
     }
 }

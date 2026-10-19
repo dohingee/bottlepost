@@ -80,6 +80,24 @@ final class Session {
         profile = try await service.updateProfile(u)
     }
 
+    func submitAppeal(_ message: String) async throws {
+        try await service?.submitAppeal(message.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    /**
+     * Deletes the account on the server (partners are told it left), then everything on this phone,
+     * and starts over at onboarding. The age-check lock is about the phone, not the account: it stays.
+     */
+    func deleteAccount() async throws {
+        guard let service else { return }
+        try await service.deleteAccount()
+        sync?.stop()
+        mail?.wipe()
+        service.signOut()
+        profile = nil
+        state = .needsOnboarding
+    }
+
     /** Fetches waiting letters once (app became active, or a push arrived). */
     func syncOnce() async {
         guard state == .ready, let uid = service?.uid else { return }

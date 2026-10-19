@@ -115,6 +115,38 @@ final class MailStoreTests: XCTestCase {
         XCTAssertTrue(store.letters("t1").isEmpty)
     }
 
+    func testReportSendsLastSixLettersAsSignedAndCloses() async throws {
+        await store.ingest([letterDoc("d1", sentAt: 100)])
+        try await store.reply(threadId: "t1", body: " mine ", myLang: "en")
+        for i in 2...7 { await store.ingest([letterDoc("d\(i)", body: "letter \(i)", sentAt: Int64(3_000 + i))]) }
+        try await store.report(threadId: "t1", reason: "minor", note: "n")
+        let r = try XCTUnwrap(service.reports.first)
+        XCTAssertEqual(r.reason, "minor")
+        XCTAssertEqual(r.messages.count, reportLetters)
+        // Oldest first; the two oldest (d1 and my reply) fall outside the last six.
+        XCTAssertEqual(r.messages.map(\.deliveryId), ["d2", "d3", "d4", "d5", "d6", "d7"])
+        XCTAssertEqual(r.messages.first?.sig, "s-d2")
+        XCTAssertEqual(r.messages.first?.sentAt, 3_002)
+        XCTAssertEqual(store.thread("t1")?.closed, true)
+    }
+
+    func testReportMarksMyLettersAsSent() async throws {
+        await store.ingest([letterDoc("d1")])
+        try await store.reply(threadId: "t1", body: " mine ", myLang: "en")
+        try await store.report(threadId: "t1", reason: "spam", note: "")
+        let messages = try XCTUnwrap(service.reports.first?.messages)
+        XCTAssertEqual(messages.map(\.direction), ["received", "sent"])
+        XCTAssertEqual(messages.last?.body, "mine")
+        XCTAssertEqual(messages.last?.sig, "rsig1")
+    }
+
+    func testBlockClosesThread() async throws {
+        await store.ingest([letterDoc("d1")])
+        try await store.block(threadId: "t1")
+        XCTAssertEqual(service.blocked, ["t1"])
+        XCTAssertEqual(store.thread("t1")?.closed, true)
+    }
+
     func testMarkReadAndWipe() async throws {
         await store.ingest([letterDoc("d1")])
         store.markRead(threadId: "t1")
