@@ -92,6 +92,9 @@ final class MailStoreTests: XCTestCase {
         let t = try XCTUnwrap(store.thread("t1"))
         XCTAssertTrue(MailTab.connections.contains(t))
         XCTAssertEqual(ThreadStatus(t, now: t.lastAt + 1), .waiting)
+        // After 7 days without an answer either side may write again; their letter is still unread.
+        XCTAssertEqual(ThreadStatus(t, now: t.lastAt + turnTimeoutMs), .newLetter)
+        store.markRead(threadId: "t1")
         XCTAssertEqual(ThreadStatus(t, now: t.lastAt + turnTimeoutMs), .yourTurn)
     }
 
