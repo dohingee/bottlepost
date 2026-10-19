@@ -54,20 +54,38 @@ struct WaveShape: Shape {
 }
 
 /** Night-sea title band with a wave edge underneath, the iOS twin of SeaTopBar. */
-struct SeaTopBar: View {
+struct SeaTopBar<Trailing: View>: View {
     let title: String
+    var onBack: (() -> Void)?
+    @ViewBuilder var trailing: Trailing
 
     var body: some View {
         VStack(spacing: 0) {
-            Text(title)
-                .font(.system(.title2, design: .serif).weight(.semibold))
-                .foregroundStyle(Sea.paper)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Sea.nightGradient.ignoresSafeArea(edges: .top))
+            HStack(spacing: 8) {
+                if let onBack {
+                    Button(action: onBack) {
+                        Image(systemName: "chevron.backward").font(.title3.weight(.semibold))
+                    }
+                    .accessibilityLabel(L("action_back"))
+                }
+                Text(title)
+                    .font(.system(.title2, design: .serif).weight(.semibold))
+                    .lineLimit(1)
+                Spacer()
+                trailing
+            }
+            .foregroundStyle(Sea.paper)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(Sea.nightGradient.ignoresSafeArea(edges: .top))
             WaveShape().fill(Sea.deep).frame(height: 10)
         }
+    }
+}
+
+extension SeaTopBar where Trailing == EmptyView {
+    init(title: String, onBack: (() -> Void)? = nil) {
+        self.init(title: title, onBack: onBack) { EmptyView() }
     }
 }
 

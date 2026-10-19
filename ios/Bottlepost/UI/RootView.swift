@@ -1,96 +1,59 @@
 import SwiftUI
 
-/**
- * First screen. Milestone 1 of docs/IOS_PLAN.md: signs in anonymously and loads the profile.
- * Onboarding and the inbox replace the placeholders in later milestones.
- */
+/** Start: anonymous sign-in and profile load decide between onboarding and the main screen. */
 struct RootView: View {
-    let session: Session
+    @Bindable var session: Session
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        VStack(spacing: 0) {
-            SeaTopBar(title: L("app_name"))
-            ScrollView {
-                content
-                    .padding(20)
-                    .frame(maxWidth: .infinity)
+        content
+            .toast($session.toast)
+            .task { await session.start() }
+            .onChange(of: scenePhase) { _, phase in
+                // The listener may have been suspended in the background: catch up once.
+                if phase == .active { Task { await session.syncOnce() } }
             }
-        }
-        .background(SeaBackdrop())
-        .task { await session.start() }
     }
 
     @ViewBuilder
     private var content: some View {
         switch session.state {
         case .loading:
-            ProgressView()
-                .tint(Sea.teal)
-                .padding(.top, 80)
+            VStack(spacing: 0) {
+                SeaTopBar(title: L("app_name"))
+                ProgressView().tint(Sea.teal).frame(maxHeight: .infinity)
+            }
+            .background(SeaBackdrop())
         case .needsOnboarding:
-            PaperSheet {
-                Text(L("onboarding_tagline"))
-                    .font(.system(.title3, design: .serif))
-                Text(L("onboarding_privacy_note"))
-                    .font(.callout)
+            VStack(spacing: 0) {
+                SeaTopBar(title: L("app_name"))
+                OnboardingView(session: session)
             }
-        case .ready(let profile):
-            ProfileCard(profile: profile)
+            .background(SeaBackdrop())
+        case .underage:
+            VStack(spacing: 0) {
+                SeaTopBar(title: L("app_name"))
+                UnderageView()
+            }
+            .background(SeaBackdrop())
+        case .ready:
+            MainView(session: session)
         case .failed(let error):
-            VStack(spacing: 16) {
-                PaperSheet {
-                    Text(errorMessage(error))
+            VStack(spacing: 0) {
+                SeaTopBar(title: L("app_name"))
+                VStack(spacing: 16) {
+                    PaperSheet { Text(errorMessage(error)) }
+                    Button(L("action_retry")) { Task { await session.start() } }
+                        .buttonStyle(BottleButtonStyle())
                 }
-                Button(L("action_retry")) {
-                    Task { await session.start() }
-                }
-                .buttonStyle(BottleButtonStyle())
+                .padding(20)
+                .frame(maxHeight: .infinity, alignment: .top)
             }
+            .background(SeaBackdrop())
         }
-    }
-}
-
-private struct ProfileCard: View {
-    let profile: Profile
-
-    var body: some View {
-        PaperSheet(tinted: true) {
-            Text(L("settings_profile"))
-                .font(.system(.headline, design: .serif))
-            Text(L("settings_my_gender", selfGenderLabel(profile.gender)) + " · \(profile.birthYear)")
-            if !profile.nickname.isEmpty {
-                Text(profile.nickname)
-            }
-            if let status = statusText {
-                Text(status)
-                    .foregroundStyle(Sea.wax)
-            }
-        }
-    }
-
-    private var statusText: String? {
-        if profile.isBanned { return L("status_banned") }
-        guard profile.isSuspended() else { return nil }
-        if let until = profile.suspendedUntil {
-            return L("status_suspended_until", until.formatted(date: .abbreviated, time: .omitted))
-        }
-        return L("status_suspended_review")
-    }
-}
-
-/** Singular form for the user's own gender; [genderLabel] is the plural recipient choice. */
-func selfGenderLabel(_ code: String) -> String {
-    L(code == "M" ? "gender_self_male" : "gender_self_female")
-}
-
-func genderLabel(_ code: String) -> String {
-    switch code {
-    case "M": L("gender_male")
-    case "F": L("gender_female")
-    default: L("gender_any")
     }
 }
 
 #Preview {
-    RootView(session: Session(service: nil))
+    RootView(session: Session(service: nil, mail: nil, sync: nil, ageLock: MemoryUnderageLock()))
 }
