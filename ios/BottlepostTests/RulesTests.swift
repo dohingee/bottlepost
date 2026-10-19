@@ -48,6 +48,19 @@ final class RulesTests: XCTestCase {
         XCTAssertEqual(errorMessageKey(ApiError.from(paused)), "error_no_recipient")
     }
 
+    func testTranslationPlan() {
+        XCTAssertEqual(LetterTranslation.plan(source: "ko", target: "ko"), .sameLanguage)
+        XCTAssertEqual(LetterTranslation.plan(source: "pt-BR", target: "pt"), .sameLanguage)
+        XCTAssertEqual(LetterTranslation.plan(source: "ja", target: "ko"), .translate(from: "ja"))
+        XCTAssertEqual(LetterTranslation.baseCode("zh-Hant"), "zh-Hant")
+    }
+
+    func testDetectionBeatsHintWhenSure() {
+        let korean = "오늘은 바닷가에 다녀왔어요. 파도 소리가 정말 좋았고 하늘도 맑았어요."
+        XCTAssertEqual(LetterTranslation.detectLanguage(korean, hint: "en"), "ko")
+        XCTAssertEqual(LetterTranslation.detectLanguage("ok", hint: "vi"), "vi")
+    }
+
     func testStableSealColour() {
         XCTAssertEqual(stableHash("abc"), stableHash("abc"))
         XCTAssertNotEqual(stableHash("abc"), stableHash("abd"))
