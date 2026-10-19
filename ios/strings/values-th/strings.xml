@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">ฉันเคยใช้ Bottlepost — กู้คืนด้วย Apple</string>
+    <string name="ios_apple_new">เชื่อมบัญชี Apple แล้ว กรอกโปรไฟล์ให้ครบเพื่อเริ่มต้น</string>
+    <string name="ios_link_explain">เชื่อมบัญชี Apple เพื่อเก็บบัญชีไว้และสำรองบทสนทนาแบบเข้ารหัสไปยัง iCloud ของคุณเอง หากไม่เชื่อม การติดตั้งแอปใหม่จะลบทุกอย่าง</string>
+    <string name="ios_apple_linked">เชื่อมบัญชี Apple แล้ว</string>
+    <string name="ios_backup_done">สำรองข้อมูลไปยัง iCloud ของคุณแล้ว</string>
+    <string name="ios_backup_none">ไม่พบข้อมูลสำรองใน iCloud นี้</string>
+    <string name="ios_icloud_unavailable">หากต้องการสำรองข้อมูล โปรดลงชื่อเข้าใช้ iCloud ในแอปการตั้งค่า</string>
+    <string name="ios_switch_title">บัญชี Apple นี้มีบัญชี Bottlepost อื่นอยู่แล้ว</string>
+    <string name="ios_switch_body">การสลับจะลบบัญชีที่คุณใช้อยู่และบทสนทนาในโทรศัพท์เครื่องนี้ และอีกฝ่ายจะเห็นว่าคุณออกไปแล้ว หากบัญชีนั้นมีข้อมูลสำรองใน iCloud บทสนทนาจะถูกกู้คืน สลับไหม</string>
+    <string name="ios_link_required">โปรดเชื่อมบัญชี Apple ก่อน</string>
+</resources>

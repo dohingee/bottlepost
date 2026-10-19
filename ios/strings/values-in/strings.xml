@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">Saya pernah memakai Bottlepost — pulihkan dengan Apple</string>
+    <string name="ios_apple_new">Akun Apple tertaut. Lengkapi profil Anda untuk mulai.</string>
+    <string name="ios_link_explain">Tautkan akun Apple Anda untuk mempertahankan akun dan mencadangkan percakapan secara terenkripsi ke iCloud Anda sendiri. Tanpa itu, memasang ulang aplikasi akan menghapus semuanya.</string>
+    <string name="ios_apple_linked">Akun Apple tertaut</string>
+    <string name="ios_backup_done">Dicadangkan ke iCloud Anda.</string>
+    <string name="ios_backup_none">Tidak ada cadangan di iCloud ini.</string>
+    <string name="ios_icloud_unavailable">Untuk mencadangkan, masuk ke iCloud di app Pengaturan.</string>
+    <string name="ios_switch_title">Akun Apple ini punya akun Bottlepost lain</string>
+    <string name="ios_switch_body">Beralih akan menghapus akun yang Anda pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicara Anda akan melihat Anda keluar. Jika akun itu punya cadangan iCloud, percakapannya akan dipulihkan. Beralih?</string>
+    <string name="ios_link_required">Tautkan akun Apple Anda terlebih dahulu.</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">以前使っていました — Appleで復元</string>
+    <string name="ios_apple_new">Appleアカウントを連携しました。プロフィールを入力して始めましょう。</string>
+    <string name="ios_link_explain">Appleアカウントを連携すると、アカウントを保持し、会話を暗号化して自分のiCloudにバックアップできます。連携しないと、再インストール時にすべて消えます。</string>
+    <string name="ios_apple_linked">Appleアカウント連携済み</string>
+    <string name="ios_backup_done">iCloudにバックアップしました。</string>
+    <string name="ios_backup_none">このiCloudにバックアップがありません。</string>
+    <string name="ios_icloud_unavailable">バックアップするには、設定アプリでiCloudにサインインしてください。</string>
+    <string name="ios_switch_title">このAppleアカウントには別のボトルポストアカウントがあります</string>
+    <string name="ios_switch_body">切り替えると、今使っているアカウントとこのスマホの会話は削除され、相手には退出したと表示されます。そのアカウントのiCloudバックアップがあれば、その会話を復元します。切り替えますか？</string>
+    <string name="ios_link_required">先にAppleアカウントを連携してください。</string>
+</resources>

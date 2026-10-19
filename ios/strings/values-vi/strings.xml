@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">Tôi đã dùng Bottlepost — khôi phục bằng Apple</string>
+    <string name="ios_apple_new">Đã liên kết tài khoản Apple. Hoàn tất hồ sơ để bắt đầu.</string>
+    <string name="ios_link_explain">Liên kết tài khoản Apple để giữ tài khoản và sao lưu cuộc trò chuyện (được mã hóa) vào iCloud của riêng bạn. Nếu không, cài lại ứng dụng sẽ xóa mọi thứ.</string>
+    <string name="ios_apple_linked">Đã liên kết tài khoản Apple</string>
+    <string name="ios_backup_done">Đã sao lưu vào iCloud của bạn.</string>
+    <string name="ios_backup_none">Không tìm thấy bản sao lưu trong iCloud này.</string>
+    <string name="ios_icloud_unavailable">Để sao lưu, hãy đăng nhập iCloud trong ứng dụng Cài đặt.</string>
+    <string name="ios_switch_title">Tài khoản Apple này có một tài khoản Bottlepost khác</string>
+    <string name="ios_switch_body">Chuyển đổi sẽ xóa tài khoản bạn đang dùng cùng các cuộc trò chuyện trên điện thoại này, và người kia sẽ thấy bạn đã rời đi. Nếu tài khoản đó có bản sao lưu iCloud, các cuộc trò chuyện sẽ được khôi phục. Chuyển?</string>
+    <string name="ios_link_required">Hãy liên kết tài khoản Apple trước.</string>
+</resources>

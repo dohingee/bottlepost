@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only text (Apple account, iCloud). Same format and rules as the Android resources;
+     tools/ios-strings.ts merges it into the iOS catalog and tools/check-strings.ts checks it. -->
+<resources>
+    <string name="ios_restore_apple">I used Bottlepost before — restore with Apple</string>
+    <string name="ios_apple_new">Apple account linked. Finish your profile to start.</string>
+    <string name="ios_link_explain">Link your Apple account to keep your account and back up conversations, encrypted, to your own iCloud. Without it, reinstalling the app erases everything.</string>
+    <string name="ios_apple_linked">Apple account linked</string>
+    <string name="ios_backup_done">Backed up to your iCloud.</string>
+    <string name="ios_backup_none">No backup found in this iCloud account.</string>
+    <string name="ios_icloud_unavailable">Sign in to iCloud in the Settings app to back up.</string>
+    <string name="ios_switch_title">This Apple account has another Bottlepost account</string>
+    <string name="ios_switch_body">Switching deletes the account you are using now, including its conversations on this phone, and your partners will see that you left. If that account has an iCloud backup, its conversations are restored. Switch?</string>
+    <string name="ios_link_required">Link your Apple account first.</string>
+</resources>

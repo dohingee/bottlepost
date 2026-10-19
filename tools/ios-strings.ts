@@ -1,6 +1,7 @@
 /**
  * Generates the iOS string catalogs from the Android string resources, so translations live in one
- * place (android/app/src/main/res/values-*\/strings.xml) and both apps say the same thing.
+ * place (android/app/src/main/res/values-*\/strings.xml) and both apps say the same thing. Text only
+ * the iPhone app needs (Apple account, iCloud) lives in ios/strings/values-*\/strings.xml, same format.
  *   npx tsx ios-strings.ts            write ios/Bottlepost/Resources/{Localizable,InfoPlist}.xcstrings
  *   npx tsx ios-strings.ts --check    exit code 1 when the committed catalogs are out of date
  */
@@ -9,6 +10,7 @@ import { join } from "node:path";
 
 const ROOT = join(__dirname, "..");
 const RES = join(ROOT, "android", "app", "src", "main", "res");
+const IOS_RES = join(ROOT, "ios", "strings");
 const OUT = join(ROOT, "ios", "Bottlepost", "Resources");
 
 /** Android resource folder -> iOS locale (Android "pt" is Brazilian Portuguese, "in" is Indonesian). */
@@ -45,7 +47,12 @@ function unescape(s: string): string {
     .replace(/%(\d+)\$d/g, "%$1$ld");
 }
 
-const tables = Object.entries(LOCALES).map(([dir, locale]) => ({ locale, strings: parse(join(RES, dir, "strings.xml")) }));
+const tables = Object.entries(LOCALES).map(([dir, locale]) => {
+  const strings = parse(join(RES, dir, "strings.xml"));
+  const extra = join(IOS_RES, dir, "strings.xml");
+  if (existsSync(extra)) for (const [k, v] of parse(extra)) strings.set(k, v);
+  return { locale, strings };
+});
 const keys = [...tables[0].strings.keys()].sort();
 
 function catalog(entries: [string, (locale: string) => string | undefined][]) {
@@ -68,7 +75,17 @@ const lookup = (key: string) => (locale: string) => {
 
 const files: Record<string, string> = {
   "Localizable.xcstrings": catalog(keys.map((k) => [k, lookup(k)])),
-  "InfoPlist.xcstrings": catalog([["CFBundleDisplayName", lookup("app_name")]]),
+  "InfoPlist.xcstrings": catalog(
+    (
+      [
+        ["CFBundleDisplayName", "app_name"],
+        // App Tracking Transparency prompt (ads, M7); only once the key exists.
+        ["NSUserTrackingUsageDescription", "ios_att_purpose"],
+      ] as const
+    )
+      .filter(([, key]) => tables[0].strings.has(key))
+      .map(([plistKey, key]) => [plistKey, lookup(key)] as [string, (locale: string) => string | undefined]),
+  ),
 };
 
 let stale = 0;
@@ -81,7 +98,7 @@ for (const [name, content] of Object.entries(files)) {
     }
   } else {
     writeFileSync(path, content);
-    console.log(`wrote ${path} (${name === "InfoPlist.xcstrings" ? 1 : keys.length} keys, ${tables.length} locales)`);
+    console.log(`wrote ${path} (${tables.length} locales)`);
   }
 }
 process.exit(stale);

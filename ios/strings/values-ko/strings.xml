@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">전에 쓰던 계정이 있어요 — Apple로 복원</string>
+    <string name="ios_apple_new">Apple 계정을 연결했어요. 프로필을 완성하면 시작할 수 있어요.</string>
+    <string name="ios_link_explain">Apple 계정을 연결하면 계정이 유지되고, 대화를 암호화해 내 iCloud에 백업할 수 있어요. 연결하지 않으면 앱을 다시 설치할 때 모든 대화가 사라져요.</string>
+    <string name="ios_apple_linked">Apple 계정 연결됨</string>
+    <string name="ios_backup_done">내 iCloud에 백업했어요.</string>
+    <string name="ios_backup_none">이 iCloud에 백업이 없어요.</string>
+    <string name="ios_icloud_unavailable">백업하려면 iPhone 설정에서 iCloud에 로그인해 주세요.</string>
+    <string name="ios_switch_title">이 Apple 계정에는 다른 보틀포스트 계정이 있어요</string>
+    <string name="ios_switch_body">전환하면 지금 쓰는 계정과 이 휴대폰의 대화가 삭제되고, 상대방에게는 퇴장한 것으로 보여요. 그 계정의 iCloud 백업이 있으면 그 대화를 불러와요. 전환할까요?</string>
+    <string name="ios_link_required">먼저 Apple 계정을 연결해 주세요.</string>
+</resources>
