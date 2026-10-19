@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import Translation
 
 /** One conversation: alternating letters, waiting banner, reply box, leave / delete (ThreadScreen.kt). */
 struct ThreadView: View {
@@ -58,7 +59,8 @@ struct ThreadView: View {
                     VStack(spacing: 14) {
                         if waiting { WaitingBanner() }
                         ForEach(letters) { letter in
-                            LetterSheet(letter: letter).id(letter.deliveryId)
+                            LetterSheet(letter: letter, targetLang: session.profile?.lang ?? deviceLang())
+                                .id(letter.deliveryId)
                         }
                     }
                     .padding(16)
@@ -202,6 +204,13 @@ private struct WaitingBanner: View {
 /** One letter on paper: mine tinted and indented from the left, theirs from the right. */
 private struct LetterSheet: View {
     let letter: Letter
+    /** The reader's letter language (profile lang), like Android. */
+    let targetLang: String
+
+    @State private var translated: String?
+    /** translate_loading / _failed / _same_language / _unsupported while there is no translation. */
+    @State private var notice: String?
+    @State private var request: TranslationSession.Configuration?
 
     var body: some View {
         PaperSheet(tinted: letter.outgoing) {
@@ -212,12 +221,53 @@ private struct LetterSheet: View {
                 Spacer()
                 Text(shortDateTime(letter.sentAt)).font(.caption).foregroundStyle(Sea.inkText.opacity(0.6))
             }
-            Text(letter.body)
+            Text(translated ?? letter.body)
                 .font(.system(size: 17, design: .serif))
                 .lineSpacing(9)
                 .textSelection(.enabled)
                 .background(RuledLines(lineHeight: 29.5), alignment: .topLeading)
+            if !letter.outgoing {
+                if let notice {
+                    Text(L(notice)).font(.footnote).foregroundStyle(Sea.inkText.opacity(0.7))
+                }
+                Button(L(translated == nil && notice == nil ? "action_translate" : "action_show_original")) { toggle() }
+                    .font(.footnote.weight(.semibold))
+                    .tint(Sea.teal)
+            }
         }
         .padding(letter.outgoing ? .leading : .trailing, 28)
+        .translationTask(request) { session in
+            do {
+                let response = try await session.translate(letter.body)
+                translated = response.targetText
+                notice = nil
+            } catch {
+                notice = "translate_failed"
+            }
+        }
+    }
+
+    private func toggle() {
+        if translated != nil || notice != nil {
+            translated = nil
+            notice = nil
+            request = nil
+            return
+        }
+        let source = LetterTranslation.detectLanguage(letter.body, hint: letter.lang)
+        switch LetterTranslation.plan(source: source, target: targetLang) {
+        case .sameLanguage:
+            notice = "translate_same_language"
+        case .translate(let from):
+            notice = "translate_loading"
+            Task {
+                guard await LetterTranslation.isSupported(from: from, to: targetLang) else {
+                    notice = "translate_unsupported"
+                    return
+                }
+                request = TranslationSession.Configuration(source: Locale.Language(identifier: from),
+                                                           target: Locale.Language(identifier: targetLang))
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@
 <ul>
 <li>편지 본문은 수신자 기기로 전달될 때까지만 중계 서버(Google Cloud Firestore)에 저장되고, 전달 즉시 삭제됩니다. 7일 안에 전달되지 않으면 자동 삭제됩니다.</li>
 <li>대화 내역은 이용자 기기에만 저장됩니다. Google 계정을 연결하고 백업을 켜면 이용자 본인의 Google Drive 앱 전용 폴더(appDataFolder)에 암호화된 백업 파일이 저장되며, 운영자는 이 파일에 접근할 수 없습니다.</li>
-<li>번역은 기기 안의 Google ML Kit로 처리되며, 본문이 외부로 전송되지 않습니다.</li>
+<li>번역은 기기 안에서 처리되며(Android: Google ML Kit, iPhone: Apple 번역), 본문이 외부로 전송되지 않습니다. 처음 번역할 때 언어팩을 내려받을 수 있습니다.</li>
 </ul>
 <h2>3. 처리 위탁 및 국외 이전</h2>
 <table><thead><tr><th>수탁자</th><th>업무</th><th>이전 국가</th></tr></thead><tbody><tr><td>Google LLC (Firebase, Google Cloud)</td><td>서버, 인증, 푸시, 오류 분석, 기기 무결성 확인</td><td>미국 등 Google 데이터센터</td></tr><tr><td>OpenAI, L.L.C. (Moderation API)</td><td><strong>신고된 편지에 한해</strong> 유해성 자동 분류</td><td>미국</td></tr><tr><td>Google LLC (AdMob)</td><td>광고 게재·측정, 광고 사기 방지</td><td>미국 등 Google 데이터센터</td></tr><tr><td>Apple Inc. (App Attest, APNs)</td><td>iPhone 앱의 기기 무결성 확인(정품 앱 여부), 새 편지 알림 전달</td><td>미국</td></tr></tbody></table>

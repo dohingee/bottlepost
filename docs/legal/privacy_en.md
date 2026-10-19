@@ -12,7 +12,7 @@
 
 **What we never collect:** real name, phone number, precise location, contacts, photos, hardware device identifiers.
 
-**Letter content.** A letter waits on our relay (Google Cloud Firestore) only until it reaches the recipient's device and is deleted immediately afterwards; undelivered letters are deleted after 7 days. Conversations live on your device. Optional backups are encrypted and stored in your own Google Drive app-data folder, which we cannot access. Translation runs on-device (Google ML Kit).
+**Letter content.** A letter waits on our relay (Google Cloud Firestore) only until it reaches the recipient's device and is deleted immediately afterwards; undelivered letters are deleted after 7 days. Conversations live on your device. Optional backups are encrypted and stored in your own Google Drive app-data folder, which we cannot access. Translation runs on-device (Google ML Kit on Android, Apple Translation on iPhone); the first use may download a language pack.
 
 **Processors.** Google (Firebase/Google Cloud: hosting, auth, push, crash reporting, integrity); Apple (App Attest: device-integrity checks in the iPhone app; APNs: new-letter notifications, which never contain letter text); OpenAI (Moderation API, **only for reported letters**); Google AdMob (showing and measuring ads, ad fraud prevention). Data may be processed in the United States.
 
