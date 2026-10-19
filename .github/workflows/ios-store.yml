@@ -1,0 +1,125 @@
+# App Store listing: renders the 6.9" iPhone screenshots in all 8 languages from the real app
+# (demo mode, ios/Bottlepost/App/Demo.swift) and, when asked, uploads them with the text in
+# ios/fastlane/metadata to the version being prepared in App Store Connect. Never submits for review.
+# Guide: docs/IOS_RELEASE_GUIDE.md "M8".
+name: iOS App Store listing
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Upload screenshots and text to App Store Connect (otherwise only the screenshot artifact)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-store
+  cancel-in-progress: false
+
+jobs:
+  listing:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Generate the Xcode project
+        working-directory: ios
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - uses: actions/cache@v5
+        with:
+          path: ios/build/spm
+          key: spm-${{ hashFiles('ios/project.yml') }}
+
+      - name: Build for the simulator
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Bottlepost.xcodeproj -scheme Bottlepost -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -clonedSourcePackagesDirPath build/spm \
+            -derivedDataPath build/dd \
+            -skipPackagePluginValidation -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee ../xcodebuild-output.txt | grep -E "error:|\*\* " || true
+          grep -q '\*\* BUILD SUCCEEDED \*\*' ../xcodebuild-output.txt
+
+      - name: Take screenshots (6.9-inch iPhone)
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          # Newest iOS runtime and the largest iPhone it offers (1320x2868 on the 16/17 Pro Max).
+          read -r runtime devtype <<<"$(xcrun simctl list -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)
+          rt = sorted((r for r in d["runtimes"] if r["platform"] == "iOS" and r["isAvailable"]), key=lambda r: [int(x) for x in r["version"].split(".")])[-1]
+          names = {t["name"]: t["identifier"] for t in rt.get("supportedDeviceTypes", d["devicetypes"])}
+          pick = next(n for n in ["iPhone 17 Pro Max", "iPhone 16 Pro Max"] if n in names)
+          print(rt["identifier"], names[pick])')"
+          udid=$(xcrun simctl create shots "$devtype" "$runtime")
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          xcrun simctl status_bar "$udid" override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 \
+            --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+          xcrun simctl install "$udid" build/dd/Build/Products/Debug-iphonesimulator/Bottlepost.app
+          app=com.bottlepost.app
+          # App language : region format : App Store Connect locale folders (Spanish serves both storefronts).
+          langs="ko:ko_KR:ko en:en_US:en-US ja:ja_JP:ja es:es_MX:es-MX,es-ES pt-BR:pt_BR:pt-BR id:id_ID:id vi:vi_VN:vi th:th_TH:th"
+          screens="1:inbox 2:compose 3:thread 4:waiting 5:connections"
+          xcrun simctl launch "$udid" "$app" -BPDemo YES >/dev/null; sleep 8   # first start is slow
+          for pair in $langs; do
+            IFS=: read -r lang locale dirs <<<"$pair"
+            for s in $screens; do
+              n=${s%%:*}; screen=${s#*:}
+              xcrun simctl launch --terminate-running-process "$udid" "$app" \
+                -BPDemo YES -BPDemoScreen "$screen" -AppleLanguages "($lang)" -AppleLocale "$locale" >/dev/null
+              sleep 5
+              out="fastlane/screenshots/${dirs%%,*}/${n}_${screen}.png"
+              mkdir -p "$(dirname "$out")"
+              xcrun simctl io "$udid" screenshot --type=png "$out" >/dev/null 2>&1
+              for extra in ${dirs//,/ }; do
+                [ "$extra" = "${dirs%%,*}" ] || { mkdir -p "fastlane/screenshots/$extra"; cp "$out" "fastlane/screenshots/$extra/"; }
+              done
+            done
+          done
+          size=$(sips -g pixelWidth -g pixelHeight fastlane/screenshots/ko/1_inbox.png | awk '/pixel/ {print $2}' | paste -sd x -)
+          echo "Screenshots: $size on $devtype" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "$size" = "1320x2868" ] || { echo "::error::expected 1320x2868 screenshots, got $size"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-screenshots
+          path: ios/fastlane/screenshots
+
+      - name: Upload to App Store Connect
+        if: inputs.upload
+        working-directory: ios
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          KEY: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          gem install fastlane -v '~> 2.227' --no-document --user-install >/dev/null
+          export PATH="$(ruby -e 'print Gem.user_dir')/bin:$PATH"
+          python3 -c 'import json, os; print(json.dumps({"key_id": os.environ["KEY_ID"], "issuer_id": os.environ["ISSUER"], "key": os.environ["KEY"], "in_house": False}))' \
+            > "$RUNNER_TEMP/asc.json"
+          version=$(grep -E '^\s+MARKETING_VERSION:' project.yml | head -1 | sed -E 's/.*"(.*)".*/\1/')
+          fastlane deliver --api_key_path "$RUNNER_TEMP/asc.json" --app_identifier com.bottlepost.app \
+            --app_version "$version" --platform ios \
+            --metadata_path fastlane/metadata --screenshots_path fastlane/screenshots \
+            --skip_binary_upload true --overwrite_screenshots true --force true \
+            --submit_for_review false --run_precheck_before_submit false --automatic_release false
+          echo "Uploaded the listing for version $version. Submit it yourself in App Store Connect." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report build errors
+        if: failure() && hashFiles('xcodebuild-output.txt') != ''
+        run: |
+          { grep -E "error:" xcodebuild-output.txt || tail -n 30 xcodebuild-output.txt; } \
+            | tail -n 30 | cut -c1-400 | sed -E 's/%/%25/g' | while IFS= read -r line; do echo "::error title=xcodebuild::${line}"; done

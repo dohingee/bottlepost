@@ -16,6 +16,13 @@ final class FakeService: BottlepostService, @unchecked Sendable {
     private(set) var deletedAccount = false
     private(set) var signedOut = false
     var appealFailure: ApiError?
+    /** Ordered log of account calls, to check flows. */
+    private(set) var calls: [String] = []
+    var linkOutcome: LinkOutcome = .linked
+    var appleLinked = false
+    /** Profile of the account the Apple ID belongs to (after a switch). */
+    var otherAccountProfile: Profile?
+    var backupKey = Data(repeating: 7, count: 32)
     var deleteFailure: ApiError?
     private var counter = 0
 
@@ -65,8 +72,42 @@ final class FakeService: BottlepostService, @unchecked Sendable {
 
     func deleteAccount() async throws {
         if let deleteFailure { throw deleteFailure }
+        calls.append("deleteAccount")
         deletedAccount = true
     }
 
     func signOut() { signedOut = true }
+
+    var isAppleLinked: Bool { appleLinked }
+
+    func linkApple(_ credential: AppleCredential) async throws -> LinkOutcome {
+        calls.append("linkApple")
+        if linkOutcome == .linked { appleLinked = true }
+        return linkOutcome
+    }
+
+    func switchToLinkedApple() async throws {
+        calls.append("switch")
+        appleLinked = true
+        profile = otherAccountProfile
+    }
+
+    func deleteCurrentUser() async throws { calls.append("deleteCurrentUser") }
+
+    func confirmAccountLink() async throws -> Profile {
+        calls.append("confirmAccountLink")
+        return Profile(callable: ["gender": profile?.gender ?? "F", "birthYear": profile?.birthYear ?? 1990, "linked": true])!
+    }
+
+    func getBackupKey() async throws -> Data { backupKey }
+
+    func revokeApple(authorizationCode: String) async throws { calls.append("revoke:\(authorizationCode)") }
+}
+
+/** Backup file kept in memory. */
+final class MemoryBackupStorage: BackupStorage, @unchecked Sendable {
+    var data: Data?
+    func write(_ data: Data) async throws { self.data = data }
+    func read() async throws -> Data? { data }
+    func remove() async throws { data = nil }
 }

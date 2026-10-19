@@ -16,7 +16,18 @@ settings:
     SWIFT_VERSION: "5.0"
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    # AdMob: Google's test app and ad units until the iOS app is approved in AdMob (then put the real
+    # IDs here; tools/policy-check.sh warns while the release build still has test IDs).
+    ADMOB_APP_ID: ca-app-pub-3940256099942544~1458002511
+    ADMOB_BANNER: ca-app-pub-3940256099942544/2435281174
+    ADMOB_INTERSTITIAL: ca-app-pub-3940256099942544/4411468910
 packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
+    exactVersion: 13.11.0
+  GoogleUserMessagingPlatform:
+    url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform
+    exactVersion: 3.1.0
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     exactVersion: 12.19.2
@@ -49,6 +60,63 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         # Wake-up for letter pushes, so the letter is already there when the user opens the app.
         UIBackgroundModes: [remote-notification]
+        # Ads (Ads/AdsManager.swift). The tracking prompt text is localized in InfoPlist.xcstrings.
+        GADApplicationIdentifier: $(ADMOB_APP_ID)
+        BPAdMobBanner: $(ADMOB_BANNER)
+        BPAdMobInterstitial: $(ADMOB_INTERSTITIAL)
+        NSUserTrackingUsageDescription: Allows ads that are more relevant to you. Bottlepost never shares your letters.
+        # Google's SKAdNetwork list (developers.google.com/admob/ios/3p-skadnetworks).
+        SKAdNetworkItems:
+          - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
+          - SKAdNetworkIdentifier: 22mmun2rn5.skadnetwork
+          - SKAdNetworkIdentifier: 2fnua5tdw4.skadnetwork
+          - SKAdNetworkIdentifier: 2u9pt9hc89.skadnetwork
+          - SKAdNetworkIdentifier: 3qcr597p9d.skadnetwork
+          - SKAdNetworkIdentifier: 3qy4746246.skadnetwork
+          - SKAdNetworkIdentifier: 3rd42ekr43.skadnetwork
+          - SKAdNetworkIdentifier: 3sh42y64q3.skadnetwork
+          - SKAdNetworkIdentifier: 4468km3ulz.skadnetwork
+          - SKAdNetworkIdentifier: 44jx6755aq.skadnetwork
+          - SKAdNetworkIdentifier: 47vhws6wlr.skadnetwork
+          - SKAdNetworkIdentifier: 4dzt52r2t5.skadnetwork
+          - SKAdNetworkIdentifier: 4fzdc2evr5.skadnetwork
+          - SKAdNetworkIdentifier: 578prtvx9j.skadnetwork
+          - SKAdNetworkIdentifier: 7ug5zh24hu.skadnetwork
+          - SKAdNetworkIdentifier: 8c4e2ghe7u.skadnetwork
+          - SKAdNetworkIdentifier: 8s468mfl3y.skadnetwork
+          - SKAdNetworkIdentifier: 97r2b46745.skadnetwork
+          - SKAdNetworkIdentifier: 9t245vhmpl.skadnetwork
+          - SKAdNetworkIdentifier: a2p9lx4jpn.skadnetwork
+          - SKAdNetworkIdentifier: c3frkrj4fj.skadnetwork
+          - SKAdNetworkIdentifier: c6k4g5qg8m.skadnetwork
+          - SKAdNetworkIdentifier: cp8zw746q7.skadnetwork
+          - SKAdNetworkIdentifier: e5fvkxwrpn.skadnetwork
+          - SKAdNetworkIdentifier: f38h382jlk.skadnetwork
+          - SKAdNetworkIdentifier: gta9lk7p23.skadnetwork
+          - SKAdNetworkIdentifier: hs6bdukanm.skadnetwork
+          - SKAdNetworkIdentifier: k674qkevps.skadnetwork
+          - SKAdNetworkIdentifier: kbd757ywx3.skadnetwork
+          - SKAdNetworkIdentifier: kbmxgpxpgc.skadnetwork
+          - SKAdNetworkIdentifier: klf5c3l5u5.skadnetwork
+          - SKAdNetworkIdentifier: ludvb6z3bs.skadnetwork
+          - SKAdNetworkIdentifier: mlmmfzh3r3.skadnetwork
+          - SKAdNetworkIdentifier: n38lu8286q.skadnetwork
+          - SKAdNetworkIdentifier: p78axxw29g.skadnetwork
+          - SKAdNetworkIdentifier: ppxm28t8ap.skadnetwork
+          - SKAdNetworkIdentifier: s39g8k73mm.skadnetwork
+          - SKAdNetworkIdentifier: su67r6k2v3.skadnetwork
+          - SKAdNetworkIdentifier: t38b2kh725.skadnetwork
+          - SKAdNetworkIdentifier: tl55sbb4fm.skadnetwork
+          - SKAdNetworkIdentifier: uw77j35x4d.skadnetwork
+          - SKAdNetworkIdentifier: v4nxqhlyqp.skadnetwork
+          - SKAdNetworkIdentifier: v72qych5uu.skadnetwork
+          - SKAdNetworkIdentifier: v9wttpbfk9.skadnetwork
+          - SKAdNetworkIdentifier: vutu7akeur.skadnetwork
+          - SKAdNetworkIdentifier: wg4vff78zm.skadnetwork
+          - SKAdNetworkIdentifier: wzmmz9fp6w.skadnetwork
+          - SKAdNetworkIdentifier: y5ghdn5j9k.skadnetwork
+          - SKAdNetworkIdentifier: yclnxrl5pm.skadnetwork
+          - SKAdNetworkIdentifier: ydx93a7ass.skadnetwork
     entitlements:
       path: Bottlepost/Bottlepost.entitlements
       properties:
@@ -58,6 +126,12 @@ targets:
         aps-environment: production
         # 18+ check with Apple's age range (iOS 26+); see Data/AgeGate.swift.
         com.apple.developer.declared-age-range: true
+        # Sign in with Apple (account restore) and the private iCloud Drive container for the
+        # encrypted backup (Data/CloudBackup.swift). Container: docs/IOS_RELEASE_GUIDE.md "M6".
+        com.apple.developer.applesignin: [Default]
+        com.apple.developer.icloud-services: [CloudDocuments]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.bottlepost.app]
+        com.apple.developer.ubiquity-container-identifiers: [iCloud.com.bottlepost.app]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bottlepost.app
@@ -77,6 +151,12 @@ targets:
         product: FirebaseFirestore
       - package: Firebase
         product: FirebaseMessaging
+      - package: Firebase
+        product: FirebaseRemoteConfig
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
+      - package: GoogleUserMessagingPlatform
+        product: GoogleUserMessagingPlatform
   BottlepostTests:
     type: bundle.unit-test
     platform: iOS

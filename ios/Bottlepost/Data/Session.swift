@@ -24,12 +24,23 @@ final class Session {
     @ObservationIgnored private let service: BottlepostService?
     @ObservationIgnored private let sync: DeliverySync?
     @ObservationIgnored private var pushToken: String?
+    @ObservationIgnored let backup: BackupManager?
+    /** AdMob (M7); nil in unit tests. */
+    let ads: AdsManager?
+    /** Set while backing up or restoring, for the settings screen. */
+    private(set) var backupBusy = false
+    /** Shown in settings; read from the backup manager when it changes. */
+    private(set) var lastBackupAt: Date?
 
-    init(service: BottlepostService?, mail: MailStore?, sync: DeliverySync?, ageLock: UnderageLock) {
+    init(service: BottlepostService?, mail: MailStore?, sync: DeliverySync?, ageLock: UnderageLock,
+         backup: BackupManager? = nil, ads: AdsManager? = nil) {
+        self.ads = ads
         self.service = service
         self.mail = mail
         self.sync = sync
         self.ageLock = ageLock
+        self.backup = backup
+        self.lastBackupAt = backup?.lastBackupAt
     }
 
     func start() async {
@@ -61,6 +72,8 @@ final class Session {
         guard let service else { return }
         do {
             profile = try await service.createProfile(p)
+            // Apple was linked on the onboarding screen: record it now that a profile exists.
+            if service.isAppleLinked, let linked = try? await service.confirmAccountLink() { profile = linked }
             state = .ready
             await onReady()
         } catch {
@@ -88,14 +101,121 @@ final class Session {
      * Deletes the account on the server (partners are told it left), then everything on this phone,
      * and starts over at onboarding. The age-check lock is about the phone, not the account: it stays.
      */
-    func deleteAccount() async throws {
+    func deleteAccount(appleReauth: AppleCredential? = nil) async throws {
         guard let service else { return }
+        if service.isAppleLinked {
+            // Apple requires revoking Sign in with Apple when the account goes. Not fatal: the
+            // account deletion itself must never be blocked.
+            if let code = appleReauth?.authorizationCode { try? await service.revokeApple(authorizationCode: code) }
+            await backup?.deleteBackup()
+            lastBackupAt = nil
+        }
         try await service.deleteAccount()
         sync?.stop()
         mail?.wipe()
         service.signOut()
         profile = nil
         state = .needsOnboarding
+    }
+
+    // MARK: Apple account and backup
+
+    var isAppleLinked: Bool { service?.isAppleLinked == true }
+
+    enum AppleLinkResult: Equatable {
+        case linked
+        /** The Apple ID belongs to another account: ask before switching (this one would be deleted). */
+        case needsSwitchConfirm
+    }
+
+    /** Settings: links Apple to this account, or reports that it belongs to another one. */
+    func linkApple(_ credential: AppleCredential) async throws -> AppleLinkResult {
+        guard let service else { return .linked }
+        switch try await service.linkApple(credential) {
+        case .linked:
+            profile = try await service.confirmAccountLink()
+            await backupNow(quiet: true)
+            return .linked
+        case .belongsToAnother:
+            return .needsSwitchConfirm
+        }
+    }
+
+    /** Settings, after the user confirmed: deletes this account and moves to the Apple ID's one. */
+    func switchToAppleAccount() async throws {
+        guard let service else { return }
+        try await service.deleteAccount()
+        sync?.stop()
+        mail?.wipe()
+        try await service.switchToLinkedApple()
+        await afterSwitch()
+    }
+
+    /**
+     * Onboarding "restore with Apple". Returns true when an existing account was restored, false when
+     * the Apple ID is new (it stays linked and is recorded after createProfile).
+     */
+    func restoreWithApple(_ credential: AppleCredential) async throws -> Bool {
+        guard let service else { return false }
+        switch try await service.linkApple(credential) {
+        case .linked:
+            return false
+        case .belongsToAnother:
+            // Nothing exists yet for this anonymous user: drop it and sign in to the old account.
+            try await service.deleteCurrentUser()
+            try await service.switchToLinkedApple()
+            await afterSwitch()
+            return true
+        }
+    }
+
+    private func afterSwitch() async {
+        guard let service else { return }
+        do {
+            if let p = try await service.getProfile() {
+                profile = p
+                state = .ready
+                await onReady()
+                if (try? await backup?.restore()) != nil { show("backup_restored") }
+            } else {
+                profile = nil
+                state = .needsOnboarding
+            }
+        } catch {
+            state = .failed(ApiError.from(error))
+        }
+    }
+
+    func backupNow(quiet: Bool = false) async {
+        guard let backup else { return }
+        backupBusy = true
+        defer { backupBusy = false }
+        do {
+            try await backup.backup()
+            lastBackupAt = backup.lastBackupAt
+            if !quiet { show("ios_backup_done") }
+        } catch {
+            if !quiet { show(errorMessageKey(ApiError.from(error))) }
+        }
+    }
+
+    func restoreBackup() async {
+        guard let backup else { return }
+        backupBusy = true
+        defer { backupBusy = false }
+        do {
+            try await backup.restore()
+            show("backup_restored")
+        } catch {
+            show(errorMessageKey(ApiError.from(error)))
+        }
+    }
+
+    /** App went to the background: daily backup for linked accounts (Android BackupWorker). */
+    func backupIfDue() async {
+        guard state == .ready, isAppleLinked, let backup else { return }
+        await backup.backupIfDue()
+        lastBackupAt = backup.lastBackupAt
     }
 
     /** Fetches waiting letters once (app became active, or a push arrived). */

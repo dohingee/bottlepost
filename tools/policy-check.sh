@@ -74,10 +74,31 @@ if [ -d $IOS ]; then
   if grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml; then
     grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && ok "tracking declared in privacy manifest" || bad "ATT prompt present but NSPrivacyTracking is false"
   fi
+  grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml && warn "iOS: AdMob test IDs (fine while Remote Config ads_enabled is false; put the real iOS app/unit IDs in ios/project.yml before turning ads on)" || ok "iOS AdMob IDs are not the test IDs"
+  if grep -q 'GoogleMobileAds' $IOS/project.yml; then
+    grep -q 'SKAdNetworkItems' $IOS/project.yml && ok "SKAdNetworkItems declared" || bad "AdMob without SKAdNetworkItems"
+    grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml && ok "ATT prompt text declared" || bad "AdMob without NSUserTrackingUsageDescription"
+  fi
   grep -rq 'DeclaredAgeRange' $IOS/Bottlepost && ok "Declared Age Range check (18+)" || warn "iOS: no Declared Age Range check yet (milestone 3)"
   grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"
   grep -rq '"minor"' $IOS/Bottlepost && ok "iOS report has a minor-safety reason" || warn "iOS: report/block not implemented yet (Guideline 1.2, milestone 4)"
   grep -rqi 'google' $IOS/Bottlepost/Data 2>/dev/null && ! grep -rq 'AuthenticationServices' $IOS/Bottlepost && bad "Google sign-in without Sign in with Apple (Guideline 4.8)" || ok "Sign in with Apple rule (4.8)"
+  # App Store text (ios/fastlane/metadata): Apple's length limits, and no other platform or store (2.3.10).
+  META=$IOS/fastlane/metadata
+  if [ -d "$META" ]; then
+    long=$(python3 - "$META" <<'PY'
+import pathlib, sys
+limits = {"name.txt": 30, "subtitle.txt": 30, "keywords.txt": 100, "promotional_text.txt": 170, "description.txt": 4000}
+for f in pathlib.Path(sys.argv[1]).glob("*/*.txt"):
+    n = len(f.read_text().rstrip("\n"))
+    if f.name in limits and n > limits[f.name]: print(f"{f.parent.name}/{f.name} {n}>{limits[f.name]}")
+PY
+)
+    [ -z "$long" ] && ok "App Store text within Apple's limits" || bad "App Store text too long: $long"
+    grep -rliE 'android|google play|play store|google drive' "$META" --include=description.txt --include=promotional_text.txt --include=keywords.txt --include=subtitle.txt --include=name.txt \
+      && bad "App Store text mentions another platform (Guideline 2.3.10)" || ok "App Store text names no other platform"
+    grep -q 'if DEBUG' $IOS/Bottlepost/App/Demo.swift && ok "screenshot demo mode is debug-only" || bad "Demo.swift must stay #if DEBUG"
+  fi
   if command -v npx >/dev/null && [ -d tools/node_modules ]; then
     (cd tools && npx tsx ios-strings.ts --check >/dev/null) && ok "iOS string catalogs match the Android strings" || bad "iOS string catalogs out of date (npx tsx tools/ios-strings.ts)"
   fi

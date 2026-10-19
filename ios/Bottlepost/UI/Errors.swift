@@ -17,7 +17,10 @@ func errorMessageKey(_ error: ApiError) -> String {
     case "wait_for_reply": "error_wait_for_reply"
     case "report_limit": "error_report_limit"
     case "appeal_pending": "error_appeal_pending"
-    case "google_link_required", "google_not_linked", "email_unverified": "error_google_required"
+    // iPhone links Apple, not Google: same server codes, Apple wording.
+    case "google_link_required", "google_not_linked", "email_unverified": "ios_link_required"
+    case "icloud_unavailable": "ios_icloud_unavailable"
+    case "backup_none": "ios_backup_none"
     case "no_google_account": "error_no_google_account"
     case "profile_required": "error_profile_required"
     case "network": "error_network"

@@ -12,8 +12,8 @@ struct MainView: View {
     let session: Session
 
     @Query(sort: \LetterThread.lastAt, order: .reverse) private var threads: [LetterThread]
-    @State private var tab = Tab.inbox
-    @State private var path: [Route] = []
+    @State private var tab = Demo.isOn ? MainView.demoTab : Tab.inbox
+    @State private var path: [Route] = Demo.isOn ? MainView.demoPath : []
 
     enum Tab: Hashable { case inbox, connections, settings }
 
@@ -38,6 +38,11 @@ struct MainView: View {
                         .tag(Tab.settings)
                 }
                 .tint(Sea.deep)
+                // Bottom banner below the tab bar, main screen only (not while reading or writing).
+                if session.ads?.bannersAllowed == true {
+                    Divider()
+                    BannerSlot()
+                }
             }
             .background(SeaBackdrop())
             .overlay(alignment: .bottomTrailing) {
@@ -54,11 +59,27 @@ struct MainView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .thread(let id): ThreadView(session: session, threadId: id)
-                case .compose: ComposeView(session: session)
+                case .compose: ComposeView(session: session, adGate: (session.ads as AdGate?) ?? NoAdGate())
                 }
             }
         }
-        .task { await askNotificationPermissionOnce() }
+        .task {
+            guard !Demo.isOn else { return }
+            await askNotificationPermissionOnce()
+            // After the notification question: consent form and tracking prompt only if ads are on.
+            await session.ads?.start()
+        }
+    }
+
+    /** Store screenshots open straight on the screen being captured (App/Demo.swift). */
+    private static var demoTab: Tab { Demo.screen == .connections ? .connections : .inbox }
+    private static var demoPath: [Route] {
+        switch Demo.screen {
+        case .compose: [.compose]
+        case .thread: [.thread(Demo.threadId)]
+        case .waiting: [.thread(Demo.waitingId)]
+        case .inbox, .connections: []
+        }
     }
 
     private var titleKey: String {
@@ -94,6 +115,17 @@ struct MainView: View {
         let center = UNUserNotificationCenter.current()
         guard await center.notificationSettings().authorizationStatus == .notDetermined else { return }
         _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
+    }
+}
+
+/** Fixed-height slot for the anchored adaptive banner, so the layout does not jump while it loads. */
+private struct BannerSlot: View {
+    var body: some View {
+        GeometryReader { geo in
+            AdBanner(width: geo.size.width)
+        }
+        .frame(height: 60)
+        .background(Sea.paper)
     }
 }
 

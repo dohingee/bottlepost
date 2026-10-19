@@ -12,21 +12,34 @@ struct BottlepostApp: App {
     init() {
         // Unit tests run inside this app; they never talk to Firebase and keep no files.
         let unitTest = Runtime.isUnitTest
-        if !unitTest {
+        // Store screenshots (App/Demo.swift): sample letters, no Firebase, nothing kept.
+        let demo = Demo.isOn
+        if !unitTest && !demo {
             // Must be installed before FirebaseApp.configure(); every callable enforces App Check.
             AppCheck.setAppCheckProviderFactory(AppCheckSetup.factory())
             FirebaseApp.configure()
         }
         do {
             container = try ModelContainer(for: LetterThread.self, Letter.self,
-                                           configurations: ModelConfiguration(isStoredInMemoryOnly: unitTest))
+                                           configurations: ModelConfiguration(isStoredInMemoryOnly: unitTest || demo))
         } catch {
             fatalError("local store: \(error)")
         }
+        #if DEBUG
+        if demo {
+            Demo.seed(container.mainContext)
+            let service = DemoService()
+            let session = Session(service: service, mail: MailStore(context: container.mainContext, service: service),
+                                  sync: nil, ageLock: MemoryUnderageLock())
+            _session = State(initialValue: session)
+            return
+        }
+        #endif
         let service: BottlepostService? = unitTest ? nil : FirebaseService()
         let mail = MailStore(context: container.mainContext, service: service)
+        let backup = service.map { BackupManager(mail: mail, service: $0, storage: ICloudBackupStorage()) }
         let session = Session(service: service, mail: mail, sync: unitTest ? nil : DeliverySync(mail: mail),
-                              ageLock: KeychainUnderageLock())
+                              ageLock: KeychainUnderageLock(), backup: backup, ads: unitTest ? nil : AdsManager())
         _session = State(initialValue: session)
         // A push can launch the app in the background, before any view exists.
         AppDelegate.session = session
@@ -42,4 +55,6 @@ struct BottlepostApp: App {
 
 enum Runtime {
     static let isUnitTest = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    /** No Firebase at all: unit tests and store screenshots. */
+    static var isOffline: Bool { isUnitTest || Demo.isOn }
 }

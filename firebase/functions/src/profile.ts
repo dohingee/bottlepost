@@ -1,10 +1,10 @@
 import { randomBytes } from "node:crypto";
-import { onCall, HttpsError } from "firebase-functions/https";
+import { onCall, HttpsError, type CallableRequest } from "firebase-functions/https";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { LIMITS } from "./config";
 import { callableOpts, loadUser, requireUid } from "./common";
 import { col, dayKey } from "./db";
-import { emailHash } from "./hash";
+import { linkedIdentity, type LinkProvider } from "./identity";
 import type { UserDoc } from "./types";
 import {
   cleanNickname,
@@ -103,19 +103,14 @@ export const registerPushToken = onCall(callableOpts, async (req) => {
 });
 
 /**
- * Called after the device links Google to its anonymous Firebase user (linkWithCredential keeps the uid).
- * Records the link and enforces ban evasion protection via a hash of the Google e-mail.
+ * Records a restore link (linkWithCredential keeps the anonymous uid) and enforces ban-evasion
+ * protection with a hash of the linked identity (identity.ts).
  */
-export const confirmGoogleLink = onCall(callableOpts, async (req) => {
+async function confirmLink(req: CallableRequest, allowed: LinkProvider[]) {
   const uid = requireUid(req);
-  const token = req.auth!.token;
-  if (token.firebase?.sign_in_provider !== "google.com" && !token.firebase?.identities?.["google.com"]) {
-    throw new HttpsError("failed-precondition", "google_not_linked");
-  }
-  const email = token.email;
-  if (!email || token.email_verified !== true) throw new HttpsError("failed-precondition", "email_unverified");
-
-  const hash = emailHash(email);
+  const id = linkedIdentity(req.auth!.token, allowed);
+  if ("error" in id) throw new HttpsError("failed-precondition", id.error);
+  const hash = id.hash;
   const ban = await col.bans().doc(hash).get();
   if (ban.exists) {
     await col.users().doc(uid).set({ status: "banned", linked: true, emailHash: hash }, { merge: true });
@@ -123,11 +118,17 @@ export const confirmGoogleLink = onCall(callableOpts, async (req) => {
   }
   await col.users().doc(uid).update({ linked: true, emailHash: hash, lastActive: Timestamp.now() });
   return view(await loadUser(uid));
-});
+}
+
+/** Android: after linking Google. */
+export const confirmGoogleLink = onCall(callableOpts, (req) => confirmLink(req, ["google.com"]));
+
+/** iPhone: after linking Sign in with Apple (Google too, for a future client). */
+export const confirmAccountLink = onCall(callableOpts, (req) => confirmLink(req, ["google.com", "apple.com"]));
 
 /**
  * Per-user AES-256 key for the Drive backup. Kept server-side so that neither Google Drive alone
- * nor our server alone can read a user's conversations. Only for Google-linked accounts, which is
+ * nor our server alone can read a user's conversations. Only for linked (Google/Apple) accounts, which is
  * also what makes the key recoverable after reinstalling.
  */
 export const getBackupKey = onCall(callableOpts, async (req) => {

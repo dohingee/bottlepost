@@ -158,10 +158,82 @@ GitHub `dohingee/bottlepost` → **Settings** → **Secrets and variables** → 
    - 빌드 번호는 실행할 때마다 1씩 커집니다.
 3. ✋ iPhone의 TestFlight 앱에서 **업데이트**를 누릅니다.
 
-## 나중에: App Store 심사 제출 (M8)
-`docs/IOS_PLAN.md` "App Store 심사 위험과 대응"과 `docs/POLICY_CHECKLIST.md` I절을 따라 다음을 채웁니다.
-- 연령 등급 18+
-- App Privacy
-- 심사 메모(초안 있음)
-- 스크린샷(6.9인치 iPhone)
-- EU 거래자(DSA) 정보
+## M6 준비: Apple 계정 연결과 iCloud 백업 (한 번만)
+iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해제)가 동작하려면 아래 3가지가 필요합니다.
+
+1. ✋ **Firebase에서 Apple 로그인 켜기**
+   - Firebase 콘솔 → **Authentication** → **로그인 방법** → **새 제공업체 추가** → **Apple** → **사용 설정** → 저장
+2. ✋ **Apple 토큰 철회용 키** (계정 삭제 때 Apple 연결을 끊는 데 필요, Apple 심사 요구사항)
+   - https://developer.apple.com/account/resources/authkeys/list → **＋**
+   - Key Name: `Bottlepost Sign in with Apple`
+   - ☑ **Sign in with Apple** → **Configure** → Primary App ID: `com.bottlepost.app` → Save → Continue → Register
+   - **Download**로 `.p8`을 받습니다(한 번만 가능). **Key ID**를 메모합니다.
+   - Firebase 콘솔 → Authentication → 로그인 방법 → **Apple** → **OAuth 코드 흐름 구성**:
+     - Apple 팀 ID: `DZVPW5CX52`
+     - 키 ID: 방금 메모한 Key ID
+     - 비공개 키: `.p8` 파일을 메모장으로 열어 전체 내용 붙여넣기
+     - 서비스 ID는 비워 둬도 됩니다(웹 로그인용).
+   - 저장합니다.
+3. ✋ **iCloud 컨테이너 만들기**
+   - https://developer.apple.com/account/resources/identifiers/list → **＋** → **iCloud Containers** → Continue
+   - Description: `Bottlepost backup`, Identifier: `iCloud.com.bottlepost.app` → Register
+   - 다시 **Identifiers** 목록에서 **App IDs**의 `com.bottlepost.app`을 누릅니다.
+   - **iCloud** 체크 → 옆 **Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
+   - "프로비저닝 프로파일이 무효화된다"는 안내가 나오면 확인을 누릅니다. 다음 TestFlight 빌드가 자동으로 새로 만듭니다.
+
+> 3번을 하기 전에 TestFlight 빌드를 돌리면 서명 단계에서 iCloud 관련 오류로 실패합니다. 3번을 마친 뒤 다시 실행하면 됩니다.
+
+## M8: App Store 심사 제출
+스크린샷과 8개 언어 소개 문구는 GitHub가 만들어 App Store Connect에 올립니다. 문구 원본은 `ios/fastlane/metadata/<언어>/`(이름·부제·키워드·설명·홍보 문구·URL), 심사 메모는 `ios/fastlane/metadata/review_information/notes.txt`입니다.
+
+### 1. 🤖 스크린샷과 문구 올리기
+1. ✋ GitHub → **Actions** → **iOS App Store listing** → **Run workflow**
+   - 처음엔 **upload**를 끈 채로 실행해 스크린샷만 확인합니다. 실행 화면 아래 **Artifacts → ios-screenshots**를 받으면 언어별 5장(6.9인치, 1320×2868)이 들어 있습니다.
+   - 괜찮으면 **upload**를 켜고 다시 실행합니다. App Store Connect의 "제출 준비 중" 버전(1.0.0)에 8개 언어(스페인어는 멕시코·스페인 둘 다) 문구, 스크린샷, 카테고리(소셜 네트워킹 / 라이프스타일), 심사 메모가 채워집니다.
+   - 심사 제출은 하지 않습니다. 제출은 아래 6번에서 직접 누릅니다.
+2. 문구를 바꾸고 싶으면 Claude에게 말하거나 `ios/fastlane/metadata`를 고친 뒤 다시 실행하면 덮어씁니다.
+
+> 스크린샷은 실제 앱 화면입니다. 디버그 빌드의 데모 모드(`ios/Bottlepost/App/Demo.swift`)가 서버 없이 예시 편지를 보여 줍니다. 출시 빌드에는 데모 모드가 들어가지 않습니다(`tools/policy-check.sh`가 확인).
+
+### 2. ✋ 앱 정보 (App Store Connect → 앱 → 일반 → 앱 정보)
+- **연령 등급** → 편집. 설문에 사실대로 답합니다.
+  - 폭력·성적 내용·약물·도박·공포 등 콘텐츠 항목: 모두 **없음**
+  - 의료·건강 정보: **없음**
+  - 무제한 웹 접근: **아니요**
+  - **사용자 생성 콘텐츠: 예**, **메시지 및 채팅: 예**, **광고: 예**
+  - 보호자 통제·연령 확인 기능을 묻는 항목: 앱 안 연령 확인(출생 연도 + Declared Age Range)이 있으므로 **예**
+  - 마지막에 계산된 등급이 18+보다 낮으면 **연령 등급 재정의 → 18+**를 고릅니다.
+- **콘텐츠 권한**: "타사 콘텐츠를 포함하거나 접근하나요?" → **아니요**
+- **DSA(EU 거래자)**: 광고 수익이 있으면 **거래자**입니다. 주소·전화·이메일이 EU 스토어에 공개됩니다. 공개를 원하지 않으면 6번의 가격 및 사용 가능 여부에서 EU 국가를 빼고 거래자 아님을 선택합니다.
+
+### 3. ✋ 앱 개인정보 보호 (App Store Connect → 앱 → 앱 개인정보 보호)
+- 개인정보처리방침 URL: `https://bottlepost.web.app/privacy`
+- "데이터를 수집합니까?" → **예**. 아래를 체크합니다(`docs/POLICY_CHECKLIST.md` I절 표와 같음).
+
+| 데이터 유형 | 목적 | 사용자와 연결 | 추적 |
+|---|---|---|---|
+| 식별자 > 사용자 ID | 앱 기능 | 예 | 아니요 |
+| 식별자 > 기기 ID | 타사 광고 | 예 | **예** |
+| 사용자 콘텐츠 > 기타 사용자 콘텐츠 | 앱 기능 | 예 | 아니요 |
+| 위치 > 대략적인 위치 | 타사 광고 | 예 | **예** |
+| 사용 데이터 > 제품 상호작용 | 타사 광고, 분석 | 예 | 아니요 |
+| 사용 데이터 > 광고 데이터 | 타사 광고 | 예 | **예** |
+| 진단 > 충돌 데이터, 성능 데이터 | 분석 | 아니요 | 아니요 |
+| 기타 데이터 > 기타 데이터 유형 (성별·출생 연도·언어·국가) | 앱 기능 | 예 | 아니요 |
+
+- 이메일·이름·연락처·사진·위치(정확)·건강·금융은 **수집 안 함**입니다.
+
+### 4. ✋ 버전 페이지 (앱 → iOS 앱 → 1.0.0)
+- **빌드**: ＋를 눌러 가장 최신 TestFlight 빌드를 고릅니다.
+- **저작권**: `2026 본인 이름`
+- **앱 심사 정보**: 로그인 필요 **해제**(로그인 없이 쓰는 앱), 연락처(이름·전화·이메일)를 넣습니다. 메모는 1번에서 채워집니다.
+- **버전 출시**: "이 버전을 수동으로 출시" 권장(승인 후 직접 출시 버튼). 출시할 때 **단계적 출시(7일)**를 켭니다.
+
+### 5. ✋ 심사 기간에 할 일
+- 심사 메모에 "운영자 테스트 계정이 답장한다"고 적혀 있습니다. 심사 중에는 Android 앱이나 다른 iPhone의 운영자 계정으로 받은편지함을 확인하고 몇 시간 안에 답장해 주세요.
+- 광고는 Remote Config `ads_enabled`가 false인 동안 나오지 않습니다. 실제 AdMob iOS ID를 넣기 전엔 켜지 마세요.
+
+### 6. ✋ 제출
+- **가격 및 사용 가능 여부**: 무료, 국가 선택(위 DSA 참고).
+- 버전 페이지 오른쪽 위 **심사에 추가** → **심사 제출**.
+- 거절되면 해결 센터 메시지를 그대로 Claude에게 붙여 넣어 주세요.

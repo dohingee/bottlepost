@@ -2,12 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   App privacy manifest. Must match the App Privacy answers in docs/POLICY_CHECKLIST.md ("App Store").
-  Firebase packages ship their own manifests. Ads (milestone 7) will add tracking data here.
+  Firebase and Google Mobile Ads ship their own manifests.
 -->
 <plist version="1.0">
 <dict>
+	<!-- AdMob may track once the user allows it (ATT). The SDK's own manifest lists its domains and data. -->
 	<key>NSPrivacyTracking</key>
-	<false/>
+	<true/>
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>
@@ -50,6 +51,16 @@
 		</dict>
 	</array>
 	<key>NSPrivacyAccessedAPITypes</key>
-	<array/>
+	<array>
+		<dict>
+			<!-- Last backup time, read only by this app (Data/CloudBackup.swift). -->
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

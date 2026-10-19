@@ -29,13 +29,15 @@
 | Google LLC (Firebase, Google Cloud) | 서버, 인증, 푸시, 오류 분석, 기기 무결성 확인 | 미국 등 Google 데이터센터 |
 | OpenAI, L.L.C. (Moderation API) | **신고된 편지에 한해** 유해성 자동 분류 | 미국 |
 | Google LLC (AdMob) | 광고 게재·측정, 광고 사기 방지 | 미국 등 Google 데이터센터 |
-| Apple Inc. (App Attest, APNs) | iPhone 앱의 기기 무결성 확인(정품 앱 여부), 새 편지 알림 전달 | 미국 |
+| Apple Inc. (App Attest, APNs, Sign in with Apple, iCloud) | iPhone 앱의 기기 무결성 확인, 새 편지 알림 전달, 계정 복원, 암호화 백업 보관 | 미국 |
 
 ## 4. iPhone(iOS) 앱
 - iPhone 앱도 위와 같은 정보를 같은 목적으로 처리하며, 편지 본문을 서버에 보관하지 않는 원칙도 같습니다.
 - 정품 앱 확인에는 Google Play Integrity 대신 Apple App Attest를 사용합니다. Apple은 이 과정에서 기기를 식별할 수 있는 정보를 운영자에게 제공하지 않습니다.
+- 계정 복원에는 Google 대신 **Sign in with Apple**을 사용합니다(선택). Apple에 이메일과 이름은 요청하지 않으며, Apple이 주는 사용자 식별자만 받습니다. 운영자는 그 식별자를 단방향 해시로만 보관합니다(제재 회피 방지).
+- 대화 백업은 Apple 계정을 연결한 경우에만, 이용자 본인 **iCloud**의 앱 전용 공간에 암호화되어 저장됩니다. 암호 키는 서버에, 암호문은 iCloud에 따로 있어 운영자도 Apple도 단독으로는 읽을 수 없습니다. 계정을 삭제하면 백업 파일도 삭제되고 Sign in with Apple 연결도 해제(토큰 철회)됩니다.
 - 새 편지 알림은 Apple 푸시 알림 서비스(APNs)로 전달됩니다. 알림에는 "편지가 도착했어요" 같은 안내 문구만 있고 편지 내용은 들어가지 않습니다.
-- iPhone 앱은 현재 광고 식별자(IDFA)를 수집하지 않으며, 앱 추적 투명성(ATT) 허용을 요청하지 않습니다. 광고를 도입하면 사전에 이 방침을 변경하고 앱에서 허용 여부를 묻습니다.
+- iPhone 앱의 광고는 Android와 같은 방식(Google AdMob, 5절)입니다. 광고 식별자(IDFA)는 Apple의 앱 추적 투명성(ATT) 요청에서 **허용한 경우에만** 사용되며, 허용하지 않아도 앱의 모든 기능을 쓸 수 있습니다. 허용 여부는 iPhone [설정 > 개인정보 보호 및 보안 > 추적]에서 언제든 바꿀 수 있습니다.
 
 ## 5. 이용자의 권리
 - 앱 [설정]에서 프로필을 열람·수정할 수 있고, [설정 > 계정 삭제] 또는 웹페이지(https://bottlepost.web.app/delete-account)에서 계정을 삭제할 수 있습니다.

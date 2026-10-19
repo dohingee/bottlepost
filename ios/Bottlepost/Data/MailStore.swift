@@ -179,6 +179,44 @@ final class MailStore {
         save()
     }
 
+    // MARK: Backup
+
+    func snapshot(now: Int64 = nowMs()) -> BackupPayload {
+        let threads = (try? context.fetch(FetchDescriptor<LetterThread>())) ?? []
+        let letters = (try? context.fetch(FetchDescriptor<Letter>(sortBy: [SortDescriptor(\.sentAt)]))) ?? []
+        return BackupPayload(
+            createdAt: now,
+            threads: threads.map {
+                .init(threadId: $0.threadId, startedByMe: $0.startedByMe, partnerNickname: $0.partnerNickname,
+                      partnerGender: $0.partnerGender, partnerLang: $0.partnerLang, createdAt: $0.createdAt,
+                      lastAt: $0.lastAt, lastPreview: $0.lastPreview, hasIncoming: $0.hasIncoming,
+                      hasOutgoing: $0.hasOutgoing, unread: $0.unread, closed: $0.closed,
+                      partnerLeft: $0.partnerLeft, lastOutgoing: $0.lastOutgoing)
+            },
+            letters: letters.map {
+                .init(deliveryId: $0.deliveryId, threadId: $0.threadId, outgoing: $0.outgoing, body: $0.body,
+                      lang: $0.lang, sentAt: $0.sentAt, sig: $0.sig)
+            })
+    }
+
+    /** Restore: the backup replaces everything on this phone (the user confirmed it). */
+    func replaceAll(_ payload: BackupPayload) {
+        try? context.delete(model: Letter.self)
+        try? context.delete(model: LetterThread.self)
+        for t in payload.threads {
+            context.insert(LetterThread(threadId: t.threadId, startedByMe: t.startedByMe, partnerNickname: t.partnerNickname,
+                                        partnerGender: t.partnerGender, partnerLang: t.partnerLang, createdAt: t.createdAt,
+                                        lastAt: t.lastAt, lastPreview: t.lastPreview, hasIncoming: t.hasIncoming,
+                                        hasOutgoing: t.hasOutgoing, unread: t.unread, closed: t.closed,
+                                        partnerLeft: t.partnerLeft, lastOutgoing: t.lastOutgoing))
+        }
+        for l in payload.letters {
+            context.insert(Letter(deliveryId: l.deliveryId, threadId: l.threadId, outgoing: l.outgoing, body: l.body,
+                                  lang: l.lang, sentAt: l.sentAt, sig: l.sig))
+        }
+        save()
+    }
+
     // MARK: Queries
 
     func thread(_ id: String) -> LetterThread? {

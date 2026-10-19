@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_restore_apple">Ya usaba Bottlepost — restaurar con Apple</string>
+    <string name="ios_apple_new">Cuenta de Apple vinculada. Completa tu perfil para empezar.</string>
+    <string name="ios_link_explain">Vincula tu cuenta de Apple para conservar tu cuenta y hacer una copia cifrada de tus conversaciones en tu propio iCloud. Sin ella, reinstalar la app lo borra todo.</string>
+    <string name="ios_apple_linked">Cuenta de Apple vinculada</string>
+    <string name="ios_backup_done">Copia guardada en tu iCloud.</string>
+    <string name="ios_backup_none">No hay copia de seguridad en este iCloud.</string>
+    <string name="ios_icloud_unavailable">Para hacer copias, inicia sesión en iCloud en la app Ajustes.</string>
+    <string name="ios_switch_title">Esta cuenta de Apple tiene otra cuenta de Bottlepost</string>
+    <string name="ios_switch_body">Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y las personas con las que hablas verán que saliste. Si esa cuenta tiene una copia en iCloud, se restaurarán sus conversaciones. ¿Cambiar?</string>
+    <string name="ios_link_required">Primero vincula tu cuenta de Apple.</string>
+    <string name="ios_att_purpose">Permite mostrarte anuncios más relevantes. Bottlepost nunca comparte tus cartas.</string>
+</resources>
