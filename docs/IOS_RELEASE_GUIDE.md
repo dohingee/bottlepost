@@ -172,7 +172,7 @@ iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해
      - Apple 팀 ID: `DZVPW5CX52`
      - 키 ID: 방금 메모한 Key ID
      - 비공개 키: `.p8` 파일을 메모장으로 열어 전체 내용 붙여넣기
-     - 서비스 ID는 비워 둬도 됩니다(웹 로그인용).
+     - 서비스 ID: 앱 번들 ID `com.bottlepost.app`을 넣습니다. iPhone 앱에서만 Apple 로그인을 쓰므로 Apple이 발급한 코드의 대상(client_id)이 번들 ID이고, 계정 삭제 때 토큰 철회도 이 값으로 합니다. 웹 로그인용 Services ID는 따로 만들지 않습니다.
    - 저장합니다.
 3. ✋ **iCloud 컨테이너 만들기**
    - https://developer.apple.com/account/resources/identifiers/list → **＋** → **iCloud Containers** → Continue
