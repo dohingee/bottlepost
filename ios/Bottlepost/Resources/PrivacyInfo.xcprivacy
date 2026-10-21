@@ -6,9 +6,11 @@
 -->
 <plist version="1.0">
 <dict>
-	<!-- AdMob may track once the user allows it (ATT). The SDK's own manifest lists its domains and data. -->
+	<!-- 1.0 ships with ads off (AdMob test IDs, Remote Config ads_enabled false), so nothing tracks and no
+	     ATT prompt appears. Set this to true, together with the App Privacy answers, in the release that
+	     turns ads on (.claude/skills/enable-admob, tools/policy-check.sh checks it). -->
 	<key>NSPrivacyTracking</key>
-	<true/>
+	<false/>
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>

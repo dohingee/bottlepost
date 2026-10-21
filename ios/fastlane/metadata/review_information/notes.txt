@@ -12,4 +12,4 @@ No login is needed: onboarding asks only gender and birth year. Sign in with App
 
 To receive a reply during review, send a letter choosing "Anyone": the operator's test account replies, usually within a few hours.
 
-Ads: an interstitial may show after sending a letter and a banner on the main screen; Google's consent form and the App Tracking Transparency prompt are shown first, and declining keeps the app fully usable.
+Ads: this version shows no ads and does not track (no App Tracking Transparency prompt). The ad SDK is included but switched off; ads will come in a later version with updated privacy details.

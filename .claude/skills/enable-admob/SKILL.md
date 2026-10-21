@@ -32,3 +32,10 @@ description: AdMob 승인 후 "편지 보내기 전 전면광고"를 정책에 �
 - 개인정보처리방침 AdMob 항목 활성화, 데이터 보안: 기기 ID(광고 ID) 수집·공유 "광고" 목적
 - Play Console 앱 콘텐츠 > 광고 포함 "예", 광고 ID 선언
 - `tools/policy-check.sh`의 AD_ID 경고 확인 후 체크리스트 갱신
+
+## 5. iPhone (App Store) — 광고를 켜는 버전에서 한 번에
+- AdMob iOS 앱의 실제 앱 ID·배너·전면 ID를 `ios/project.yml`(`ADMOB_*`)에 넣는다.
+- `ios/Bottlepost/Resources/PrivacyInfo.xcprivacy`의 `NSPrivacyTracking`을 true로 바꾼다. 실제 ID인데 false면 `policy-check.sh`가 실패한다.
+- App Store Connect → 앱 개인정보 보호에 `docs/POLICY_CHECKLIST.md` I절의 AdMob 줄을 추가한다(기기 ID·대략적 위치·광고 데이터는 추적 "예").
+- 심사 메모 `ios/fastlane/metadata/review_information/notes.txt`의 Ads 문단을 "UMP → ATT → 광고"로 되돌린다.
+- 새 빌드를 심사에 내고, 승인된 뒤 Remote Config `ads_enabled` = true로 바꾼다.

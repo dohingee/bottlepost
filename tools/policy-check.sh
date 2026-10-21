@@ -71,8 +71,13 @@ if [ -d $IOS ]; then
   for k in $(grep -oE 'NS[A-Za-z]+UsageDescription' $IOS/project.yml | sort -u); do
     case " $allowed_ios " in *" $k "*) ok "usage description $k";; *) bad "unexpected permission $k (update App Privacy + checklist first)";; esac
   done
-  if grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml; then
-    grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && ok "tracking declared in privacy manifest" || bad "ATT prompt present but NSPrivacyTracking is false"
+  # Tracking is declared only in a release that can show ads (real AdMob IDs). With the test IDs the
+  # ATT prompt never appears, and declaring tracking without it is a 5.1.2 rejection.
+  tracking=$(grep -q '<key>NSPrivacyTracking</key>[[:space:]]*<true/>' <(tr -d '\n' < $IOS/Bottlepost/Resources/PrivacyInfo.xcprivacy) && echo yes || echo no)
+  if grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml; then
+    [ "$tracking" = no ] && ok "no tracking declared while ads cannot run (App Privacy: no tracking)" || bad "NSPrivacyTracking is true but ads cannot run (test IDs): no ATT prompt, 5.1.2"
+  else
+    [ "$tracking" = yes ] && ok "tracking declared in privacy manifest (ads on)" || bad "real AdMob IDs but NSPrivacyTracking is false (update the manifest and App Privacy)"
   fi
   grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml && warn "iOS: AdMob test IDs (fine while Remote Config ads_enabled is false; put the real iOS app/unit IDs in ios/project.yml before turning ads on)" || ok "iOS AdMob IDs are not the test IDs"
   if grep -q 'GoogleMobileAds' $IOS/project.yml; then
