@@ -29,13 +29,14 @@ final class AccountLinkTests: XCTestCase {
         Session(service: fake, mail: mail, sync: nil, ageLock: MemoryUnderageLock(), backup: backup)
     }
 
-    private func letter(_ id: String) -> IncomingDelivery {
-        IncomingDelivery(id: id, data: ["threadId": "t1", "body": "hello \(id)", "sentAt": NSNumber(value: 10), "sig": "s"],
+    /** Distinct send times: letters are ordered by sentAt, and equal times have no defined order. */
+    private func letter(_ id: String, at sentAt: Int64) -> IncomingDelivery {
+        IncomingDelivery(id: id, data: ["threadId": "t1", "body": "hello \(id)", "sentAt": NSNumber(value: sentAt), "sig": "s"],
                          delete: {})
     }
 
     func testBackupRoundTripIsEncrypted() async throws {
-        await mail.ingest([letter("d1"), letter("d2")])
+        await mail.ingest([letter("d1", at: 10), letter("d2", at: 20)])
         try await backup.backup()
         let sealed = try XCTUnwrap(storage.data)
         XCTAssertNil(String(data: sealed, encoding: .utf8)?.range(of: "hello"), "backup must not be plain text")
@@ -64,7 +65,7 @@ final class AccountLinkTests: XCTestCase {
         let now = Date()
         await backup.backupIfDue(now: now)
         let first = try XCTUnwrap(storage.data)
-        await mail.ingest([letter("d9")])
+        await mail.ingest([letter("d9", at: 10)])
         await backup.backupIfDue(now: now.addingTimeInterval(60))
         XCTAssertEqual(storage.data, first, "no second backup within a day")
     }
@@ -85,10 +86,10 @@ final class AccountLinkTests: XCTestCase {
         fake.linkOutcome = .belongsToAnother
         fake.otherAccountProfile = Profile(callable: ["gender": "M", "birthYear": 1985, "linked": true])
         // The other account's backup.
-        await mail.ingest([letter("old")])
+        await mail.ingest([letter("old", at: 10)])
         try await backup.backup()
         mail.wipe()
-        await mail.ingest([letter("current")])
+        await mail.ingest([letter("current", at: 20)])
 
         let s = session()
         await s.start()

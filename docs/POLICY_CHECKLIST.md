@@ -122,10 +122,10 @@
 **광고 (5.1.2)** — `ios/Bottlepost/Ads/AdsManager.swift`
 - [x] UMP 동의 → **ATT 허용 요청** → 광고 요청 순서. 거부해도 앱 사용 가능, 거부 시 IDFA 미사용
 - [x] `SKAdNetworkItems`(Google 목록 50개) Info.plist 등록
-- [x] `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking` = true (SDK 매니페스트가 도메인·데이터 선언)
+- [ ] `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking`: 1.0은 false(광고 꺼짐, ATT 창 없음). 광고를 켜는 버전에서 true
 - [x] 보내기 전 전면광고(빈도 제한·2초 안에 없으면 생략), 메인 화면 하단 배너만. 편지 읽기·쓰기 화면엔 배너 없음
 - [ ] AdMob에 iOS 앱 등록 → 실제 앱 ID·광고 단위 ID를 `ios/project.yml`에 넣기(지금은 테스트 ID) → 승인 후 Remote Config `ads_enabled` = true
-- [ ] App Privacy에 광고 데이터(추적 포함) 답변 — 아래 표의 AdMob 줄
+- [ ] 광고를 켜는 버전에서: App Privacy에 아래 표의 AdMob 줄(추적 포함) 추가 + `PrivacyInfo.xcprivacy`의 `NSPrivacyTracking` = true (지금은 false, 테스트 ID인 동안 `policy-check.sh`가 false를 요구)
 - [x] 스토어 문구에 다른 플랫폼(Android·Google Play·Google Drive) 언급 없음 (2.3.10) — `policy-check.sh`
 - [x] 스크린샷은 실제 앱 화면(데모 모드, 디버그 빌드 전용), 실제 사용자 정보 없음 (2.3.3)
 
@@ -142,6 +142,6 @@
 | 사용자 콘텐츠 > 기타 사용자 콘텐츠 (편지 중계, 신고된 편지) | 예 | 앱 기능 | 전달 즉시 삭제, 신고 건만 보관 |
 | 기타 데이터 (성별, 출생연도, 언어·국가) | 예 | 앱 기능 | |
 | 연락처 정보 > 이메일 주소 | — | — | **수집 안 함**: iOS는 Sign in with Apple만 쓰고 이메일·이름 scope를 요청하지 않음. Apple 식별자는 해시로만 보관(사용자 ID 항목에 포함) |
-| 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 | **추적: 예** (ATT 허용 시에만 IDFA) — AdMob SDK |
-| 사용 데이터 > 제품 상호작용 | 예 | 타사 광고, 분석 | AdMob SDK |
-| 진단 > 충돌·성능 데이터 | 아니요 | 분석 | AdMob SDK (Crashlytics는 없음) |
+| 식별자 > 기기 ID (IDFA), 위치 > 대략적 위치, 사용 데이터 > 광고 데이터 | 예 | 타사 광고 | **추적: 예** (ATT 허용 시에만 IDFA) — AdMob SDK — **광고를 켜는 버전부터 추가** (1.0은 광고 꺼짐: 체크 안 함) |
+| 사용 데이터 > 제품 상호작용 | 예 | 타사 광고, 분석 | AdMob SDK — **광고를 켜는 버전부터 추가** (1.0은 광고 꺼짐: 체크 안 함) |
+| 진단 > 충돌·성능 데이터 | 아니요 | 분석 | AdMob SDK (Crashlytics는 없음) — **광고를 켜는 버전부터 추가** (1.0은 광고 꺼짐: 체크 안 함) |

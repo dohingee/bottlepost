@@ -172,13 +172,13 @@ iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해
      - Apple 팀 ID: `DZVPW5CX52`
      - 키 ID: 방금 메모한 Key ID
      - 비공개 키: `.p8` 파일을 메모장으로 열어 전체 내용 붙여넣기
-     - 서비스 ID는 비워 둬도 됩니다(웹 로그인용).
+     - 서비스 ID: 앱 번들 ID `com.bottlepost.app`을 넣습니다. iPhone 앱에서만 Apple 로그인을 쓰므로 Apple이 발급한 코드의 대상(client_id)이 번들 ID이고, 계정 삭제 때 토큰 철회도 이 값으로 합니다. 웹 로그인용 Services ID는 따로 만들지 않습니다.
    - 저장합니다.
 3. ✋ **iCloud 컨테이너 만들기**
    - https://developer.apple.com/account/resources/identifiers/list → **＋** → **iCloud Containers** → Continue
    - Description: `Bottlepost backup`, Identifier: `iCloud.com.bottlepost.app` → Register
    - 다시 **Identifiers** 목록에서 **App IDs**의 `com.bottlepost.app`을 누릅니다.
-   - **iCloud** 체크 → 옆 **Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
+   - **iCloud** 체크 → 옵션은 **Include CloudKit support (requires Xcode 6)**("Compatible with Xcode 5"는 컨테이너를 고를 수 없음) → 옆 **Edit/Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
    - "프로비저닝 프로파일이 무효화된다"는 안내가 나오면 확인을 누릅니다. 다음 TestFlight 빌드가 자동으로 새로 만듭니다.
 
 > 3번을 하기 전에 TestFlight 빌드를 돌리면 서명 단계에서 iCloud 관련 오류로 실패합니다. 3번을 마친 뒤 다시 실행하면 됩니다.
@@ -213,15 +213,11 @@ iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해
 | 데이터 유형 | 목적 | 사용자와 연결 | 추적 |
 |---|---|---|---|
 | 식별자 > 사용자 ID | 앱 기능 | 예 | 아니요 |
-| 식별자 > 기기 ID | 타사 광고 | 예 | **예** |
 | 사용자 콘텐츠 > 기타 사용자 콘텐츠 | 앱 기능 | 예 | 아니요 |
-| 위치 > 대략적인 위치 | 타사 광고 | 예 | **예** |
-| 사용 데이터 > 제품 상호작용 | 타사 광고, 분석 | 예 | 아니요 |
-| 사용 데이터 > 광고 데이터 | 타사 광고 | 예 | **예** |
-| 진단 > 충돌 데이터, 성능 데이터 | 분석 | 아니요 | 아니요 |
 | 기타 데이터 > 기타 데이터 유형 (성별·출생 연도·언어·국가) | 앱 기능 | 예 | 아니요 |
 
-- 이메일·이름·연락처·사진·위치(정확)·건강·금융은 **수집 안 함**입니다.
+- 이메일·이름·연락처·사진·위치·건강·금융·진단은 **수집 안 함**입니다.
+- 1.0은 광고가 꺼져 있어 추적이 없습니다("추적에 사용"은 모두 아니요). 광고를 켜는 버전에서 기기 ID·대략적인 위치·광고 데이터(추적: 예), 제품 상호작용, 충돌·성능 데이터를 추가합니다(`docs/POLICY_CHECKLIST.md` I절 표).
 
 ### 4. ✋ 버전 페이지 (앱 → iOS 앱 → 1.0.0)
 - **빌드**: ＋를 눌러 가장 최신 TestFlight 빌드를 고릅니다.

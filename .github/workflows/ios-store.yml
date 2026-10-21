@@ -13,7 +13,8 @@ on:
         default: false
 
 permissions:
-  contents: read
+  # Pushes the rendered screenshots to the ios-screenshots branch (viewable on GitHub, also on a phone).
+  contents: write
 
 concurrency:
   group: ios-store
@@ -96,6 +97,20 @@ jobs:
         with:
           name: ios-screenshots
           path: ios/fastlane/screenshots
+
+      - name: Publish screenshots to the ios-screenshots branch
+        working-directory: ios/fastlane/screenshots
+        run: |
+          set -euo pipefail
+          git init -q -b ios-screenshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898231+github-actions[bot]@users.noreply.github.com"
+          printf '# iOS App Store screenshots\n\nRendered by `.github/workflows/ios-store.yml` from %s. Folders are App Store Connect locales.\n' "$GITHUB_SHA" > README.md
+          git add -A
+          git commit -qm "Screenshots for $GITHUB_SHA"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ios-screenshots
+          rm -rf .git README.md
+          echo "Screenshots: https://github.com/${{ github.repository }}/tree/ios-screenshots" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload to App Store Connect
         if: inputs.upload
