@@ -82,7 +82,9 @@ final class AdsManager: AdGate {
         guard !initialized else { return }
         initialized = true
         // Apple's prompt comes after Google's consent form and before the first ad request.
-        if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
+        // Asking without NSUserTrackingUsageDescription in Info.plist would crash; 1.0 ships without it.
+        if Bundle.main.object(forInfoDictionaryKey: "NSUserTrackingUsageDescription") != nil,
+           ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
             _ = await ATTrackingManager.requestTrackingAuthorization()
         }
         _ = await MobileAds.shared.start()
