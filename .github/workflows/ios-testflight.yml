@@ -4,6 +4,12 @@ name: iOS TestFlight
 
 on:
   workflow_dispatch:
+    inputs:
+      runner:
+        description: "macOS runner (pick macos-15 when macos-26 jobs keep getting cancelled while queued)"
+        type: choice
+        options: [macos-26, macos-15]
+        default: macos-26
 
 permissions:
   contents: read
@@ -17,7 +23,7 @@ env:
 
 jobs:
   upload:
-    runs-on: macos-26
+    runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 45
     steps:
       - name: Check secrets
@@ -68,6 +74,14 @@ jobs:
           fb apps:sdkconfig IOS "$app" --out ios/Bottlepost/GoogleService-Info.plist
           /usr/libexec/PlistBuddy -c 'Print :BUNDLE_ID' ios/Bottlepost/GoogleService-Info.plist | grep -qx "$BUNDLE_ID"
           echo "Firebase iOS app: $app" >> "$GITHUB_STEP_SUMMARY"
+
+      # App Store uploads need the iOS 26 SDK. macos-15 images carry Xcode 26 next to older ones.
+      - name: Select Xcode 26
+        run: |
+          xcode=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
+          xcodebuild -version | tee -a "$GITHUB_STEP_SUMMARY"
+          xcodebuild -version | head -1 | grep -qE 'Xcode (2[6-9]|[3-9][0-9])' || { echo "::error::Xcode 26 or newer is required"; exit 1; }
 
       - name: Generate the Xcode project
         working-directory: ios
