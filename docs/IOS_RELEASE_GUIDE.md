@@ -178,7 +178,7 @@ iPhone 앱의 "Apple로 복원", "지금 백업", 계정 삭제(Apple 연결 해
    - https://developer.apple.com/account/resources/identifiers/list → **＋** → **iCloud Containers** → Continue
    - Description: `Bottlepost backup`, Identifier: `iCloud.com.bottlepost.app` → Register
    - 다시 **Identifiers** 목록에서 **App IDs**의 `com.bottlepost.app`을 누릅니다.
-   - **iCloud** 체크 → 옆 **Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
+   - **iCloud** 체크 → 옵션은 **Include CloudKit support (requires Xcode 6)**("Compatible with Xcode 5"는 컨테이너를 고를 수 없음) → 옆 **Edit/Configure** → 방금 만든 `iCloud.com.bottlepost.app` 체크 → Continue → **Save**
    - "프로비저닝 프로파일이 무효화된다"는 안내가 나오면 확인을 누릅니다. 다음 TestFlight 빌드가 자동으로 새로 만듭니다.
 
 > 3번을 하기 전에 TestFlight 빌드를 돌리면 서명 단계에서 iCloud 관련 오류로 실패합니다. 3번을 마친 뒤 다시 실행하면 됩니다.
