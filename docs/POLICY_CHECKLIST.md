@@ -82,7 +82,7 @@
 - [ ] 최신 Xcode·iOS SDK로 빌드 (2026년 4월 말부터 Xcode 26 / iOS 26 SDK 필수. 매년 봄 상향되므로 제출 전 Apple 공지 확인. CI `macos-26` 러너의 Xcode 버전을 실행 요약에서 확인)
 - [x] 개인정보 매니페스트 `PrivacyInfo.xcprivacy` — 아래 App Privacy 답안과 일치
 - [x] `ITSAppUsesNonExemptEncryption = false` (HTTPS와 Apple 기본 암호화만 사용 → 수출 규정 서류 면제)
-- [x] 권한 요청 문구(`NS…UsageDescription`)는 실제로 쓰는 것만: ATT(`NSUserTrackingUsageDescription`, 8개 언어)뿐
+- [x] 권한 요청 문구(`NS…UsageDescription`)는 실제로 쓰는 것만: 1.0은 없음. ATT(`NSUserTrackingUsageDescription`, 번역 8개 언어 준비됨)는 광고를 켜는 버전에서 `ios/project.yml` 주석을 풀어 추가 — 추적 미신고 상태에서 이 키가 있으면 App Store Connect가 제출을 막음
 - [x] App Check = App Attest (엔타이틀먼트 + Firebase 콘솔 등록)
 - [ ] 비공개 API·숨은 기능·원격 코드 다운로드 없음 (2.5.2, 2.3.1)
 

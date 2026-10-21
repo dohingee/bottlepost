@@ -64,7 +64,10 @@ targets:
         GADApplicationIdentifier: $(ADMOB_APP_ID)
         BPAdMobBanner: $(ADMOB_BANNER)
         BPAdMobInterstitial: $(ADMOB_INTERSTITIAL)
-        NSUserTrackingUsageDescription: Allows ads that are more relevant to you. Bottlepost never shares your letters.
+        # No NSUserTrackingUsageDescription while ads are off (1.0): App Store Connect refuses a build that
+        # can ask for tracking when App Privacy declares none. The release that turns ads on adds it back:
+        #   NSUserTrackingUsageDescription: Allows ads that are more relevant to you. Bottlepost never shares your letters.
+        # (translations: ios_att_purpose in ios/strings; .claude/skills/enable-admob).
         # Google's SKAdNetwork list (developers.google.com/admob/ios/3p-skadnetworks).
         SKAdNetworkItems:
           - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork

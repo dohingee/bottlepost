@@ -68,7 +68,7 @@ if [ -d $IOS ]; then
   grep -q 'appattest-environment: production' $IOS/project.yml && ok "App Attest entitlement (App Check)" || bad "App Attest entitlement missing (App Check would reject release builds)"
   # Every permission prompt must be declared in the App Privacy answers first.
   allowed_ios="NSUserTrackingUsageDescription"
-  for k in $(grep -oE 'NS[A-Za-z]+UsageDescription' $IOS/project.yml | sort -u); do
+  for k in $(grep -vE '^\s*#' $IOS/project.yml | grep -oE 'NS[A-Za-z]+UsageDescription' | sort -u); do
     case " $allowed_ios " in *" $k "*) ok "usage description $k";; *) bad "unexpected permission $k (update App Privacy + checklist first)";; esac
   done
   # Tracking is declared only in a release that can show ads (real AdMob IDs). With the test IDs the
@@ -82,7 +82,12 @@ if [ -d $IOS ]; then
   grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml && warn "iOS: AdMob test IDs (fine while Remote Config ads_enabled is false; put the real iOS app/unit IDs in ios/project.yml before turning ads on)" || ok "iOS AdMob IDs are not the test IDs"
   if grep -q 'GoogleMobileAds' $IOS/project.yml; then
     grep -q 'SKAdNetworkItems' $IOS/project.yml && ok "SKAdNetworkItems declared" || bad "AdMob without SKAdNetworkItems"
-    grep -q 'NSUserTrackingUsageDescription' $IOS/project.yml && ok "ATT prompt text declared" || bad "AdMob without NSUserTrackingUsageDescription"
+    att=$(grep -qE '^\s+NSUserTrackingUsageDescription:' $IOS/project.yml && echo yes || echo no)
+    if grep -q 'ADMOB_APP_ID: ca-app-pub-3940256099942544' $IOS/project.yml; then
+      [ "$att" = no ] && ok "no ATT prompt text while ads are off (App Store Connect rejects it with no tracking declared)" || bad "NSUserTrackingUsageDescription present but ads are off and no tracking is declared"
+    else
+      [ "$att" = yes ] && ok "ATT prompt text declared" || bad "AdMob with real IDs but no NSUserTrackingUsageDescription"
+    fi
   fi
   grep -rq 'DeclaredAgeRange' $IOS/Bottlepost && ok "Declared Age Range check (18+)" || warn "iOS: no Declared Age Range check yet (milestone 3)"
   grep -rq 'deleteAccount' $IOS/Bottlepost && ok "in-app account deletion (5.1.1(v))" || warn "iOS: no in-app account deletion yet (required before App Store review, milestone 4)"

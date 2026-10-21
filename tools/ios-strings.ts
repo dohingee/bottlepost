@@ -12,6 +12,10 @@ const ROOT = join(__dirname, "..");
 const RES = join(ROOT, "android", "app", "src", "main", "res");
 const IOS_RES = join(ROOT, "ios", "strings");
 const OUT = join(ROOT, "ios", "Bottlepost", "Resources");
+const projectYml = readFileSync(join(ROOT, "ios", "project.yml"), "utf8")
+  .split("\n")
+  .filter((line) => !line.trimStart().startsWith("#"))
+  .join("\n");
 
 /** Android resource folder -> iOS locale (Android "pt" is Brazilian Portuguese, "in" is Indonesian). */
 const LOCALES: Record<string, string> = {
@@ -79,11 +83,12 @@ const files: Record<string, string> = {
     (
       [
         ["CFBundleDisplayName", "app_name"],
-        // App Tracking Transparency prompt (ads, M7); only once the key exists.
+        // App Tracking Transparency prompt (ads, M7).
         ["NSUserTrackingUsageDescription", "ios_att_purpose"],
       ] as const
     )
-      .filter(([, key]) => tables[0].strings.has(key))
+      // Only keys the app's Info.plist actually has (the tracking prompt only while ads are on).
+      .filter(([plistKey, key]) => tables[0].strings.has(key) && (plistKey === "CFBundleDisplayName" || projectYml.includes(`${plistKey}:`)))
       .map(([plistKey, key]) => [plistKey, lookup(key)] as [string, (locale: string) => string | undefined]),
   ),
 };
