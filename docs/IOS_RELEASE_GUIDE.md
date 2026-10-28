@@ -152,6 +152,15 @@ GitHub `dohingee/bottlepost` → **Settings** → **Secrets and variables** → 
 
 ---
 
+## TestFlight가 실패할 때
+- **"Choose a certificate to revoke… maximum number of certificates"**
+  - GitHub 빌드가 매번 만드는 개발용 인증서가 한도에 찬 것입니다. 워크플로가 빌드 전에 자동으로 정리합니다.
+  - 그래도 실패하면 https://developer.apple.com/account/resources/certificates/list 에서 종류가 **Development**이고 이름에 "Created via API"가 있는 인증서를 모두 **Revoke**한 뒤 다시 실행합니다.
+  - Distribution 인증서는 건드리지 않습니다.
+- **실행이 시작되지 않고 15분 뒤 회색(취소)**
+  - GitHub macOS 러너가 붐벼서 생기는 일입니다.
+  - **Run workflow**의 runner를 `macos-15` ↔ `macos-26`으로 바꿔 다시 실행하거나, 시간을 두고 다시 실행합니다.
+
 ## 업데이트할 때마다
 1. 🤖 Claude가 코드를 고쳐 push합니다. 그러면 **iOS build**가 시뮬레이터 빌드와 테스트를 자동으로 돌립니다.
 2. ✋ 확인할 빌드가 필요할 때만 **iOS TestFlight**를 실행합니다.
