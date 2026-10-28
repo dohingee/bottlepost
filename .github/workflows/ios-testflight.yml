@@ -8,8 +8,8 @@ on:
       runner:
         description: "macOS runner (pick macos-15 when macos-26 jobs keep getting cancelled while queued)"
         type: choice
-        options: [macos-26, macos-15]
-        default: macos-26
+        options: [macos-15, macos-26]
+        default: macos-15
 
 permissions:
   contents: read
@@ -23,7 +23,7 @@ env:
 
 jobs:
   upload:
-    runs-on: ${{ inputs.runner || 'macos-26' }}
+    runs-on: ${{ inputs.runner || 'macos-15' }}
     timeout-minutes: 45
     steps:
       - name: Check secrets

@@ -22,10 +22,19 @@ concurrency:
 
 jobs:
   listing:
-    runs-on: macos-26
+    runs-on: macos-15
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+
+      # App Store builds need the iOS 26 SDK. macos-15 images carry Xcode 26 next to older ones
+      # (macos-26 jobs were cancelled after 15 minutes in the queue for lack of capacity).
+      - name: Select Xcode 26
+        run: |
+          xcode=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
+          xcodebuild -version | tee -a "$GITHUB_STEP_SUMMARY"
+          xcodebuild -version | head -1 | grep -qE 'Xcode (2[6-9]|[3-9][0-9])' || { echo "::error::Xcode 26 or newer is required"; exit 1; }
 
       - name: Generate the Xcode project
         working-directory: ios
