@@ -24,8 +24,7 @@ env:
 jobs:
   upload:
     runs-on: ${{ inputs.runner || 'macos-15-intel' }}
-    # Intel runners compile Firebase and Google Mobile Ads from source in about an hour.
-    timeout-minutes: 100
+    timeout-minutes: 60
     steps:
       - name: Check secrets
         env:
@@ -103,7 +102,7 @@ jobs:
           key="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
           printf '%s\n' "$KEY" > "$key"
           # Each run would otherwise leave one more development certificate behind (account limit).
-          KEY_PATH="$key" python3 ../.github/scripts/asc-clean-dev-certs.py || echo "::warning::could not revoke old development certificates (see docs/IOS_RELEASE_GUIDE.md)"
+          KEY_PATH="$key" python3 -u ../.github/scripts/asc-clean-dev-certs.py < /dev/null || echo "::warning::could not revoke old development certificates (see docs/IOS_RELEASE_GUIDE.md)"
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$key" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER")
           xcodebuild archive \
             -project Bottlepost.xcodeproj -scheme Bottlepost -configuration Release \
