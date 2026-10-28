@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: "macOS runner (pick macos-15 when macos-26 jobs keep getting cancelled while queued)"
+        description: "macOS runner (if a run is cancelled after 15 minutes in the queue, try another one)"
         type: choice
-        options: [macos-15, macos-26]
-        default: macos-15
+        options: [macos-15-intel, macos-15, macos-26]
+        default: macos-15-intel
 
 permissions:
   contents: read
@@ -23,8 +23,8 @@ env:
 
 jobs:
   upload:
-    runs-on: ${{ inputs.runner || 'macos-15' }}
-    timeout-minutes: 45
+    runs-on: ${{ inputs.runner || 'macos-15-intel' }}
+    timeout-minutes: 60
     steps:
       - name: Check secrets
         env:
@@ -102,7 +102,7 @@ jobs:
           key="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
           printf '%s\n' "$KEY" > "$key"
           # Each run would otherwise leave one more development certificate behind (account limit).
-          KEY_PATH="$key" python3 ../.github/scripts/asc-clean-dev-certs.py || echo "::warning::could not revoke old development certificates (see docs/IOS_RELEASE_GUIDE.md)"
+          KEY_PATH="$key" python3 -u ../.github/scripts/asc-clean-dev-certs.py < /dev/null || echo "::warning::could not revoke old development certificates (see docs/IOS_RELEASE_GUIDE.md)"
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$key" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER")
           xcodebuild archive \
             -project Bottlepost.xcodeproj -scheme Bottlepost -configuration Release \

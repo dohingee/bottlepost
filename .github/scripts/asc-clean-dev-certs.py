@@ -37,23 +37,26 @@ def token() -> str:
     payload = {"iss": os.environ["ISSUER"], "iat": now, "exp": now + 600, "aud": "appstoreconnect-v1"}
     signing_input = b64(json.dumps(header).encode()) + b"." + b64(json.dumps(payload).encode())
     der = subprocess.run(["openssl", "dgst", "-sha256", "-sign", os.environ["KEY_PATH"]],
-                         input=signing_input, capture_output=True, check=True).stdout
+                         input=signing_input, capture_output=True, check=True, timeout=30).stdout
     return (signing_input + b"." + b64(raw_signature(der))).decode()
 
 
 def call(method: str, url: str, auth: str):
     req = urllib.request.Request(url, method=method, headers={"Authorization": f"Bearer {auth}"})
-    with urllib.request.urlopen(req) as res:
+    with urllib.request.urlopen(req, timeout=30) as res:
         body = res.read()
         return json.loads(body) if body else None
 
 
+print("signing App Store Connect token", flush=True)
 auth = token()
+print("listing development certificates", flush=True)
 certs = call("GET", f"{API}/certificates?filter[certificateType]=DEVELOPMENT,IOS_DEVELOPMENT&limit=200", auth)["data"]
 revoked = 0
 for cert in certs:
     name = cert["attributes"].get("name", "") + " " + (cert["attributes"].get("displayName") or "")
     if "Created via API" in name:
+        print(f"revoking {cert['id']}", flush=True)
         call("DELETE", f"{API}/certificates/{cert['id']}", auth)
         revoked += 1
 print(f"development certificates: {len(certs)}, revoked {revoked} made by earlier CI runs")
