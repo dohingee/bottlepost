@@ -124,14 +124,16 @@ final class MailStore {
     }
 
     /** Blocks on the server (the other side is not told) and closes the conversation here. */
+    /** Blocks the other person and removes the conversation from this phone at once (Guideline 1.2). */
     func block(threadId: String) async throws {
         try await service?.blockThread(threadId)
-        markClosed(threadId)
+        removeLocal(threadId)
     }
 
     /**
      * Uploads the most recent letters of the conversation, unchanged so their signatures verify
-     * (the user agreed to this in the report sheet). The server also blocks the other person.
+     * (the user agreed to this in the report sheet). The server also blocks the other person, so the
+     * conversation is then removed from this phone at once.
      */
     func report(threadId: String, reason: String, note: String) async throws {
         guard let service else { throw ApiError(code: "unknown") }
@@ -140,7 +142,7 @@ final class MailStore {
                           direction: $0.outgoing ? "sent" : "received")
         }
         try await service.submitReport(threadId: threadId, reason: reason, note: note, messages: Array(recent))
-        markClosed(threadId)
+        removeLocal(threadId)
     }
 
     /** Leaves on the server (the other side is told). The letters stay readable here until deleted. */
@@ -155,6 +157,11 @@ final class MailStore {
      */
     func delete(threadId: String) async throws {
         if let t = thread(threadId), !t.closed { try await service?.leaveThread(threadId) }
+        removeLocal(threadId)
+    }
+
+    /** Drops the conversation and its letters from this phone only. */
+    private func removeLocal(_ threadId: String) {
         for l in letters(threadId) { context.delete(l) }
         if let t = thread(threadId) { context.delete(t) }
         save()

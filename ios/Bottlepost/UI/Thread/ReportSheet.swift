@@ -36,7 +36,10 @@ struct ReportSheet: View {
                             if new.count > 500 { note = String(new.prefix(500)) }
                         }
                 } footer: {
-                    Text(L("report_consent"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L("report_consent"))
+                        Text(L("ios_report_contact", Links.supportEmail))
+                    }
                 }
             }
             .navigationTitle(L("report_title"))

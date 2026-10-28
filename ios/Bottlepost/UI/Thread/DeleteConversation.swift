@@ -13,16 +13,27 @@ struct DeleteConversation: ViewModifier {
 
     @State private var confirm = false
     @State private var confirmActive = false
+    @State private var report = false
+    @State private var block = false
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
                 if asMenu {
+                    Button { report = true } label: {
+                        Label(L("action_report"), systemImage: "exclamationmark.bubble")
+                    }
+                    if !thread.closed {
+                        Button { block = true } label: {
+                            Label(L("action_block"), systemImage: "hand.raised")
+                        }
+                    }
                     Button(role: .destructive) { confirm = true } label: {
                         Label(L("action_delete_thread"), systemImage: "trash")
                     }
                 }
             }
+            .safetyActions(session: session, threadId: thread.threadId, report: $report, block: $block)
             .onChange(of: start) { _, new in
                 if new { confirm = true; start = false }
             }
@@ -57,7 +68,7 @@ struct DeleteConversation: ViewModifier {
 }
 
 extension View {
-    /** Long-press menu on list cards. */
+    /** Long-press menu on list cards: report, block, delete. */
     func deleteConversation(session: Session, thread: LetterThread) -> some View {
         modifier(DeleteConversation(session: session, thread: thread, start: .constant(false)))
     }

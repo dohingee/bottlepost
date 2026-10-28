@@ -11,4 +11,8 @@
     <string name="ios_switch_body">Al cambiar se elimina la cuenta que usas ahora, incluidas sus conversaciones en este teléfono, y las personas con las que hablas verán que saliste. Si esa cuenta tiene una copia en iCloud, se restaurarán sus conversaciones. ¿Cambiar?</string>
     <string name="ios_link_required">Primero vincula tu cuenta de Apple.</string>
     <string name="ios_att_purpose">Permite mostrarte anuncios más relevantes. Bottlepost nunca comparte tus cartas.</string>
+    <string name="ios_zero_tolerance">Tolerancia cero con el contenido ofensivo y los usuarios abusivos. Revisamos las cartas denunciadas en menos de 24 horas: eliminamos las que infringen las normas y bloqueamos a quien las envió.</string>
+    <string name="ios_report_removed">Denunciada. Eliminamos esta conversación y esa persona ya no puede escribirte.</string>
+    <string name="ios_block_removed">Bloqueado. Eliminamos esta conversación.</string>
+    <string name="ios_report_contact">Para denunciar cualquier otra cosa, escribe a %1$s</string>
 </resources>

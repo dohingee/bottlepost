@@ -115,7 +115,7 @@ final class MailStoreTests: XCTestCase {
         XCTAssertTrue(store.letters("t1").isEmpty)
     }
 
-    func testReportSendsLastSixLettersAsSignedAndCloses() async throws {
+    func testReportSendsLastSixLettersAsSignedThenRemovesConversation() async throws {
         await store.ingest([letterDoc("d1", sentAt: 100)])
         try await store.reply(threadId: "t1", body: " mine ", myLang: "en")
         for i in 2...7 { await store.ingest([letterDoc("d\(i)", body: "letter \(i)", sentAt: Int64(3_000 + i))]) }
@@ -127,7 +127,9 @@ final class MailStoreTests: XCTestCase {
         XCTAssertEqual(r.messages.map(\.deliveryId), ["d2", "d3", "d4", "d5", "d6", "d7"])
         XCTAssertEqual(r.messages.first?.sig, "s-d2")
         XCTAssertEqual(r.messages.first?.sentAt, 3_002)
-        XCTAssertEqual(store.thread("t1")?.closed, true)
+        // Gone from the list at once (Guideline 1.2), after the letters were sent.
+        XCTAssertNil(store.thread("t1"))
+        XCTAssertTrue(store.letters("t1").isEmpty)
     }
 
     func testReportMarksMyLettersAsSent() async throws {
@@ -140,11 +142,14 @@ final class MailStoreTests: XCTestCase {
         XCTAssertEqual(messages.last?.sig, "rsig1")
     }
 
-    func testBlockClosesThread() async throws {
+    func testBlockRemovesConversation() async throws {
         await store.ingest([letterDoc("d1")])
         try await store.block(threadId: "t1")
         XCTAssertEqual(service.blocked, ["t1"])
-        XCTAssertEqual(store.thread("t1")?.closed, true)
+        XCTAssertNil(store.thread("t1"))
+        XCTAssertTrue(store.letters("t1").isEmpty)
+        // Blocking is not leaving: the server already ended the conversation.
+        XCTAssertTrue(service.left.isEmpty)
     }
 
     func testMarkReadAndWipe() async throws {

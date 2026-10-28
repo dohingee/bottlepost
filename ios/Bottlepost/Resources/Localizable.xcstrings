@@ -3976,6 +3976,59 @@
         }
       }
     },
+    "ios_block_removed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blocked. This conversation was removed."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "차단했어요. 이 대화를 지웠어요."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブロックしました。この会話を削除しました。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloqueado. Eliminamos esta conversación."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloqueado. Removemos esta conversa."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sudah diblokir. Percakapan ini dihapus."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã chặn. Cuộc trò chuyện này đã bị xóa."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บล็อกแล้ว บทสนทนานี้ถูกลบ"
+          }
+        }
+      }
+    },
     "ios_icloud_unavailable": {
       "extractionState": "manual",
       "localizations": {
@@ -4135,6 +4188,112 @@
         }
       }
     },
+    "ios_report_contact": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To report anything else, write to %1$@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 문제는 %1$@ 로 알려 주세요"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その他の問題は %1$@ までお知らせください"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para denunciar cualquier otra cosa, escribe a %1$@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para denunciar qualquer outra coisa, escreva para %1$@"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untuk melaporkan hal lain, kirim email ke %1$@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để báo cáo vấn đề khác, hãy gửi email tới %1$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หากต้องการแจ้งปัญหาอื่น ส่งอีเมลมาที่ %1$@"
+          }
+        }
+      }
+    },
+    "ios_report_removed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported. This conversation was removed and the sender can no longer write to you."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "신고했어요. 이 대화를 지웠고, 상대는 더 이상 편지를 보낼 수 없어요."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通報しました。この会話を削除し、相手はもうあなたに手紙を送れません。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denunciada. Eliminamos esta conversación y esa persona ya no puede escribirte."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denunciada. Removemos esta conversa e essa pessoa não pode mais escrever para você."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sudah dilaporkan. Percakapan ini dihapus dan pengirim tidak dapat lagi menulis kepada Anda."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã báo cáo. Cuộc trò chuyện này đã bị xóa và người đó không thể viết thư cho bạn nữa."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รายงานแล้ว บทสนทนานี้ถูกลบ และผู้ส่งจะเขียนถึงคุณไม่ได้อีก"
+          }
+        }
+      }
+    },
     "ios_restore_apple": {
       "extractionState": "manual",
       "localizations": {
@@ -4290,6 +4449,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "บัญชี Apple นี้มีบัญชี Bottlepost อื่นอยู่แล้ว"
+          }
+        }
+      }
+    },
+    "ios_zero_tolerance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zero tolerance for objectionable content and abusive users. Reported letters are reviewed within 24 hours; offending letters are removed and their senders are banned."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "불쾌한 콘텐츠와 악성 이용자는 절대 용납하지 않아요. 신고된 편지는 24시간 안에 검토하고, 위반한 편지는 삭제하며 보낸 사람은 이용을 정지해요."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不快なコンテンツや悪質なユーザーは一切容認しません。通報された手紙は24時間以内に確認し、違反した手紙は削除、送り主は利用停止にします。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tolerancia cero con el contenido ofensivo y los usuarios abusivos. Revisamos las cartas denunciadas en menos de 24 horas: eliminamos las que infringen las normas y bloqueamos a quien las envió."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tolerância zero com conteúdo ofensivo e usuários abusivos. Analisamos as cartas denunciadas em até 24 horas: removemos as que violam as regras e banimos quem as enviou."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tidak ada toleransi untuk konten yang tidak pantas dan pengguna yang kasar. Surat yang dilaporkan ditinjau dalam 24 jam; surat yang melanggar dihapus dan pengirimnya diblokir dari layanan."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không khoan nhượng với nội dung phản cảm và người dùng lạm dụng. Thư bị báo cáo được xem xét trong vòng 24 giờ; thư vi phạm bị xóa và người gửi bị cấm sử dụng."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เราไม่ยอมรับเนื้อหาที่ไม่เหมาะสมและผู้ใช้ที่ก่อกวนโดยเด็ดขาด จดหมายที่ถูกรายงานจะได้รับการตรวจสอบภายใน 24 ชั่วโมง จดหมายที่ละเมิดจะถูกลบและผู้ส่งจะถูกระงับการใช้งาน"
           }
         }
       }

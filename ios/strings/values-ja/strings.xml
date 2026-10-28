@@ -11,4 +11,8 @@
     <string name="ios_switch_body">切り替えると、今使っているアカウントとこのスマホの会話は削除され、相手には退出したと表示されます。そのアカウントのiCloudバックアップがあれば、その会話を復元します。切り替えますか？</string>
     <string name="ios_link_required">先にAppleアカウントを連携してください。</string>
     <string name="ios_att_purpose">あなたにより関連性の高い広告を表示するために使います。手紙の内容は共有しません。</string>
+    <string name="ios_zero_tolerance">不快なコンテンツや悪質なユーザーは一切容認しません。通報された手紙は24時間以内に確認し、違反した手紙は削除、送り主は利用停止にします。</string>
+    <string name="ios_report_removed">通報しました。この会話を削除し、相手はもうあなたに手紙を送れません。</string>
+    <string name="ios_block_removed">ブロックしました。この会話を削除しました。</string>
+    <string name="ios_report_contact">その他の問題は %1$s までお知らせください</string>
 </resources>

@@ -11,4 +11,8 @@
     <string name="ios_switch_body">Beralih akan menghapus akun yang Anda pakai sekarang beserta percakapannya di ponsel ini, dan lawan bicara Anda akan melihat Anda keluar. Jika akun itu punya cadangan iCloud, percakapannya akan dipulihkan. Beralih?</string>
     <string name="ios_link_required">Tautkan akun Apple Anda terlebih dahulu.</string>
     <string name="ios_att_purpose">Digunakan untuk menampilkan iklan yang lebih relevan bagi Anda. Bottlepost tidak pernah membagikan surat Anda.</string>
+    <string name="ios_zero_tolerance">Tidak ada toleransi untuk konten yang tidak pantas dan pengguna yang kasar. Surat yang dilaporkan ditinjau dalam 24 jam; surat yang melanggar dihapus dan pengirimnya diblokir dari layanan.</string>
+    <string name="ios_report_removed">Sudah dilaporkan. Percakapan ini dihapus dan pengirim tidak dapat lagi menulis kepada Anda.</string>
+    <string name="ios_block_removed">Sudah diblokir. Percakapan ini dihapus.</string>
+    <string name="ios_report_contact">Untuk melaporkan hal lain, kirim email ke %1$s</string>
 </resources>

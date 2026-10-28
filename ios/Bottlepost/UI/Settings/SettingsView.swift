@@ -61,7 +61,12 @@ struct SettingsView: View {
                     Link(L("settings_terms"), destination: Links.terms)
                     Link(L("settings_privacy"), destination: Links.privacy)
                     Link(L("settings_child_safety"), destination: Links.childSafety)
-                    Link(L("settings_contact"), destination: Links.contact)
+                    Link(destination: Links.contact) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("settings_contact"))
+                            Text(Links.supportEmail).font(.footnote).foregroundStyle(Sea.inkText.opacity(0.7))
+                        }
+                    }
                     if session.ads?.privacyOptionsRequired == true {
                         Button(L("settings_ad_privacy")) { Task { await session.ads?.showPrivacyOptions() } }
                     }
