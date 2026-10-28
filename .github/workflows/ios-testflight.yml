@@ -101,6 +101,8 @@ jobs:
           set -o pipefail
           key="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
           printf '%s\n' "$KEY" > "$key"
+          # Each run would otherwise leave one more development certificate behind (account limit).
+          KEY_PATH="$key" python3 ../.github/scripts/asc-clean-dev-certs.py || echo "::warning::could not revoke old development certificates (see docs/IOS_RELEASE_GUIDE.md)"
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$key" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER")
           xcodebuild archive \
             -project Bottlepost.xcodeproj -scheme Bottlepost -configuration Release \
