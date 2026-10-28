@@ -24,7 +24,8 @@ env:
 jobs:
   upload:
     runs-on: ${{ inputs.runner || 'macos-15-intel' }}
-    timeout-minutes: 45
+    # Intel runners compile Firebase and Google Mobile Ads from source in about an hour.
+    timeout-minutes: 100
     steps:
       - name: Check secrets
         env:
