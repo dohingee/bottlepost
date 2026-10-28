@@ -159,7 +159,7 @@ GitHub `dohingee/bottlepost` → **Settings** → **Secrets and variables** → 
   - Distribution 인증서는 건드리지 않습니다.
 - **실행이 시작되지 않고 15분 뒤 회색(취소)**
   - GitHub macOS 러너가 붐벼서 생기는 일입니다.
-  - **Run workflow**의 runner를 `macos-15` ↔ `macos-26`으로 바꿔 다시 실행하거나, 시간을 두고 다시 실행합니다.
+  - **Run workflow**의 runner를 `macos-15-intel`(기본, 인텔 러너라 대기가 짧음) → `macos-15` → `macos-26` 순서로 바꿔 다시 실행하거나, 한산한 시간(한국 기준 새벽·아침)에 다시 실행합니다.
 
 ## 업데이트할 때마다
 1. 🤖 Claude가 코드를 고쳐 push합니다. 그러면 **iOS build**가 시뮬레이터 빌드와 테스트를 자동으로 돌립니다.
