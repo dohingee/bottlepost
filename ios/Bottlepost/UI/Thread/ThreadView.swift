@@ -2,7 +2,10 @@ import SwiftData
 import SwiftUI
 import Translation
 
-/** One conversation: alternating letters, waiting banner, reply box, leave / delete (ThreadScreen.kt). */
+/**
+ * One conversation: alternating letters, waiting banner, reply box, leave / delete (ThreadScreen.kt).
+ * Every received letter carries Report and Block in plain sight (Guideline 1.2).
+ */
 struct ThreadView: View {
     let session: Session
     let threadId: String
@@ -59,7 +62,9 @@ struct ThreadView: View {
                     VStack(spacing: 14) {
                         if waiting { WaitingBanner() }
                         ForEach(letters) { letter in
-                            LetterSheet(letter: letter, targetLang: session.profile?.lang ?? deviceLang())
+                            LetterSheet(letter: letter, targetLang: session.profile?.lang ?? deviceLang(),
+                                        onReport: { showReport = true },
+                                        onBlock: thread.closed ? nil : { confirmBlock = true })
                                 .id(letter.deliveryId)
                         }
                     }
@@ -76,15 +81,8 @@ struct ThreadView: View {
         .onAppear { session.mail?.markRead(threadId: threadId) }
         .onChange(of: letters.count) { _, _ in session.mail?.markRead(threadId: threadId) }
         .modifier(DeleteConversation(session: session, thread: thread, asMenu: false, start: $startDelete, onDeleted: { dismiss() }))
-        .alert(L("block_title"), isPresented: $confirmBlock) {
-            Button(L("action_cancel"), role: .cancel) {}
-            Button(L("action_block"), role: .destructive) { block() }
-        } message: {
-            Text(L("block_body"))
-        }
-        .sheet(isPresented: $showReport) {
-            ReportSheet { reason, note in report(reason: reason, note: note) }
-        }
+        // Both remove the conversation; the body above then closes this screen.
+        .safetyActions(session: session, threadId: threadId, report: $showReport, block: $confirmBlock)
         .alert(L("leave_title"), isPresented: $confirmLeave) {
             Button(L("action_cancel"), role: .cancel) {}
             Button(L("action_leave"), role: .destructive) { leave() }
@@ -151,30 +149,6 @@ struct ThreadView: View {
         }
     }
 
-    private func block() {
-        Task {
-            do {
-                try await session.mail?.block(threadId: threadId)
-                session.show("block_done")
-                dismiss()
-            } catch {
-                session.show(errorMessageKey(ApiError.from(error)))
-            }
-        }
-    }
-
-    private func report(reason: String, note: String) {
-        Task {
-            do {
-                try await session.mail?.report(threadId: threadId, reason: reason, note: note)
-                session.show("report_done")
-                dismiss()
-            } catch {
-                session.show(errorMessageKey(ApiError.from(error)))
-            }
-        }
-    }
-
     private func leave() {
         Task {
             do {
@@ -206,6 +180,9 @@ private struct LetterSheet: View {
     let letter: Letter
     /** The reader's letter language (profile lang), like Android. */
     let targetLang: String
+    let onReport: () -> Void
+    /** nil once the conversation has ended (nothing left to block). */
+    let onBlock: (() -> Void)?
 
     @State private var translated: String?
     /** translate_loading / _failed / _same_language / _unsupported while there is no translation. */
@@ -230,9 +207,20 @@ private struct LetterSheet: View {
                 if let notice {
                     Text(L(notice)).font(.footnote).foregroundStyle(Sea.inkText.opacity(0.7))
                 }
-                Button(L(translated == nil && notice == nil ? "action_translate" : "action_show_original")) { toggle() }
-                    .font(.footnote.weight(.semibold))
-                    .tint(Sea.teal)
+                // One row when it fits, else the safety buttons go on their own line (long languages).
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 16) {
+                        translateButton
+                        Spacer(minLength: 8)
+                        safetyButtons
+                    }
+                    VStack(alignment: .leading, spacing: 10) {
+                        translateButton
+                        HStack(spacing: 16) { safetyButtons }
+                    }
+                }
+                .font(.footnote.weight(.semibold))
+                .buttonStyle(.borderless)
             }
         }
         .padding(letter.outgoing ? .leading : .trailing, 28)
@@ -244,6 +232,24 @@ private struct LetterSheet: View {
             } catch {
                 notice = "translate_failed"
             }
+        }
+    }
+
+    private var translateButton: some View {
+        Button(L(translated == nil && notice == nil ? "action_translate" : "action_show_original")) { toggle() }
+            .tint(Sea.teal)
+            .fixedSize()
+    }
+
+    @ViewBuilder
+    private var safetyButtons: some View {
+        Button(L("action_report"), systemImage: "exclamationmark.bubble", action: onReport)
+            .tint(Sea.wax)
+            .fixedSize()
+        if let onBlock {
+            Button(L("action_block"), systemImage: "hand.raised", action: onBlock)
+                .tint(Sea.wax)
+                .fixedSize()
         }
     }
 

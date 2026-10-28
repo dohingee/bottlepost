@@ -58,6 +58,27 @@ export async function applyAction(a: Action): Promise<void> {
     at: Timestamp.now(),
   });
   await batch.commit();
+  if (a.verdict === "ban_permanent" || patch.status === "suspended") await deletePendingLetters(a.uid);
+}
+
+/**
+ * Letters the user sent that were not picked up yet: removed when they are suspended or banned, so
+ * reported content stops reaching anyone (App Review 1.2: remove the content, eject the user).
+ * Deliveries carry no sender uid, so they are found through the user's threads.
+ */
+export async function deletePendingLetters(uid: string): Promise<number> {
+  const threads = await col.threads().where("participants", "array-contains", uid).get();
+  let removed = 0;
+  for (const t of threads.docs) {
+    const pending = await col.deliveries().where("threadId", "==", t.id).get();
+    const theirs = pending.docs.filter((d) => d.get("to") !== uid && d.get("kind") !== "left");
+    if (!theirs.length) continue;
+    const batch = db.batch();
+    theirs.forEach((d) => batch.delete(d.ref));
+    await batch.commit();
+    removed += theirs.length;
+  }
+  return removed;
 }
 
 /** Lifts a suspension or ban (appeal granted). */

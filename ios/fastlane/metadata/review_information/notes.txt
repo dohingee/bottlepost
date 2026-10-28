@@ -1,14 +1,16 @@
-Bottlepost lets adults (18+) send one anonymous letter to a random adult. A conversation only continues if the recipient replies, and each side must wait for the other's reply (turn-taking). It is not a real-time chat: letters are limited per day and each letter is delivered once.
+Bottlepost lets adults (18+) send one anonymous letter to a random adult. A conversation only continues if the recipient replies, and each side must wait for the other's reply (turn-taking). It is not a real-time chat and has no public feed: letters are limited per day and each letter is delivered once, to one person.
 
-Safety (Guideline 1.2):
-- Terms of use with zero tolerance for objectionable content and abusive users must be accepted before use.
-- Before sending, a server filter blocks links, phone numbers, e-mail addresses, messenger IDs and crypto addresses.
-- Every received letter has Report (which also blocks the sender at once) and Block. Reports are checked by a rules engine and a moderation model and reviewed by the operator within 24 hours; child-safety reports suspend the sender immediately.
-- Age: neutral birth-year entry at onboarding, re-checked on the server; on iOS 26 Apple's Declared Age Range is also asked. The age rating is 18+.
-- Support: Settings > Contact support. Child safety: https://bottlepost.web.app/child-safety
-- Account deletion: Settings > Delete account (Sign in with Apple is revoked too).
+Guideline 1.2 (user-generated content), where to find each precaution:
+1. Age rating 18+; birth year checked at onboarding and on the server; Apple's Declared Age Range on iOS 26.
+2. Terms (EULA) with zero tolerance: the onboarding screen shows "Zero tolerance for objectionable content and abusive users..." above the required "I agree to the Terms of Service" checkbox. Terms section 6-7: https://bottlepost.web.app/terms-en
+3. Filtering: before a letter is sent, the server blocks links, phone numbers, e-mail addresses, messenger IDs and crypto addresses; reported letters are checked by a rules engine and a moderation model.
+4. Flag content: every received letter shows a "Report" button under it (also in the conversation's ... menu and by long-pressing a conversation in the list).
+5. Block users: every received letter shows a "Block" button (same places as Report). Reporting also blocks the sender.
+6. Remove content immediately: reporting or blocking removes the conversation from the user's screen at once; any conversation can also be deleted (long-press > Delete conversation, or ... > Delete).
+7. We review reports within 24 hours. Confirmed violations: the content is removed (the sender's undelivered letters are deleted on the server) and the sender is suspended or permanently banned. Child-safety reports suspend the sender at once.
+8. Contact in the app: Settings > Contact support (kimyeoware@gmail.com, shown on screen) and in the report form. Child safety: https://bottlepost.web.app/child-safety
 
-No login is needed: onboarding asks only gender and birth year. Sign in with Apple (Settings) is optional and only used to restore the account and its encrypted iCloud backup on a new iPhone; it requests no name or e-mail.
+No login is needed: onboarding asks only gender and birth year. Sign in with Apple (Settings) is optional and only restores the account and its encrypted iCloud backup on a new iPhone; it requests no name or e-mail. Account deletion: Settings > Delete account.
 
 To receive a reply during review, send a letter choosing "Anyone": the operator's test account replies, usually within a few hours.
 

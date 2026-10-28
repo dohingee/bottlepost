@@ -11,4 +11,8 @@
     <string name="ios_switch_body">Chuyển đổi sẽ xóa tài khoản bạn đang dùng cùng các cuộc trò chuyện trên điện thoại này, và người kia sẽ thấy bạn đã rời đi. Nếu tài khoản đó có bản sao lưu iCloud, các cuộc trò chuyện sẽ được khôi phục. Chuyển?</string>
     <string name="ios_link_required">Hãy liên kết tài khoản Apple trước.</string>
     <string name="ios_att_purpose">Dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bottlepost không bao giờ chia sẻ thư của bạn.</string>
+    <string name="ios_zero_tolerance">Không khoan nhượng với nội dung phản cảm và người dùng lạm dụng. Thư bị báo cáo được xem xét trong vòng 24 giờ; thư vi phạm bị xóa và người gửi bị cấm sử dụng.</string>
+    <string name="ios_report_removed">Đã báo cáo. Cuộc trò chuyện này đã bị xóa và người đó không thể viết thư cho bạn nữa.</string>
+    <string name="ios_block_removed">Đã chặn. Cuộc trò chuyện này đã bị xóa.</string>
+    <string name="ios_report_contact">Để báo cáo vấn đề khác, hãy gửi email tới %1$s</string>
 </resources>

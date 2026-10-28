@@ -83,6 +83,13 @@ struct OnboardingView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
+                    // The key term of the EULA, shown before agreeing (Guideline 1.2).
+                    Label(L("ios_zero_tolerance"), systemImage: "shield.lefthalf.filled")
+                        .font(.footnote)
+                        .foregroundStyle(Sea.inkText)
+                        .padding(12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Sea.parchment))
                     agreement("onboarding_agree_terms", isOn: $agreeTerms, link: Links.terms)
                     agreement("onboarding_agree_privacy", isOn: $agreePrivacy, link: Links.privacy)
                 }

@@ -14,4 +14,8 @@
     <string name="ios_link_required">Link your Apple account first.</string>
     <!-- iPhone tracking permission prompt (InfoPlist NSUserTrackingUsageDescription). -->
     <string name="ios_att_purpose">Allows ads that are more relevant to you. Bottlepost never shares your letters.</string>
+    <string name="ios_zero_tolerance">Zero tolerance for objectionable content and abusive users. Reported letters are reviewed within 24 hours; offending letters are removed and their senders are banned.</string>
+    <string name="ios_report_removed">Reported. This conversation was removed and the sender can no longer write to you.</string>
+    <string name="ios_block_removed">Blocked. This conversation was removed.</string>
+    <string name="ios_report_contact">To report anything else, write to %1$s</string>
 </resources>

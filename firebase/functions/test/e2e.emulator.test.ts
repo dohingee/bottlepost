@@ -102,6 +102,11 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
   });
 
   it("verifies reported letters by signature and runs the moderation bot", async () => {
+    // A letter from Alice in another conversation that nobody picked up yet.
+    const otherThread = db.collection("threads").doc("alice-other-thread");
+    await otherThread.set({ participants: [A, "zed-uid"], closed: false });
+    const undelivered = db.collection("deliveries").doc("alice-undelivered");
+    await undelivered.set({ to: "zed-uid", threadId: otherThread.id, kind: "first", body: "pending letter", sentAt: 1 });
     await call("replyLetter", A, { threadId, body: "send me 500 usdt for crypto investment profit, trust me please" });
     const [scam] = await pickup(B);
     const res = await call("submitReport", B, {
@@ -123,6 +128,8 @@ describe.skipIf(!onEmulator)("letter lifecycle", async () => {
     const alice = (await db.doc(`users/${A}`).get()).data()!;
     expect(alice.status).toBe("suspended");
     expect(alice.strikes).toBe(1);
+    // Suspension also removes what she sent that was still on its way.
+    expect((await undelivered.get()).exists).toBe(false);
     await expectCode(call("sendLetter", A, { body: "a completely new letter to someone", wantGender: "F" }), "account_suspended");
   });
 
